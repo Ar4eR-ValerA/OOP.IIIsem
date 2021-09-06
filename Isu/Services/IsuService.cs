@@ -22,7 +22,7 @@ namespace Isu.Services
         {
             if (group.StudentsLimit <= group.Students.Count)
             {
-                throw new IsuException("Group is full");
+                throw new IsuException($"Group {group.Name} is full");
             }
 
             var student = new Student(_students.Count, name);
@@ -35,14 +35,12 @@ namespace Isu.Services
 
         public Student GetStudent(int id)
         {
-            try
+            if (id < 0 || id >= _students.Count)
             {
-                return _students[id];
+                throw new IsuException($"Invalid id: {id}");
             }
-            catch
-            {
-                return null;
-            }
+
+            return _students[id];
         }
 
         public Student FindStudent(string name)
@@ -116,17 +114,17 @@ namespace Isu.Services
 
         public void ChangeStudentGroup(Student student, Group newGroup)
         {
-            if (newGroup.StudentsLimit <= newGroup.Students.Count)
-            {
-                throw new IsuException("Group is full");
-            }
-
             foreach (Group group in _groups)
             {
                 if (group.Name.Equals(student.Group.Name))
                 {
                     group.Students.Remove(student);
                 }
+            }
+
+            if (newGroup.StudentsLimit <= newGroup.Students.Count)
+            {
+                throw new IsuException($"Group {newGroup.Name} is full");
             }
 
             newGroup.Students.Add(student);

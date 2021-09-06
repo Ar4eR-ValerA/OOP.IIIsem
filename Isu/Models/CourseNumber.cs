@@ -11,7 +11,7 @@ namespace Isu.Models
         {
             if (course is < 0 or > 4)
             {
-                throw new IsuException("Invalid course");
+                throw new IsuException($"Invalid course: {course}");
             }
 
             _course = course;
@@ -22,7 +22,7 @@ namespace Isu.Models
             int intCourse = course - '0';
             if (intCourse is < 0 or > 4)
             {
-                throw new IsuException("Invalid course");
+                throw new IsuException($"Invalid course: {course}");
             }
 
             _course = intCourse;

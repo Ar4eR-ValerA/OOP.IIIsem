@@ -11,7 +11,7 @@ namespace Isu.Models
         {
             if (studentStatus != 3)
             {
-                throw new IsuException("Invalid student status");
+                throw new IsuException($"Invalid student status: {studentStatus}");
             }
 
             _studentStatus = studentStatus;
@@ -22,7 +22,7 @@ namespace Isu.Models
             int intStudentStatus = studentStatus - '0';
             if (intStudentStatus != 3)
             {
-                throw new IsuException("Invalid student status");
+                throw new IsuException($"Invalid student status: {studentStatus}");
             }
 
             _studentStatus = intStudentStatus;

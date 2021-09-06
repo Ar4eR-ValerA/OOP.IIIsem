@@ -11,7 +11,7 @@ namespace Isu.Models
         {
             if (department != 'M')
             {
-                throw new IsuException("Invalid department");
+                throw new IsuException($"Invalid department: {department}");
             }
 
             _department = department;

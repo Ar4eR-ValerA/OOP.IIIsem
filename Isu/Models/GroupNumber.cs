@@ -12,7 +12,7 @@ namespace Isu.Models
         {
             if (group is < 0 or > 99)
             {
-                throw new IsuException("Invalid group");
+                throw new IsuException($"Invalid group: {group}");
             }
 
             _group = group.ToString();
@@ -22,7 +22,7 @@ namespace Isu.Models
         {
             if (Convert.ToInt32(group) is < 0 or > 99)
             {
-                throw new IsuException("Invalid group");
+                throw new IsuException($"Invalid group: {group}");
             }
 
             _group = group;

@@ -93,7 +93,18 @@ namespace Isu.Tests
             var student = new Student(0, "1", new Group("M3112", 30));
 
             Assert.IsNull(_isuService.FindStudent(student.FullName));
-            Assert.IsNull(_isuService.GetStudent(student.Id));
+        }
+        
+        [Test]
+        public void GetWrongStudent_ThrowException()
+        {
+            _isuService.AddGroup(new GroupName("M3112"));
+            var student = new Student(0, "1", new Group("M3112", 30));
+
+            Assert.Catch<IsuException>(() =>
+            {
+                _isuService.GetStudent(student.Id);
+            });
         }
         
         [Test]
