@@ -28,21 +28,21 @@ namespace Shops.Services
             return shop;
         }
 
-        public Shop FindCheapestShop(CustomerProductData customerProductData)
+        public Shop FindCheapestShop(CustomerProductDetails customerProductDetails)
         {
             int minPrice = -1;
             Shop minPriceShop = null;
 
             foreach (Shop shop in _shops)
             {
-                ShopProductData currentProduct = shop.FindProduct(customerProductData.Product);
+                ShopProductDetails currentProduct = shop.FindProduct(customerProductDetails.Product);
                 if (currentProduct == null)
                 {
                     continue;
                 }
 
                 if ((currentProduct.Price < minPrice || minPrice == -1) &&
-                    currentProduct.Count >= customerProductData.Count)
+                    currentProduct.Count >= customerProductDetails.Count)
                 {
                     minPrice = currentProduct.Price;
                     minPriceShop = shop;
@@ -52,7 +52,7 @@ namespace Shops.Services
             return minPriceShop;
         }
 
-        public Shop FindCheapestShop(List<CustomerProductData> customerProductsData)
+        public Shop FindCheapestShop(List<CustomerProductDetails> customerProductsDetails)
         {
             int minPrice = -1;
             Shop minPriceShop = null;
@@ -61,9 +61,9 @@ namespace Shops.Services
             {
                 int sumPrice = 0;
 
-                foreach (CustomerProductData customerProduct in customerProductsData)
+                foreach (CustomerProductDetails customerProduct in customerProductsDetails)
                 {
-                    ShopProductData currentProduct = shop.FindProduct(customerProduct.Product);
+                    ShopProductDetails currentProduct = shop.FindProduct(customerProduct.Product);
                     if (currentProduct != null)
                     {
                         sumPrice += currentProduct.Price;
@@ -83,6 +83,54 @@ namespace Shops.Services
             }
 
             return minPriceShop;
+        }
+
+        public List<Shop> FindShops(CustomerProductDetails customerProductDetails)
+        {
+            var shops = new List<Shop>();
+
+            foreach (Shop shop in _shops)
+            {
+                ShopProductDetails currentProduct = shop.FindProduct(customerProductDetails.Product);
+                if (currentProduct == null)
+                {
+                    continue;
+                }
+
+                if (currentProduct.Count >= customerProductDetails.Count)
+                {
+                    shops.Add(shop);
+                }
+            }
+
+            return shops;
+        }
+
+        public List<Shop> FindShops(List<CustomerProductDetails> customerProductsDetails)
+        {
+            var shops = new List<Shop>();
+
+            foreach (Shop shop in _shops)
+            {
+                bool suitableFl = true;
+
+                foreach (CustomerProductDetails customerProduct in customerProductsDetails)
+                {
+                    ShopProductDetails currentProduct = shop.FindProduct(customerProduct.Product);
+                    if (currentProduct == null)
+                    {
+                        suitableFl = false;
+                        break;
+                    }
+                }
+
+                if (suitableFl)
+                {
+                    shops.Add(shop);
+                }
+            }
+
+            return shops;
         }
     }
 }

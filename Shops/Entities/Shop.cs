@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Shops.Models;
 using Shops.Tools;
 
@@ -6,32 +7,26 @@ namespace Shops.Entities
 {
     public class Shop
     {
-        private List<ShopProductData> _productsDataList;
+        private List<ShopProductDetails> _productsDetailsList;
         private int _balance;
 
         public Shop(string name, int id, int balance)
         {
-            if (balance < 0)
-            {
-                throw new ShopsException($"Negative shop's balance: {_balance}");
-            }
-
-            _balance = balance;
-
+            Balance = balance;
             Name = name;
             Id = id;
             Balance = balance;
-            _productsDataList = new List<ShopProductData>();
+            _productsDetailsList = new List<ShopProductDetails>();
         }
 
-        public IReadOnlyList<ShopProductData> ProductsDataList => _productsDataList;
+        public IReadOnlyList<ShopProductDetails> ProductsDetailsList => _productsDetailsList;
         public int Id { get; }
         public string Name { get; }
 
         public int Balance
         {
             get => _balance;
-            internal set
+            set
             {
                 if (value < 0)
                 {
@@ -42,28 +37,14 @@ namespace Shops.Entities
             }
         }
 
-        public ShopProductData AddProduct(Product product, int count, int price)
+        public void AddProduct(ShopProductDetails productDetails)
         {
-            var productData = new ShopProductData(product, price, count);
-
-            ShopProductData currentProductData = FindProduct(productData.Product);
-            if (currentProductData != null)
-            {
-                currentProductData.Count += productData.Count;
-                currentProductData.Price = productData.Price;
-            }
-            else
-            {
-                _productsDataList.Add(
-                    new ShopProductData(productData.Product, productData.Price, productData.Count));
-            }
-
-            return productData;
+            _productsDetailsList.Add(productDetails);
         }
 
-        public void Purchase(Customer customer, CustomerProductData shoppingList)
+        public void Purchase(Customer customer, CustomerProductDetails shoppingList)
         {
-            ShopProductData requiredProduct = FindProduct(shoppingList.Product);
+            ShopProductDetails requiredProduct = FindProduct(shoppingList.Product);
 
             if (requiredProduct == null)
             {
@@ -76,28 +57,30 @@ namespace Shops.Entities
                                          $"Shop has: {requiredProduct.Count}, Customer required: {shoppingList.Count}");
             }
 
-            EnoughProductsCase(customer, requiredProduct, shoppingList);
+            int totalPrice = requiredProduct.Price * shoppingList.Count;
+
+            if (totalPrice > customer.Balance)
+            {
+                throw new ShopsException($"Customer hasn't enough money: {customer.Balance}, " +
+                                         $"Price is: {totalPrice}");
+            }
+
+            MakeTransaction(customer, totalPrice);
+            ChangeShopProductsList(requiredProduct, shoppingList.Count);
+            ChangeCustomerProductsList(customer, requiredProduct, shoppingList.Count);
         }
 
-        public void Purchase(Customer customer, List<CustomerProductData> shoppingList)
+        public void Purchase(Customer customer, List<CustomerProductDetails> shoppingList)
         {
-            foreach (CustomerProductData product in shoppingList)
+            foreach (CustomerProductDetails product in shoppingList)
             {
                 Purchase(customer, product);
             }
         }
 
-        public ShopProductData FindProduct(Product product)
+        public ShopProductDetails FindProduct(Product product)
         {
-            foreach (ShopProductData productData in ProductsDataList)
-            {
-                if (productData.Product.Equals(product))
-                {
-                    return productData;
-                }
-            }
-
-            return null;
+            return ProductsDetailsList.FirstOrDefault(productDetails => productDetails.Product.Equals(product));
         }
 
         private void MakeTransaction(Customer customer, int money)
@@ -106,30 +89,17 @@ namespace Shops.Entities
             Balance += money;
         }
 
-        private void EnoughProductsCase(
-            Customer customer,
-            ShopProductData shopProduct,
-            CustomerProductData shoppingList)
+        private void ChangeShopProductsList(ShopProductDetails product, int count)
         {
-            int price = shopProduct.Price * shoppingList.Count;
+            int totalCount = product.Count - count;
+            _productsDetailsList.Remove(product);
 
-            if (price > customer.Balance)
-            {
-                throw new ShopsException($"Customer hasn't enough money: {customer.Balance}, " +
-                                         $"Price is: {price}");
-            }
-
-            MakeTransaction(customer, price);
-            ChangeShopProductsList(shopProduct, shoppingList.Count);
+            _productsDetailsList.Add(new ShopProductDetails(product.Product, totalCount, product.Price));
         }
 
-        private void ChangeShopProductsList(ShopProductData product, int amount)
+        private void ChangeCustomerProductsList(Customer customer, ShopProductDetails shopProduct, int count)
         {
-            product.Count -= amount;
-            if (product.Count == 0)
-            {
-                _productsDataList.Remove(product);
-            }
+            customer.AddProduct(new CustomerProductDetails(count, shopProduct.Product));
         }
     }
 }

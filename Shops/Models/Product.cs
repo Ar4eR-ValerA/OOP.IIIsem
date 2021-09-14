@@ -1,4 +1,6 @@
-﻿#nullable enable
+﻿using System.Collections.Generic;
+
+#nullable enable
 namespace Shops.Models
 {
     public class Product
@@ -11,6 +13,11 @@ namespace Shops.Models
 
         public string Name { get; }
         public int Id { get; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
 
         public bool Equals(Product value)
         {
