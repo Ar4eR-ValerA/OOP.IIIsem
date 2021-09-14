@@ -30,7 +30,7 @@ namespace Shops.Tests
             var customerProductDetails = new CustomerProductDetails(3, product);
             shop.Purchase(customer, customerProductDetails);
             
-            Assert.IsTrue(customer.ProductList.Contains(customerProductDetails));
+            Assert.AreEqual(1, customer.ProductList.Count);
             Assert.AreEqual(5, shop.FindProduct(product).Count);
             Assert.AreEqual(6, shop.Balance);
             Assert.AreEqual(4, customer.Balance);
@@ -147,21 +147,6 @@ namespace Shops.Tests
             });
         }
 
-        [Test]
-        public void ChangePrice_PriceChanged()
-        {
-            Product product = _shopManager.RegisterProduct("Apple");
-            Shop shop = _shopManager.RegisterShop("Apple shop");
-            
-            var shopProductDetails1 = new ShopProductDetails(product, 3, 2);
-            shop.AddProduct(shopProductDetails1);
-            
-            var shopProductDetails2 = new ShopProductDetails(product, 0, 1);
-            shop.AddProduct(shopProductDetails2);
-            
-            Assert.AreEqual(1, shop.FindProduct(product).Price);
-        }
-        
         [Test]
         public void FindCheapestShop1_ReturnCheapestShop()
         {
