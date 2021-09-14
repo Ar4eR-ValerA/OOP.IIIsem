@@ -80,8 +80,8 @@ namespace Shops.Console_UI
 
         public void MakePurchase(Customer customer, ShopManager shopManager)
         {
-            List<CustomerProductDetails> customerProducts = GetCustomerProducts(shopManager);
-            if (customerProducts.Count == 0)
+            List<CustomerProductDetails> customerShoppingList = GetCustomerProducts(shopManager);
+            if (customerShoppingList.Count == 0)
             {
                 return;
             }
@@ -93,7 +93,7 @@ namespace Shops.Console_UI
             Shop chosenShop;
             if (shopChoice == "cheapest")
             {
-                chosenShop = shopManager.FindCheapestShop(customerProducts);
+                chosenShop = shopManager.FindCheapestShop(customerShoppingList);
                 if (chosenShop == null)
                 {
                     _asking.AskChoices("There is no suitable shop", new[] { "exit" });
@@ -102,7 +102,7 @@ namespace Shops.Console_UI
             }
             else
             {
-                List<Shop> shops = shopManager.FindShops(customerProducts);
+                List<Shop> shops = shopManager.FindShops(customerShoppingList);
                 if (shops.Count == 0)
                 {
                     _asking.AskChoices("There are no suitable shops", new[] { "exit" });
@@ -113,7 +113,7 @@ namespace Shops.Console_UI
                 chosenShop = shopManager.Shops[shopId];
             }
 
-            chosenShop.Purchase(customer, customerProducts);
+            chosenShop.Purchase(customer, customerShoppingList);
         }
 
         public void ShowShopProducts(ShopManager shopManager)
