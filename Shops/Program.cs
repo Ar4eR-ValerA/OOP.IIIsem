@@ -1,4 +1,4 @@
-﻿using Shops.Console_UI;
+﻿using Shops.Ui;
 
 namespace Shops
 {
@@ -6,8 +6,8 @@ namespace Shops
     {
         private static void Main()
         {
-            var outputService = new OutputService();
-            outputService.MainService();
+            var outputService = new UiService();
+            outputService.Run();
         }
     }
 }
