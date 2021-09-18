@@ -1,10 +1,10 @@
-﻿using Shops.Tools;
+﻿using Shops.Exceptions;
 
 namespace Shops.Models
 {
     public class CustomerProductDetails
     {
-        public CustomerProductDetails(int count, Product product)
+        public CustomerProductDetails(Product product, int count)
         {
             if (count < 0)
             {
@@ -12,11 +12,10 @@ namespace Shops.Models
             }
 
             Count = count;
-            Product = product;
+            Product = product ?? throw new ShopsException("Null argument");
         }
 
         public Product Product { get; }
-
         public int Count { get; }
     }
 }

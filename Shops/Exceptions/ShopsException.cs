@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
-namespace Shops.Tools
+namespace Shops.Exceptions
 {
     public class ShopsException : Exception
     {
@@ -16,11 +15,6 @@ namespace Shops.Tools
 
         public ShopsException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        protected ShopsException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

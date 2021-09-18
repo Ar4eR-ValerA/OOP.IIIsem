@@ -1,25 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Shops.Exceptions;
 using Shops.Models;
-using Shops.Tools;
 
 namespace Shops.Entities
 {
     public class Shop
     {
-        private List<ShopProductDetails> _productsDetailsList;
+        private readonly List<ShopProductDetails> _productsDetailsList;
         private int _balance;
+
+        public Shop(string name, int id)
+        {
+            Name = name ?? throw new ShopsException("Null argument");
+            Id = id;
+            Balance = 0;
+            _productsDetailsList = new List<ShopProductDetails>();
+        }
 
         public Shop(string name, int id, int balance)
         {
-            Balance = balance;
-            Name = name;
+            Name = name ?? throw new ShopsException("Null argument");
             Id = id;
             Balance = balance;
             _productsDetailsList = new List<ShopProductDetails>();
         }
 
         public IReadOnlyList<ShopProductDetails> ProductsDetailsList => _productsDetailsList;
+
         public int Id { get; }
         public string Name { get; }
 
@@ -70,12 +78,20 @@ namespace Shops.Entities
             ChangeCustomerProductsList(customer, requiredProduct, shoppingList.Count);
         }
 
-        public void Purchase(Customer customer, List<CustomerProductDetails> shoppingList)
+        public void Purchase(Customer customer, IEnumerable<CustomerProductDetails> shoppingList)
         {
             foreach (CustomerProductDetails product in shoppingList)
             {
                 Purchase(customer, product);
             }
+        }
+
+        public bool IsSuitable(IEnumerable<CustomerProductDetails> shoppingList)
+        {
+            return !(from customerProduct in shoppingList
+                let currentProduct = FindProduct(customerProduct.Product)
+                where currentProduct == null || currentProduct.Count < customerProduct.Count
+                select customerProduct).Any();
         }
 
         public ShopProductDetails FindProduct(Product product)
@@ -99,7 +115,7 @@ namespace Shops.Entities
 
         private void ChangeCustomerProductsList(Customer customer, ShopProductDetails shopProduct, int count)
         {
-            customer.AddProduct(new CustomerProductDetails(count, shopProduct.Product));
+            customer.AddProduct(new CustomerProductDetails(shopProduct.Product, count));
         }
     }
 }

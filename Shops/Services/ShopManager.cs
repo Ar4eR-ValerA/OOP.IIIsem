@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Shops.Entities;
 using Shops.Models;
 
@@ -6,131 +7,84 @@ namespace Shops.Services
 {
     public class ShopManager
     {
-        private List<Shop> _shops = new List<Shop>();
-        private List<Product> _products = new List<Product>();
+        private readonly Dictionary<int, Shop> _shops;
+        private readonly Dictionary<int, Product> _products;
+        private int _currentShopId;
+        private int _currentProductId;
 
-        public IReadOnlyList<Shop> Shops => _shops;
-        public IReadOnlyList<Product> Products => _products;
+        public ShopManager()
+        {
+            _shops = new Dictionary<int, Shop>();
+            _products = new Dictionary<int, Product>();
+            _currentShopId = 0;
+            _currentProductId = 0;
+        }
+
+        public ShopManager(Dictionary<int, Shop> shops, Dictionary<int, Product> products)
+        {
+            _shops = shops;
+            _products = products;
+            _currentShopId = 0;
+            _currentProductId = 0;
+        }
+
+        public IReadOnlyDictionary<int, Shop> Shops => _shops;
+        public IReadOnlyDictionary<int, Product> Products => _products;
 
         public Product RegisterProduct(string name)
         {
-            var product = new Product(name, _products.Count);
-            _products.Add(product);
+            var product = new Product(name, _currentProductId);
+            _products.Add(_currentProductId, product);
+            _currentProductId++;
 
             return product;
         }
 
         public Shop RegisterShop(string name)
         {
-            var shop = new Shop(name, _shops.Count, 0);
-            _shops.Add(shop);
+            var shop = new Shop(name, _currentShopId);
+            _shops.Add(_currentShopId, shop);
+            _currentShopId++;
 
             return shop;
         }
 
         public Shop FindCheapestShop(CustomerProductDetails customerProductDetails)
         {
-            int minPrice = -1;
-            Shop minPriceShop = null;
-
-            foreach (Shop shop in _shops)
-            {
-                ShopProductDetails currentProduct = shop.FindProduct(customerProductDetails.Product);
-                if (currentProduct == null)
-                {
-                    continue;
-                }
-
-                if ((currentProduct.Price < minPrice || minPrice == -1) &&
-                    currentProduct.Count >= customerProductDetails.Count)
-                {
-                    minPrice = currentProduct.Price;
-                    minPriceShop = shop;
-                }
-            }
-
-            return minPriceShop;
+            return FindCheapestShop(new List<CustomerProductDetails> { customerProductDetails });
         }
 
         public Shop FindCheapestShop(List<CustomerProductDetails> customerProductsDetails)
         {
             int minPrice = -1;
             Shop minPriceShop = null;
+            IReadOnlyList<Shop> suitableShops = FindShops(customerProductsDetails);
 
-            foreach (Shop shop in _shops)
+            foreach (Shop shop in suitableShops)
             {
-                int sumPrice = 0;
+                int sumPrice = customerProductsDetails
+                    .Select(customerProduct => shop.FindProduct(customerProduct.Product))
+                    .Select(shopProduct => shopProduct.Price)
+                    .Sum();
 
-                foreach (CustomerProductDetails customerProduct in customerProductsDetails)
-                {
-                    ShopProductDetails currentProduct = shop.FindProduct(customerProduct.Product);
-                    if (currentProduct != null)
-                    {
-                        sumPrice += currentProduct.Price;
-                    }
-                    else
-                    {
-                        sumPrice = -1;
-                        break;
-                    }
-                }
+                if (sumPrice >= minPrice && minPrice != -1)
+                    continue;
 
-                if ((sumPrice < minPrice || minPrice == -1) && sumPrice != -1)
-                {
-                    minPrice = sumPrice;
-                    minPriceShop = shop;
-                }
+                minPrice = sumPrice;
+                minPriceShop = shop;
             }
 
             return minPriceShop;
         }
 
-        public List<Shop> FindShops(CustomerProductDetails customerProductDetails)
+        public IReadOnlyList<Shop> FindShops(CustomerProductDetails customerProductDetails)
         {
-            var shops = new List<Shop>();
-
-            foreach (Shop shop in _shops)
-            {
-                ShopProductDetails currentProduct = shop.FindProduct(customerProductDetails.Product);
-                if (currentProduct == null)
-                {
-                    continue;
-                }
-
-                if (currentProduct.Count >= customerProductDetails.Count)
-                {
-                    shops.Add(shop);
-                }
-            }
-
-            return shops;
+            return FindShops(new[] { customerProductDetails });
         }
 
-        public List<Shop> FindShops(List<CustomerProductDetails> customerProductsDetails)
+        public IReadOnlyList<Shop> FindShops(IEnumerable<CustomerProductDetails> customerProductsDetails)
         {
-            var shops = new List<Shop>();
-
-            foreach (Shop shop in _shops)
-            {
-                bool suitableFl = true;
-
-                foreach (CustomerProductDetails customerProduct in customerProductsDetails)
-                {
-                    ShopProductDetails currentProduct = shop.FindProduct(customerProduct.Product);
-                    if (currentProduct == null)
-                    {
-                        suitableFl = false;
-                        break;
-                    }
-                }
-
-                if (suitableFl)
-                {
-                    shops.Add(shop);
-                }
-            }
-
-            return shops;
+            return _shops.Values.Where(shop => shop.IsSuitable(customerProductsDetails)).ToList();
         }
     }
 }

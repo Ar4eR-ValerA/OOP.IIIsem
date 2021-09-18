@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
+using Shops.Exceptions;
 using Shops.Models;
-using Shops.Tools;
 
 namespace Shops.Entities
 {
     public class Customer
     {
+        private readonly List<CustomerProductDetails> _productsList;
         private int _balance;
-        private List<CustomerProductDetails> _productsList;
 
         public Customer(int balance, string name)
         {
             Balance = balance;
-            Name = name;
+            Name = name ?? throw new ShopsException("Null argument");
             _productsList = new List<CustomerProductDetails>();
         }
 

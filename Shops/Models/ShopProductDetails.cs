@@ -1,4 +1,4 @@
-﻿using Shops.Tools;
+﻿using Shops.Exceptions;
 
 #nullable enable
 namespace Shops.Models
@@ -19,7 +19,7 @@ namespace Shops.Models
 
             Price = price;
             Count = count;
-            Product = product;
+            Product = product ?? throw new ShopsException("Null argument");
         }
 
         public Product Product { get; }

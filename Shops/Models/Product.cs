@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Shops.Exceptions;
 
 #nullable enable
 namespace Shops.Models
@@ -7,7 +7,7 @@ namespace Shops.Models
     {
         public Product(string name, int id)
         {
-            Name = name;
+            Name = name ?? throw new ShopsException("Null argument");
             Id = id;
         }
 
@@ -19,9 +19,9 @@ namespace Shops.Models
             return Name;
         }
 
-        public bool Equals(Product value)
+        public bool Equals(Product? value)
         {
-            return Id == value.Id;
+            return value != null && Id == value.Id;
         }
 
         public override bool Equals(object? obj)
@@ -31,7 +31,7 @@ namespace Shops.Models
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return Id;
         }
     }
 }
