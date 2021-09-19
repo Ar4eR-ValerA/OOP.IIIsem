@@ -7,7 +7,7 @@ namespace Shops.Ui.Tools
 {
     public class TableFiller
     {
-        public void MainTable(Table shopsTable, Table productsTable, ShopManager shopManager)
+        public void FillMainTable(Table shopsTable, Table productsTable, ShopManager shopManager)
         {
             foreach (Shop shop in shopManager.Shops.Values)
             {
@@ -20,7 +20,7 @@ namespace Shops.Ui.Tools
             }
         }
 
-        public void ShopPersonalTable(Table shopTable, Shop shop)
+        public void FillShopPersonalTable(Table shopTable, Shop shop)
         {
             foreach (ShopProductDetails product in shop.ProductsDetailsList)
             {
@@ -32,7 +32,7 @@ namespace Shops.Ui.Tools
             }
         }
 
-        public void CustomerPersonalTable(Table customerTable, Customer customer)
+        public void FillCustomerPersonalTable(Table customerTable, Customer customer)
         {
             foreach (CustomerProductDetails product in customer.ProductList)
             {

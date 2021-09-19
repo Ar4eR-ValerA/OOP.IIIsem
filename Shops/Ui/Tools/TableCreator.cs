@@ -5,7 +5,7 @@ namespace Shops.Ui.Tools
 {
     public class TableCreator
     {
-        public (Table, Table, Table) MainTable()
+        public (Table, Table, Table) CreateMainTable()
         {
             var mainTable = new Table();
             var shopsTable = new Table();
@@ -26,7 +26,7 @@ namespace Shops.Ui.Tools
             return (mainTable, shopsTable, productsTable);
         }
 
-        public Table ShopPersonalTable(Shop shop)
+        public Table CreateShopPersonalTable(Shop shop)
         {
             var shopTable = new Table
             {
@@ -38,7 +38,7 @@ namespace Shops.Ui.Tools
             return shopTable;
         }
 
-        public Table CustomerPersonalTable(Customer customer)
+        public Table CreateCustomerPersonalTable(Customer customer)
         {
             var customerTable = new Table
             {

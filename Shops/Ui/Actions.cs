@@ -27,8 +27,8 @@ namespace Shops.Ui
             Table shopsTable;
             Table productsTable;
 
-            (mainTable, shopsTable, productsTable) = _tableCreator.MainTable();
-            _tableFiller.MainTable(shopsTable, productsTable, shopManager);
+            (mainTable, shopsTable, productsTable) = _tableCreator.CreateMainTable();
+            _tableFiller.FillMainTable(shopsTable, productsTable, shopManager);
 
             AnsiConsole.Render(mainTable);
         }
@@ -93,8 +93,8 @@ namespace Shops.Ui
 
                 int shopId = _asker.AskChoices("Enter id of shop", shopManager.Shops.Keys);
 
-                Table shopTable = _tableCreator.ShopPersonalTable(shopManager.Shops[shopId]);
-                _tableFiller.ShopPersonalTable(shopTable, shopManager.Shops[shopId]);
+                Table shopTable = _tableCreator.CreateShopPersonalTable(shopManager.Shops[shopId]);
+                _tableFiller.FillShopPersonalTable(shopTable, shopManager.Shops[shopId]);
 
                 AnsiConsole.Render(shopTable);
 
@@ -129,8 +129,8 @@ namespace Shops.Ui
         {
             AnsiConsole.Clear();
 
-            Table customerTable = _tableCreator.CustomerPersonalTable(customer);
-            _tableFiller.CustomerPersonalTable(customerTable, customer);
+            Table customerTable = _tableCreator.CreateCustomerPersonalTable(customer);
+            _tableFiller.FillCustomerPersonalTable(customerTable, customer);
 
             AnsiConsole.Render(customerTable);
 
