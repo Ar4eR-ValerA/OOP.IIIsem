@@ -7,32 +7,53 @@ namespace Shops.Ui
 {
     public class UiService
     {
-        private ShopManager _shopManager;
-        private Actions _actions;
-        private Asker _asker;
+        private readonly ShopManager _shopManager;
+        private readonly Executor _executor;
+        private readonly Asker _asker;
         private Customer _customer;
 
         public UiService()
         {
-            _actions = new Actions();
+            _executor = new Executor();
             _shopManager = new ShopManager();
             _asker = new Asker();
         }
 
         public void Run()
         {
-            _customer = _actions.CreateCustomer();
+            _customer = _executor.ExecuteCreateCustomer();
 
             Command[] commands =
             {
-                new Command("register shop", () => _actions.RegisterShop(_shopManager)),
-                new Command("register product", () => _actions.RegisterProduct(_shopManager)),
-                new Command("add products to shop", () => _actions.AddProducts(_shopManager)),
-                new Command("make purchase", () => _actions.MakePurchase(_customer, _shopManager)),
-                new Command("show shop's products", () => _actions.ShowShopProducts(_shopManager)),
-                new Command("show customer's products", () => _actions.ShowCustomerProducts(_customer)),
-                new Command("change customer's balance", () => _actions.ChangeCustomerBalance(_customer)),
-                new Command("exit", AnsiConsole.Clear),
+                new Command(
+                    "register shop",
+                    () => _executor.ExecuteRegisterShop(_shopManager)),
+
+                new Command(
+                    "register product",
+                    () => _executor.ExecuteRegisterCustomer(_shopManager)),
+
+                new Command(
+                    "add products to shop",
+                    () => _executor.ExecuteAddProducts(_shopManager)),
+
+                new Command(
+                    "make purchase",
+                    () => _executor.ExecuteMakePurchase(_shopManager, _customer)),
+
+                new Command(
+                    "show shop's products",
+                    () => _executor.ExecuteShowShopProducts(_shopManager)),
+
+                new Command(
+                    "show customer's products",
+                    () => _executor.ExecuteShowCustomerProducts(_customer)),
+
+                new Command(
+                    "change customer's balance",
+                    () => _executor.ExecuteChangeCustomerBalance(_customer)),
+
+                new Command("exit"),
             };
 
             Command command = _asker.AskChoices("Enter command", commands);
@@ -42,8 +63,8 @@ namespace Shops.Ui
                 command.Action();
 
                 AnsiConsole.Clear();
-                _actions.ShowCustomerDetails(_customer);
-                _actions.RenderMainTable(_shopManager);
+                _executor.ExecuteShowCustomerDetails(_customer);
+                _executor.ExecuteRenderMainTable(_shopManager);
                 command = _asker.AskChoices("Enter command", commands);
             }
         }

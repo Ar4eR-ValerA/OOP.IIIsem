@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Shops.Entities;
-using Shops.Exceptions;
 using Shops.Models;
 using Shops.Services;
 using Shops.Ui.Tools;
@@ -33,85 +32,45 @@ namespace Shops.Ui
             AnsiConsole.Render(mainTable);
         }
 
-        public void RegisterShop(ShopManager shopManager)
+        public void RegisterShop(ShopManager shopManager, string title)
         {
-            string title = _asker.AskString("Enter the title:\n");
-            shopManager.RegisterShop(title);
+            shopManager.RegisterShop(new Shop(title));
         }
 
-        public void RegisterProduct(ShopManager shopManager)
+        public void RegisterProduct(ShopManager shopManager, string title)
         {
-            string title = _asker.AskString("Enter the title:\n");
-            shopManager.RegisterProduct(title);
+            shopManager.RegisterProduct(new Product(title));
         }
 
-        public void AddProducts(ShopManager shopManager)
+        public void AddProducts(ShopManager shopManager, int shopId, int productId, int productCount, int productPrice)
         {
-            try
-            {
-                int shopId = _asker.AskChoices(
-                    "Enter id of shop:",
-                    shopManager.Shops.Keys);
-
-                int productId = _asker.AskChoices(
-                    "Enter id of product:",
-                    shopManager.Products.Keys);
-
-                int productCount = _asker.AskInt("Enter amount of this product:\n");
-                int productPrice = _asker.AskInt("Enter price of this product:\n");
-
-                var shopProduct = new ShopProductDetails(shopManager.Products[productId], productCount, productPrice);
-                shopManager.Shops[shopId].AddProduct(shopProduct);
-            }
-            catch (ShopsException exception)
-            {
-                _asker.AskExit(exception.Message);
-            }
+            var shopProduct = new ShopProductDetails(shopManager.Products[productId], productCount, productPrice);
+            shopManager.Shops[shopId].AddProduct(shopProduct);
         }
 
-        public void MakePurchase(Customer customer, ShopManager shopManager)
+        public void MakePurchase(
+            Customer customer,
+            List<CustomerProductDetails> customerShoppingList,
+            Shop chosenShop)
         {
-            try
-            {
-                List<CustomerProductDetails> customerShoppingList =
-                    _asker.AskShoppingList(shopManager);
-
-                Shop chosenShop = _asker.AskShopForPurchase(customerShoppingList, shopManager);
-                chosenShop.Purchase(customer, customerShoppingList);
-            }
-            catch (ShopsException exception)
-            {
-                _asker.AskExit(exception.Message);
-            }
+            chosenShop.Purchase(customer, customerShoppingList);
         }
 
-        public void ShowShopProducts(ShopManager shopManager)
+        public void ShowShopProducts(ShopManager shopManager, int shopId)
         {
-            try
-            {
-                AnsiConsole.Clear();
+            AnsiConsole.Clear();
 
-                int shopId = _asker.AskChoices("Enter id of shop", shopManager.Shops.Keys);
+            Table shopTable = _tableCreator.CreateShopPersonalTable(shopManager.Shops[shopId]);
+            _tableFiller.FillShopPersonalTable(shopTable, shopManager.Shops[shopId]);
 
-                Table shopTable = _tableCreator.CreateShopPersonalTable(shopManager.Shops[shopId]);
-                _tableFiller.FillShopPersonalTable(shopTable, shopManager.Shops[shopId]);
+            AnsiConsole.Render(shopTable);
 
-                AnsiConsole.Render(shopTable);
-
-                _asker.AskExit(string.Empty);
-            }
-            catch (ShopsException exception)
-            {
-                _asker.AskExit(exception.Message);
-            }
+            _asker.AskExit(string.Empty);
         }
 
-        public Customer CreateCustomer()
+        public Customer CreateCustomer(string name, int balance)
         {
-            string customerName = _asker.AskString("Enter your name:\n");
-
-            int customerBalance = _asker.AskInt("Enter your balance:\n");
-            return new Customer(customerBalance, customerName);
+            return new Customer(balance, name);
         }
 
         public void ShowCustomerDetails(Customer customer)
@@ -119,10 +78,9 @@ namespace Shops.Ui
             AnsiConsole.Write($"{customer.Name}: {customer.Balance}$\n");
         }
 
-        public void ChangeCustomerBalance(Customer customer)
+        public void ChangeCustomerBalance(Customer customer, int newBalance)
         {
-            int customerBalance = _asker.AskInt("Enter your new balance:\n");
-            customer.Balance = customerBalance;
+            customer.Balance = newBalance;
         }
 
         public void ShowCustomerProducts(Customer customer)

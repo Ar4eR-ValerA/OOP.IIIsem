@@ -1,14 +1,16 @@
-﻿using Shops.Exceptions;
+﻿using System;
+using Shops.Exceptions;
 
 #nullable enable
 namespace Shops.Models
 {
     public class Product
     {
-        public Product(string name, int id)
+        private static int _idCounter = 1;
+        public Product(string name)
         {
             Name = name ?? throw new ShopsException("Null argument");
-            Id = id;
+            Id = _idCounter++;
         }
 
         public string Name { get; }
@@ -21,7 +23,7 @@ namespace Shops.Models
 
         public bool Equals(Product? value)
         {
-            return value != null && Id == value.Id;
+            return Id == value?.Id;
         }
 
         public override bool Equals(object? obj)

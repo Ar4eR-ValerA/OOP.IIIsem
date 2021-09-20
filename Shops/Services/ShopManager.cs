@@ -9,43 +9,31 @@ namespace Shops.Services
     {
         private readonly Dictionary<int, Shop> _shops;
         private readonly Dictionary<int, Product> _products;
-        private int _currentShopId;
-        private int _currentProductId;
 
         public ShopManager()
         {
             _shops = new Dictionary<int, Shop>();
             _products = new Dictionary<int, Product>();
-            _currentShopId = 0;
-            _currentProductId = 0;
         }
 
         public ShopManager(Dictionary<int, Shop> shops, Dictionary<int, Product> products)
         {
             _shops = shops;
             _products = products;
-            _currentShopId = 0;
-            _currentProductId = 0;
         }
 
         public IReadOnlyDictionary<int, Shop> Shops => _shops;
         public IReadOnlyDictionary<int, Product> Products => _products;
 
-        public Product RegisterProduct(string name)
+        public Product RegisterProduct(Product product)
         {
-            var product = new Product(name, _currentProductId);
-            _products.Add(_currentProductId, product);
-            _currentProductId++;
-
+            _products.Add(product.Id, product);
             return product;
         }
 
-        public Shop RegisterShop(string name)
+        public Shop RegisterShop(Shop shop)
         {
-            var shop = new Shop(name, _currentShopId);
-            _shops.Add(_currentShopId, shop);
-            _currentShopId++;
-
+            _shops.Add(shop.Id, shop);
             return shop;
         }
 
@@ -82,7 +70,7 @@ namespace Shops.Services
             return FindShops(new[] { customerProductDetails });
         }
 
-        public IReadOnlyList<Shop> FindShops(IEnumerable<CustomerProductDetails> customerProductsDetails)
+        public IReadOnlyList<Shop> FindShops(IReadOnlyList<CustomerProductDetails> customerProductsDetails)
         {
             return _shops.Values.Where(shop => shop.IsSuitable(customerProductsDetails)).ToList();
         }

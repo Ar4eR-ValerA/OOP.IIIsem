@@ -7,13 +7,14 @@ namespace Shops.Entities
 {
     public class Shop
     {
+        private static int _idCounter = 1;
         private readonly List<ShopProductDetails> _productsDetailsList;
         private int _balance;
 
-        public Shop(string name, int id)
+        public Shop(string name)
         {
             Name = name ?? throw new ShopsException("Null argument");
-            Id = id;
+            Id = _idCounter++;
             Balance = 0;
             _productsDetailsList = new List<ShopProductDetails>();
         }
@@ -78,7 +79,7 @@ namespace Shops.Entities
             ChangeCustomerProductsList(customer, requiredProduct, shoppingList.Count);
         }
 
-        public void Purchase(Customer customer, IEnumerable<CustomerProductDetails> shoppingList)
+        public void Purchase(Customer customer, IReadOnlyList<CustomerProductDetails> shoppingList)
         {
             foreach (CustomerProductDetails product in shoppingList)
             {
@@ -86,12 +87,11 @@ namespace Shops.Entities
             }
         }
 
-        public bool IsSuitable(IEnumerable<CustomerProductDetails> shoppingList)
+        public bool IsSuitable(IReadOnlyList<CustomerProductDetails> shoppingList)
         {
-            return !(from customerProduct in shoppingList
-                let currentProduct = FindProduct(customerProduct.Product)
-                where currentProduct == null || currentProduct.Count < customerProduct.Count
-                select customerProduct).Any();
+            return shoppingList
+                .All(customerProduct => FindProduct(customerProduct.Product) != null &&
+                                     FindProduct(customerProduct.Product).Count > customerProduct.Count);
         }
 
         public ShopProductDetails FindProduct(Product product)

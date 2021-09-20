@@ -10,6 +10,12 @@ namespace Shops.Ui.Tools
             Title = title;
         }
 
+        public Command(string title)
+        {
+            Action = null;
+            Title = title;
+        }
+
         public string Title { get; }
         public Action Action { get; }
 

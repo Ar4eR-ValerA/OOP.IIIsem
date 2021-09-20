@@ -25,8 +25,8 @@ namespace Shops.Tests
             int shopProductPrice,
             int customerProductCount)
         {
-            Product product = _shopManager.RegisterProduct("Apple");
-            Shop shop = _shopManager.RegisterShop("Apple shop");
+            Product product = _shopManager.RegisterProduct(new Product("Apple"));
+            Shop shop = _shopManager.RegisterShop(new Shop("Apple shop"));
             var customer = new Customer(customerBalanceBefore, "Valera");
 
             var shopProductDetails = new ShopProductDetails(product, shopProductCountBefore, shopProductPrice);
@@ -47,8 +47,8 @@ namespace Shops.Tests
             int shopProductPrice,
             int customerProductCount)
         {
-            Product product = _shopManager.RegisterProduct("Apple");
-            Shop shop = _shopManager.RegisterShop("Apple shop");
+            Product product = _shopManager.RegisterProduct(new Product("Apple"));
+            Shop shop = _shopManager.RegisterShop(new Shop("Apple shop"));
             var customer = new Customer(customerBalanceBefore, "Valera");
 
             var shopProductDetails = new ShopProductDetails(product, shopProductCountBefore, shopProductPrice);
@@ -68,8 +68,8 @@ namespace Shops.Tests
             int shopProductPrice,
             int customerProductCount)
         {
-            Product product = _shopManager.RegisterProduct("Apple");
-            Shop shop = _shopManager.RegisterShop("Apple shop");
+            Product product = _shopManager.RegisterProduct(new Product("Apple"));
+            Shop shop = _shopManager.RegisterShop(new Shop("Apple shop"));
             var customer = new Customer(customerBalanceBefore, "Valera");
 
             var shopProductDetails = new ShopProductDetails(product, shopProductCountBefore, shopProductPrice);
@@ -112,9 +112,9 @@ namespace Shops.Tests
             int customerProduct1Count,
             int customerProduct2Count)
         {
-            Product product1 = _shopManager.RegisterProduct("Apple");
-            Product product2 = _shopManager.RegisterProduct("Orange");
-            Shop shop = _shopManager.RegisterShop("Apple shop");
+            Product product1 = _shopManager.RegisterProduct(new Product("Apple"));
+            Product product2 = _shopManager.RegisterProduct(new Product("Orange"));
+            Shop shop = _shopManager.RegisterShop(new Shop("Apple shop"));
             var customer = new Customer(customerBalanceBefore, "Valera");
 
             var shopProductDetails1 = new ShopProductDetails(product1, shopProduct1CountBefore, shopProduct1Price);
@@ -147,9 +147,9 @@ namespace Shops.Tests
             int customerProduct1Count,
             int customerProduct2Count)
         {
-            Product product1 = _shopManager.RegisterProduct("Apple");
-            Product product2 = _shopManager.RegisterProduct("Orange");
-            Shop shop = _shopManager.RegisterShop("Apple shop");
+            Product product1 = _shopManager.RegisterProduct(new Product("Apple"));
+            Product product2 = _shopManager.RegisterProduct(new Product("Orange"));
+            Shop shop = _shopManager.RegisterShop(new Shop("Apple shop"));
             var customer = new Customer(customerBalanceBefore, "Valera");
 
             var shopProductDetails1 = new ShopProductDetails(product1, shopProduct1CountBefore, shopProduct1Price);
@@ -177,9 +177,9 @@ namespace Shops.Tests
             int shopProductPrice,
             int customerProductCount)
         {
-            Product product = _shopManager.RegisterProduct("Apple");
-            Shop shop1 = _shopManager.RegisterShop("Apple1 shop");
-            Shop shop2 = _shopManager.RegisterShop("Apple2 shop");
+            Product product = _shopManager.RegisterProduct(new Product("Apple"));
+            Shop shop1 = _shopManager.RegisterShop(new Shop("Apple1 shop"));
+            Shop shop2 = _shopManager.RegisterShop(new Shop("Apple2 shop"));
 
             var shopProductDetails1 =
                 new ShopProductDetails(product, chosenShopProductCountBefore, chosenShopProductPrice);
@@ -203,10 +203,10 @@ namespace Shops.Tests
             int shop2ProductPrice,
             int customerProductCount)
         {
-            Product product1 = _shopManager.RegisterProduct("Apple");
-            Product product2 = _shopManager.RegisterProduct("Orange");
-            Shop shop1 = _shopManager.RegisterShop("Apple1 shop");
-            Shop shop2 = _shopManager.RegisterShop("Apple2 shop");
+            Product product1 = _shopManager.RegisterProduct(new Product("Apple"));
+            Product product2 = _shopManager.RegisterProduct(new Product("Orange"));
+            Shop shop1 = _shopManager.RegisterShop(new Shop("Apple1 shop"));
+            Shop shop2 = _shopManager.RegisterShop(new Shop("Apple2 shop"));
 
             var shopProductDetails1 = new ShopProductDetails(product1, shop1ProductCountBefore, shop1ProductPrice);
             var shopProductDetails2 = new ShopProductDetails(product1, shop2ProductCountBefore, shop2ProductPrice);
@@ -229,10 +229,10 @@ namespace Shops.Tests
             int shop2ProductPrice,
             int customerProductCount)
         {
-            Product product1 = _shopManager.RegisterProduct("Apple");
-            Product product2 = _shopManager.RegisterProduct("Orange");
-            Shop shop1 = _shopManager.RegisterShop("Apple1 shop");
-            Shop shop2 = _shopManager.RegisterShop("Apple2 shop");
+            Product product1 = _shopManager.RegisterProduct(new Product("Apple"));
+            Product product2 = _shopManager.RegisterProduct(new Product("Orange"));
+            Shop shop1 = _shopManager.RegisterShop(new Shop("Apple1 shop"));
+            Shop shop2 = _shopManager.RegisterShop(new Shop("Apple2 shop"));
 
             var shopProductDetails1 = new ShopProductDetails(product1, shop1ProductCountBefore, shop1ProductPrice);
             var shopProductDetails2 = new ShopProductDetails(product1, shop2ProductCountBefore, shop2ProductPrice);
@@ -255,10 +255,10 @@ namespace Shops.Tests
             int shop2ProductPrice,
             int customerProductCount)
         {
-            Product product1 = _shopManager.RegisterProduct("Apple");
-            Product product2 = _shopManager.RegisterProduct("Orange");
-            Shop shop1 = _shopManager.RegisterShop("Apple1 shop");
-            Shop shop2 = _shopManager.RegisterShop("Apple2 shop");
+            Product product1 = _shopManager.RegisterProduct(new Product("Apple"));
+            Product product2 = _shopManager.RegisterProduct(new Product("Orange"));
+            Shop shop1 = _shopManager.RegisterShop(new Shop("Apple1 shop"));
+            Shop shop2 = _shopManager.RegisterShop(new Shop("Apple2 shop"));
 
             var shopProductDetails1 = new ShopProductDetails(product1, shop1ProductCountBefore, shop1ProductPrice);
             var shopProductDetails2 = new ShopProductDetails(product2, shop2ProductCountBefore, shop2ProductPrice);
@@ -286,10 +286,10 @@ namespace Shops.Tests
             int shopProductPrice,
             int customerProductCount)
         {
-            Product product1 = _shopManager.RegisterProduct("Apple");
-            Product product2 = _shopManager.RegisterProduct("Orange");
-            Shop shop1 = _shopManager.RegisterShop("Apple1 shop");
-            Shop shop2 = _shopManager.RegisterShop("Apple2 shop");
+            Product product1 = _shopManager.RegisterProduct(new Product("Apple"));
+            Product product2 = _shopManager.RegisterProduct(new Product("Orange"));
+            Shop shop1 = _shopManager.RegisterShop(new Shop("Apple1 shop"));
+            Shop shop2 = _shopManager.RegisterShop(new Shop("Apple2 shop"));
 
             var shopProductDetails = new ShopProductDetails(product1, shopProductCountBefore, shopProductPrice);
             shop1.AddProduct(shopProductDetails);
@@ -315,9 +315,9 @@ namespace Shops.Tests
             int shop2ProductPrice,
             int customerProductCount)
         {
-            Product product = _shopManager.RegisterProduct("Apple");
-            Shop shop1 = _shopManager.RegisterShop("Apple1 shop");
-            Shop shop2 = _shopManager.RegisterShop("Apple2 shop");
+            Product product = _shopManager.RegisterProduct(new Product("Apple"));
+            Shop shop1 = _shopManager.RegisterShop(new Shop("Apple1 shop"));
+            Shop shop2 = _shopManager.RegisterShop(new Shop("Apple2 shop"));
 
             var shopProductDetails1 = new ShopProductDetails(product, shop1ProductCountBefore, shop1ProductPrice);
             var shopProductDetails2 = new ShopProductDetails(product, shop2ProductCountBefore, shop2ProductPrice);

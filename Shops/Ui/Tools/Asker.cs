@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Shops.Entities;
 using Shops.Exceptions;
-using Shops.Models;
-using Shops.Services;
 using Spectre.Console;
 
 namespace Shops.Ui.Tools
@@ -59,47 +56,6 @@ namespace Shops.Ui.Tools
         public string AskString(string message)
         {
             return AnsiConsole.Ask<string>(message + "\n");
-        }
-
-        public List<CustomerProductDetails> AskShoppingList(ShopManager shopManager)
-        {
-            AnsiConsole.Write("Enter id of product\n\n");
-
-            var customerProducts = new List<CustomerProductDetails>();
-
-            string next = "next";
-            while (next != "stop")
-            {
-                int productId = AskChoices(
-                    "Enter id of product:",
-                    shopManager.Products.Keys);
-                int productCount = AskInt("Enter amount of this product\n");
-
-                customerProducts.Add(new CustomerProductDetails(shopManager.Products[productId], productCount));
-
-                next = AskChoices(
-                    "Another product or enough?",
-                    new[] { "next", "stop" });
-            }
-
-            return customerProducts;
-        }
-
-        public Shop AskShopForPurchase(List<CustomerProductDetails> customerShoppingList, ShopManager shopManager)
-        {
-            string shopChoice = AskChoices(
-                "Special shop or the cheapest?",
-                new[] { "cheapest", "special" });
-
-            if (shopChoice == "cheapest")
-            {
-                return shopManager.FindCheapestShop(customerShoppingList);
-            }
-
-            IReadOnlyList<Shop> shops = shopManager.FindShops(customerShoppingList);
-            int shopId = AskChoices("Enter id of shop", shops.Select(shop => shop.Id).ToList());
-
-            return shopManager.Shops[shopId];
         }
     }
 }
