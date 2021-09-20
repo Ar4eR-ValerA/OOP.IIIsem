@@ -7,6 +7,7 @@ namespace Shops.Models
     public class Product
     {
         private static int _idCounter = 1;
+
         public Product(string name)
         {
             Name = name ?? throw new ShopsException("Null argument");

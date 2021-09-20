@@ -12,7 +12,7 @@ namespace Shops.Ui.Tools
 
         public Command(string title)
         {
-            Action = null;
+            Action = () => { };
             Title = title;
         }
 

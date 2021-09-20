@@ -90,8 +90,7 @@ namespace Shops.Entities
         public bool IsSuitable(IReadOnlyList<CustomerProductDetails> shoppingList)
         {
             return shoppingList
-                .All(customerProduct => FindProduct(customerProduct.Product) != null &&
-                                     FindProduct(customerProduct.Product).Count > customerProduct.Count);
+                .All(customerProduct => FindProduct(customerProduct.Product)?.Count > customerProduct.Count);
         }
 
         public ShopProductDetails FindProduct(Product product)
