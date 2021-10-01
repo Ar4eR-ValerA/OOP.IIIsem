@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsuExtra.Details;
+using Isu.Entities;
 using IsuExtra.Models;
 
 namespace IsuExtra.Entities
@@ -10,18 +10,20 @@ namespace IsuExtra.Entities
         private static int _idCounter;
         private readonly List<GsaGroup> _gsaGroups;
 
-        public GsaStudent(GsaStudentDetails studentDetails)
+        public GsaStudent(Student student, Department department)
         {
-            StudentDetails = studentDetails ?? throw new ArgumentException("Null argument");
+            Student = student ?? throw new ArgumentException("Null argument");
+            Department = department ?? throw new ArgumentException("Null argument");
             Id = _idCounter++;
             _gsaGroups = new List<GsaGroup>();
             Schedule = new Schedule();
         }
 
+        public Student Student { get; }
+        public Department Department { get; }
         public int GsaLimit => 2;
         public int Id { get; }
         public IReadOnlyList<GsaGroup> GsaGroups => _gsaGroups;
-        public GsaStudentDetails StudentDetails { get; }
         public Schedule Schedule { get; }
 
         internal void AddGsaGroup(GsaGroup gsaGroup)
@@ -36,7 +38,7 @@ namespace IsuExtra.Entities
                 throw new ArgumentException("Gsas' list is full");
             }
 
-            if (gsaGroup.Gsa.Department == StudentDetails.Department)
+            if (gsaGroup.Gsa.Department == Department)
             {
                 throw new ArgumentException("Gsa's and student's department must be different");
             }

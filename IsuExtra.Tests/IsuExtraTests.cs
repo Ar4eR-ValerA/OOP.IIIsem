@@ -4,7 +4,6 @@ using System.Linq;
 using Isu.Entities;
 using Isu.Models;
 using Isu.Services;
-using IsuExtra.Details;
 using NUnit.Framework;
 using IsuExtra.Entities;
 using IsuExtra.Enums;
@@ -29,30 +28,27 @@ namespace IsuExtra.Tests
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                _ = new DepartmentDetails(null, 'M');
+                _ = new Department(null, 'M');
             });
             Assert.Throws<ArgumentException>(() =>
             {
-                _ = new DepartmentDetails("Test", 's');
+                _ = new Department("Test", 's');
             });
             Assert.Throws<ArgumentException>(() =>
             {
-                _ = new DepartmentDetails("Test", '2');
+                _ = new Department("Test", '2');
             });
             Assert.Throws<ArgumentException>(() =>
             {
-                _ = new DepartmentDetails("Test", ' ');
+                _ = new Department("Test", ' ');
             });
         }
 
         [Test]
         public void AddGsa_GsaInAdded()
         {
-            var departmentDetails = new DepartmentDetails("Cyberpunk", 'K');
-            var gsaDetails = new GsaDetails("KIB");
-
-            var department = new Department(departmentDetails);
-            var gsa = new Gsa(gsaDetails);
+            var department = new Department("Cyberpunk", 'K');
+            var gsa = new Gsa("KIB");
 
             _gsaService.RegisterDepartment(department);
             _gsaService.RegisterGsa(gsa, department);
@@ -76,20 +72,12 @@ namespace IsuExtra.Tests
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student = _isuService.AddStudent(group, "Michael");
 
-            var departmentDetails1 = new DepartmentDetails("Cyberpunk", 'K');
-            var departmentDetails2 = new DepartmentDetails("ITIP", 'M');
-            var gsaDetails = new GsaDetails("KIB");
-            var gsaGroupDetails1 = new GsaGroupDetails("KIB 1.1");
-            var gsaGroupDetails2 = new GsaGroupDetails("BIK 1.4");
-
-            var department1 = new Department(departmentDetails1);
-            var department2 = new Department(departmentDetails2);
-            var gsa = new Gsa(gsaDetails);
-            var gsaGroup1 = new GsaGroup(gsaGroupDetails1);
-            var gsaGroup2 = new GsaGroup(gsaGroupDetails2);
-
-            var gsaStudentDetails = new GsaStudentDetails(student, department2);
-            var gsaStudent = new GsaStudent(gsaStudentDetails);
+            var department1 = new Department("Cyberpunk", 'K');
+            var department2 = new Department("ITIP", 'M');
+            var gsa = new Gsa("KIB");
+            var gsaGroup1 = new GsaGroup("KIB 1.1");
+            var gsaGroup2 = new GsaGroup("BIK 1.4");
+            var gsaStudent = new GsaStudent(student, department2);
 
             _gsaService.RegisterDepartment(department1);
             _gsaService.RegisterDepartment(department2);
@@ -125,17 +113,11 @@ namespace IsuExtra.Tests
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student = _isuService.AddStudent(group, "Michael");
 
-            var departmentDetails1 = new DepartmentDetails("Cyberpunk", 'K');
-            var departmentDetails2 = new DepartmentDetails("ITIP", 'M');
-            var gsaDetails = new GsaDetails("KIB");
-            var gsaGroupDetails1 = new GsaGroupDetails("KIB 1.1");
-            var gsaGroupDetails2 = new GsaGroupDetails("BIK 1.4");
-
-            var department1 = new Department(departmentDetails1);
-            var department2 = new Department(departmentDetails2);
-            var gsa = new Gsa(gsaDetails);
-            var gsaGroup1 = new GsaGroup(gsaGroupDetails1);
-            var gsaGroup2 = new GsaGroup(gsaGroupDetails2);
+            var department1 = new Department("Cyberpunk", 'K');
+            var department2 = new Department("ITIP", 'M');
+            var gsa = new Gsa("KIB");
+            var gsaGroup1 = new GsaGroup("KIB 1.1");
+            var gsaGroup2 = new GsaGroup("BIK 1.4");
 
             _gsaService.RegisterDepartment(department1);
             _gsaService.RegisterDepartment(department2);
@@ -156,9 +138,8 @@ namespace IsuExtra.Tests
 
             _gsaService.AddLesson(lesson1, gsaGroup1);
             _gsaService.AddLesson(lesson2, gsaGroup2);
-
-            var gsaStudentDetails = new GsaStudentDetails(student, department2);
-            var gsaStudent = new GsaStudent(gsaStudentDetails);
+            
+            var gsaStudent = new GsaStudent(student, department2);
 
             _gsaService.EnrollStudent(gsaStudent, gsaGroup1);
             Assert.Catch<ArgumentException>(() =>
@@ -174,13 +155,9 @@ namespace IsuExtra.Tests
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student = _isuService.AddStudent(group, "Michael");
 
-            var departmentDetails = new DepartmentDetails("Cyberpunk", 'M');
-            var gsaDetails = new GsaDetails("KIB");
-            var gsaGroupDetails = new GsaGroupDetails("KIB 1.1");
-
-            var gsa = new Gsa(gsaDetails);
-            var department = new Department(departmentDetails);
-            var gsaGroup = new GsaGroup(gsaGroupDetails);
+            var gsa = new Gsa("KIB");
+            var department = new Department("Cyberpunk", 'M');
+            var gsaGroup = new GsaGroup("KIB 1.1");
 
             _gsaService.RegisterGsa(gsa, department);
             _gsaService.AddGsaGroup(gsaGroup, gsa);
@@ -192,9 +169,8 @@ namespace IsuExtra.Tests
                 "461a");
 
             _gsaService.AddLesson(lesson, gsaGroup);
-
-            var gsaStudentDetails = new GsaStudentDetails(student, department);
-            var gsaStudent = new GsaStudent(gsaStudentDetails);
+            
+            var gsaStudent = new GsaStudent(student, department);
 
             Assert.Catch<ArgumentException>(() =>
             {
@@ -206,15 +182,10 @@ namespace IsuExtra.Tests
         [TestCase(13, 30, 15, 10)]
         public void GetGsaGroups_GotGsaGroups(int hour1, int minute1, int hour2, int minute2)
         {
-            var departmentDetails = new DepartmentDetails("Cyberpunk", 'K');
-            var gsaDetails = new GsaDetails("KIB");
-            var gsaGroupDetails1 = new GsaGroupDetails("KIB 1.1");
-            var gsaGroupDetails2 = new GsaGroupDetails("KIB 1.2");
-
-            var gsa = new Gsa(gsaDetails);
-            var department = new Department(departmentDetails);
-            var gsaGroup1 = new GsaGroup(gsaGroupDetails1);
-            var gsaGroup2 = new GsaGroup(gsaGroupDetails2);
+            var gsa = new Gsa("KIB");
+            var department = new Department("Cyberpunk", 'K');
+            var gsaGroup1 = new GsaGroup("KIB 1.1");
+            var gsaGroup2 = new GsaGroup("KIB 1.2");
 
             _gsaService.RegisterGsa(gsa, department);
             _gsaService.AddGsaGroup(gsaGroup1, gsa);
@@ -245,13 +216,9 @@ namespace IsuExtra.Tests
         [TestCase(13, 30, 14, 10)]
         public void AddGsaGroupWithCrossingLessons_ThrowException(int hour1, int minute1, int hour2, int minute2)
         {
-            var departmentDetails = new DepartmentDetails("Cyberpunk", 'K');
-            var gsaDetails = new GsaDetails("KIB");
-            var gsaGroupDetails = new GsaGroupDetails("KIB 1.1");
-
-            var gsa = new Gsa(gsaDetails);
-            var department = new Department(departmentDetails);
-            var gsaGroup = new GsaGroup(gsaGroupDetails);
+            var gsa = new Gsa("KIB");
+            var department = new Department("Cyberpunk", 'K');
+            var gsaGroup = new GsaGroup("KIB 1.1");
 
             _gsaService.RegisterGsa(gsa, department);
             _gsaService.AddGsaGroup(gsaGroup, gsa);
@@ -278,15 +245,10 @@ namespace IsuExtra.Tests
         [TestCase(13, 30)]
         public void GetGsaStudents_GotGsaStudents(int hour, int minute)
         {
-            var departmentDetails1 = new DepartmentDetails("Cyberpunk", 'K');
-            var departmentDetails2 = new DepartmentDetails("ITIP", 'M');
-            var gsaDetails = new GsaDetails("KIB");
-            var gsaGroupDetails = new GsaGroupDetails("KIB 1.1");
-
-            var gsa = new Gsa(gsaDetails);
-            var department1 = new Department(departmentDetails1);
-            var department2 = new Department(departmentDetails2);
-            var gsaGroup = new GsaGroup(gsaGroupDetails);
+            var gsa = new Gsa("KIB");
+            var department1 = new Department("Cyberpunk", 'K');
+            var department2 = new Department("ITIP", 'M');
+            var gsaGroup = new GsaGroup("KIB 1.1");
 
             _gsaService.RegisterGsa(gsa, department1);
             _gsaService.AddGsaGroup(gsaGroup, gsa);
@@ -302,11 +264,9 @@ namespace IsuExtra.Tests
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student1 = _isuService.AddStudent(group, "Michael");
             Student student2 = _isuService.AddStudent(group, "Michael");
-
-            var gsaStudent1Details = new GsaStudentDetails(student1, department2);
-            var gsaStudent2Details = new GsaStudentDetails(student2, department2);
-            var gsaStudent1 = new GsaStudent(gsaStudent1Details);
-            var gsaStudent2 = new GsaStudent(gsaStudent2Details);
+            
+            var gsaStudent1 = new GsaStudent(student1, department2);
+            var gsaStudent2 = new GsaStudent(student2, department2);
 
             _gsaService.EnrollStudent(gsaStudent1, gsaGroup);
             _gsaService.EnrollStudent(gsaStudent2, gsaGroup);
@@ -319,15 +279,10 @@ namespace IsuExtra.Tests
         [TestCase(13, 30)]
         public void GetNotGsaStudents_GotNotGsaStudents(int hour, int minute)
         {
-            var departmentDetails1 = new DepartmentDetails("Cyberpunk", 'K');
-            var departmentDetails2 = new DepartmentDetails("ITIP", 'M');
-            var gsaDetails = new GsaDetails("KIB");
-            var gsaGroupDetails = new GsaGroupDetails("KIB 1.1");
-
-            var gsa = new Gsa(gsaDetails);
-            var department1 = new Department(departmentDetails1);
-            var department2 = new Department(departmentDetails2);
-            var gsaGroup = new GsaGroup(gsaGroupDetails);
+            var gsa = new Gsa("KIB");
+            var department1 = new Department("Cyberpunk", 'K');
+            var department2 = new Department("ITIP", 'M');
+            var gsaGroup = new GsaGroup("KIB 1.1");
             
             _gsaService.RegisterGsa(gsa, department1);
             _gsaService.AddGsaGroup(gsaGroup, gsa);
@@ -343,15 +298,13 @@ namespace IsuExtra.Tests
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student1 = _isuService.AddStudent(group, "Michael");
             Student student2 = _isuService.AddStudent(group, "Vlad");
-
-            var gsaStudent1Details = new GsaStudentDetails(student1, department2);
-            var gsaStudent2Details = new GsaStudentDetails(student2, department2);
-            var gsaStudent1 = new GsaStudent(gsaStudent1Details);
-            var gsaStudent2 = new GsaStudent(gsaStudent2Details);
+            
+            var gsaStudent1 = new GsaStudent(student1, department2);
+            var gsaStudent2 = new GsaStudent(student2, department2);
 
             _gsaService.EnrollStudent(gsaStudent1, gsaGroup);
 
-            Assert.Contains(student1, _gsaService.FindNotGsaStudents(group).ToList());
+            Assert.Contains(student2, _gsaService.FindNotGsaStudents(group).ToList());
             Assert.AreEqual(1, _gsaService.FindNotGsaStudents(group).Count);
         }
     }

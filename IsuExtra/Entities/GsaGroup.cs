@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsuExtra.Details;
 using IsuExtra.Models;
 
 namespace IsuExtra.Entities
@@ -9,20 +8,37 @@ namespace IsuExtra.Entities
     {
         private static int _idCounter;
         private readonly List<GsaStudent> _students;
+        private int _studentsLimit;
 
-        public GsaGroup(GsaGroupDetails gsaGroupDetails)
+        public GsaGroup(string name, int studentsLimit = 25)
         {
-            GsaGroupDetails = gsaGroupDetails ?? throw new ArgumentException("Null argument");
+            Name = name ?? throw new ArgumentException("Null argument");
+            StudentsLimit = studentsLimit;
             Schedule = new Schedule();
             _students = new List<GsaStudent>();
             Id = _idCounter++;
         }
 
-        public GsaGroupDetails GsaGroupDetails { get; }
         public int Id { get; }
         public Schedule Schedule { get; }
         public Gsa Gsa { get; internal set; }
         public IReadOnlyList<GsaStudent> Students => _students;
+
+        public string Name { get; }
+
+        public int StudentsLimit
+        {
+            get => _studentsLimit;
+            private init
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentException("Students' limits must be positive");
+                }
+
+                _studentsLimit = value;
+            }
+        }
 
         internal void AddStudent(GsaStudent student)
         {

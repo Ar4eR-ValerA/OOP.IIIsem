@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsuExtra.Details;
 
 namespace IsuExtra.Entities
 {
@@ -8,15 +7,31 @@ namespace IsuExtra.Entities
     {
         private static int _idCounter;
         private readonly List<Gsa> _gsas;
+        private readonly char _shortName;
 
-        public Department(DepartmentDetails departmentDetails)
+        public Department(string name, char shortName)
         {
-            DepartmentDetails = departmentDetails ?? throw new ArgumentException("Null argument");
+            Name = name ?? throw new ArgumentException("Null argument");
+            ShortName = shortName;
             _gsas = new List<Gsa>();
             Id = _idCounter++;
         }
 
-        public DepartmentDetails DepartmentDetails { get; }
+        public char ShortName
+        {
+            get => _shortName;
+            private init
+            {
+                if (!char.IsUpper(value))
+                {
+                    throw new ArgumentException("Short name must be upper case letter");
+                }
+
+                _shortName = value;
+            }
+        }
+
+        public string Name { get; }
         public int Id { get; }
         public IReadOnlyList<Gsa> Gsas => _gsas;
 

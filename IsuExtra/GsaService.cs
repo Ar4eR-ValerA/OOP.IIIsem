@@ -129,7 +129,7 @@ namespace IsuExtra
             foreach (Student student in group.Students)
             {
                 notGsaStudents.AddRange(_gsaStudents.Values
-                    .Where(gsaStudent => gsaStudent.StudentDetails.Student == student)
+                    .Where(gsaStudent => gsaStudent.Student != student)
                     .Select(gsaStudent => student));
             }
 
