@@ -1,17 +1,16 @@
 ﻿using System;
-using IsuExtra.Enums;
 
 namespace IsuExtra.Models
 {
     public class Time
     {
-        public Time(WeekDay weekDay, TimeSpan timeSpan)
+        public Time(DayOfWeek weekDay, TimeSpan timeSpan)
         {
             WeekDay = weekDay;
             TimeSpan = timeSpan;
         }
 
-        public WeekDay WeekDay { get; }
+        public DayOfWeek WeekDay { get; }
         public TimeSpan TimeSpan { get; }
     }
 }

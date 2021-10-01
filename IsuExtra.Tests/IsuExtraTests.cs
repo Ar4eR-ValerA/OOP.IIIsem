@@ -6,7 +6,6 @@ using Isu.Models;
 using Isu.Services;
 using NUnit.Framework;
 using IsuExtra.Entities;
-using IsuExtra.Enums;
 using IsuExtra.Models;
 
 namespace IsuExtra.Tests
@@ -93,12 +92,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Fredi"),
                 "461a");
 
@@ -139,12 +138,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Vlad"),
                 "228l");
 
@@ -176,7 +175,7 @@ namespace IsuExtra.Tests
 
             var lesson = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour, minute, second)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour, minute, second)),
                 new Mentor("Fredi"),
                 "461a");
 
@@ -211,12 +210,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Vlad"),
                 "228l");
 
@@ -249,12 +248,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Vlad"),
                 "228l");
 
@@ -279,7 +278,7 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour, minute, second)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour, minute, second)),
                 new Mentor("Fredi"),
                 "461a");
 
@@ -313,7 +312,7 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, new TimeSpan(hour, minute, second)),
+                new Time(DayOfWeek.Friday, new TimeSpan(hour, minute, second)),
                 new Mentor("Fredi"),
                 "461a");
 
