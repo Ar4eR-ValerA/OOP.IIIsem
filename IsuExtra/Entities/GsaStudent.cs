@@ -7,14 +7,13 @@ namespace IsuExtra.Entities
 {
     public class GsaStudent
     {
-        private static int _idCounter;
         private readonly List<GsaGroup> _gsaGroups;
 
         public GsaStudent(Student student, Department department)
         {
             Student = student ?? throw new ArgumentException("Null argument");
             Department = department ?? throw new ArgumentException("Null argument");
-            Id = _idCounter++;
+            Id = student.Id;
             _gsaGroups = new List<GsaGroup>();
             Schedule = new Schedule();
         }
