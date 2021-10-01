@@ -5,12 +5,7 @@ namespace IsuExtra.Models
 {
     public class Lesson
     {
-        public Lesson(
-            string name,
-            Time startTime,
-            int durationMinutes,
-            Mentor mentor,
-            string classroomNumber)
+        public Lesson(string name, Time startTime, int durationMinutes, Mentor mentor, string classroomNumber)
         {
             Name = name ?? throw new ArgumentException("Null argument");
             DurationMinutes = durationMinutes;
@@ -25,23 +20,9 @@ namespace IsuExtra.Models
             ClassroomNumber = classroomNumber;
         }
 
-        public Lesson(
-            string name,
-            Time startTime,
-            Mentor mentor,
-            string classroomNumber)
+        public Lesson(string name, Time startTime, Mentor mentor, string classroomNumber)
+            : this(name, startTime, 90, mentor, classroomNumber)
         {
-            Name = name ?? throw new ArgumentException("Null argument");
-            DurationMinutes = 90;
-
-            StartTime = startTime ?? throw new ArgumentException("Null argument");
-            EndTime = new Time(startTime.WeekDay, new TimeSpan(
-                startTime.TimeSpan.Hours,
-                startTime.TimeSpan.Minutes + DurationMinutes,
-                startTime.TimeSpan.Seconds));
-
-            Mentor = mentor ?? throw new ArgumentException("Null argument");
-            ClassroomNumber = classroomNumber;
         }
 
         public string Name { get; }
