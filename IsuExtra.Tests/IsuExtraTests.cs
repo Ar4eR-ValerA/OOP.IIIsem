@@ -66,8 +66,14 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        [TestCase(13, 30, 15, 10)]
-        public void EnrollStudent_StudentEnrolled(int hour1, int minute1, int hour2, int minute2)
+        [TestCase(13, 30, 0, 15, 10,0)]
+        public void EnrollStudent_StudentEnrolled(
+            int hour1, 
+            int minute1, 
+            int second1, 
+            int hour2, 
+            int minute2, 
+            int second2)
         {
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student = _isuService.AddStudent(group, "Michael");
@@ -87,12 +93,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour1, minute1),
+                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour2, minute2),
+                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Fredi"),
                 "461a");
 
@@ -107,8 +113,14 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        [TestCase(13, 30, 13, 40)]
-        public void EnrollStudentWithCrossingLessons_ThrowException(int hour1, int minute1, int hour2, int minute2)
+        [TestCase(13, 30, 0, 13, 40, 0)]
+        public void EnrollStudentWithCrossingLessons_ThrowException(
+            int hour1, 
+            int minute1, 
+            int second1, 
+            int hour2, 
+            int minute2, 
+            int second2)
         {
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student = _isuService.AddStudent(group, "Michael");
@@ -127,12 +139,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour1, minute1),
+                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour2, minute2),
+                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Vlad"),
                 "228l");
 
@@ -149,8 +161,8 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        [TestCase(13, 30)]
-        public void EnrollStudentWithSameDepartment_ThrowException(int hour, int minute)
+        [TestCase(13, 30, 0)]
+        public void EnrollStudentWithSameDepartment_ThrowException(int hour, int minute, int second)
         {
             Group group = _isuService.AddGroup(new GroupName("M3201"));
             Student student = _isuService.AddStudent(group, "Michael");
@@ -164,7 +176,7 @@ namespace IsuExtra.Tests
 
             var lesson = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour, minute),
+                new Time(WeekDay.Friday, new TimeSpan(hour, minute, second)),
                 new Mentor("Fredi"),
                 "461a");
 
@@ -179,8 +191,14 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        [TestCase(13, 30, 15, 10)]
-        public void GetGsaGroups_GotGsaGroups(int hour1, int minute1, int hour2, int minute2)
+        [TestCase(13, 30, 0, 15, 10, 0)]
+        public void GetGsaGroups_GotGsaGroups(
+            int hour1, 
+            int minute1, 
+            int second1, 
+            int hour2, 
+            int minute2, 
+            int second2)
         {
             var gsa = new Gsa("KIB");
             var department = new Department("Cyberpunk", 'K');
@@ -193,12 +211,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour1, minute1),
+                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour2, minute2),
+                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Vlad"),
                 "228l");
 
@@ -213,8 +231,14 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        [TestCase(13, 30, 14, 10)]
-        public void AddGsaGroupWithCrossingLessons_ThrowException(int hour1, int minute1, int hour2, int minute2)
+        [TestCase(13, 30, 0, 14, 10, 0)]
+        public void AddGsaGroupWithCrossingLessons_ThrowException(
+            int hour1, 
+            int minute1, 
+            int second1, 
+            int hour2, 
+            int minute2, 
+            int second2)
         {
             var gsa = new Gsa("KIB");
             var department = new Department("Cyberpunk", 'K');
@@ -225,12 +249,12 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour1, minute1),
+                new Time(WeekDay.Friday, new TimeSpan(hour1, minute1, second1)),
                 new Mentor("Fredi"),
                 "461a");
             var lesson2 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour2, minute2),
+                new Time(WeekDay.Friday, new TimeSpan(hour2, minute2, second2)),
                 new Mentor("Vlad"),
                 "228l");
 
@@ -242,8 +266,8 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        [TestCase(13, 30)]
-        public void GetGsaStudents_GotGsaStudents(int hour, int minute)
+        [TestCase(13, 30, 0)]
+        public void GetGsaStudents_GotGsaStudents(int hour, int minute, int second)
         {
             var gsa = new Gsa("KIB");
             var department1 = new Department("Cyberpunk", 'K');
@@ -255,7 +279,7 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour, minute),
+                new Time(WeekDay.Friday, new TimeSpan(hour, minute, second)),
                 new Mentor("Fredi"),
                 "461a");
 
@@ -276,8 +300,8 @@ namespace IsuExtra.Tests
         }
         
         [Test]
-        [TestCase(13, 30)]
-        public void GetNotGsaStudents_GotNotGsaStudents(int hour, int minute)
+        [TestCase(13, 30, 0)]
+        public void GetNotGsaStudents_GotNotGsaStudents(int hour, int minute, int second)
         {
             var gsa = new Gsa("KIB");
             var department1 = new Department("Cyberpunk", 'K');
@@ -289,7 +313,7 @@ namespace IsuExtra.Tests
 
             var lesson1 = new Lesson(
                 "OOP",
-                new Time(WeekDay.Friday, hour, minute),
+                new Time(WeekDay.Friday, new TimeSpan(hour, minute, second)),
                 new Mentor("Fredi"),
                 "461a");
 

@@ -24,12 +24,14 @@ namespace IsuExtra.Models
         {
             foreach (Lesson currentLesson in _lessons)
             {
-                if (lesson.StartTime < currentLesson.StartTime && lesson.EndTime > currentLesson.StartTime)
+                if (lesson.StartTime.TimeSpan < currentLesson.StartTime.TimeSpan &&
+                    lesson.EndTime.TimeSpan > currentLesson.StartTime.TimeSpan)
                 {
                     return false;
                 }
 
-                if (lesson.StartTime > currentLesson.StartTime && lesson.StartTime < currentLesson.EndTime)
+                if (lesson.StartTime.TimeSpan > currentLesson.StartTime.TimeSpan &&
+                    lesson.StartTime.TimeSpan < currentLesson.EndTime.TimeSpan)
                 {
                     return false;
                 }

@@ -14,8 +14,13 @@ namespace IsuExtra.Models
         {
             Name = name ?? throw new ArgumentException("Null argument");
             DurationMinutes = durationMinutes;
+
             StartTime = startTime ?? throw new ArgumentException("Null argument");
-            EndTime = new Time(startTime.WeekDay, startTime.Hour, startTime.Minute + DurationMinutes);
+            EndTime = new Time(startTime.WeekDay, new TimeSpan(
+                startTime.TimeSpan.Hours,
+                startTime.TimeSpan.Minutes + DurationMinutes,
+                startTime.TimeSpan.Seconds));
+
             Mentor = mentor ?? throw new ArgumentException("Null argument");
             ClassroomNumber = classroomNumber;
         }
@@ -28,8 +33,13 @@ namespace IsuExtra.Models
         {
             Name = name ?? throw new ArgumentException("Null argument");
             DurationMinutes = 90;
+
             StartTime = startTime ?? throw new ArgumentException("Null argument");
-            EndTime = new Time(startTime.WeekDay, startTime.Hour, startTime.Minute + DurationMinutes);
+            EndTime = new Time(startTime.WeekDay, new TimeSpan(
+                startTime.TimeSpan.Hours,
+                startTime.TimeSpan.Minutes + DurationMinutes,
+                startTime.TimeSpan.Seconds));
+
             Mentor = mentor ?? throw new ArgumentException("Null argument");
             ClassroomNumber = classroomNumber;
         }
