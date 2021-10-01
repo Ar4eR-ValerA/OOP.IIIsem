@@ -7,6 +7,7 @@ namespace IsuExtra.Entities
 {
     public class GsaStudent
     {
+        private const int GsaLimit = 2;
         private readonly List<GsaGroup> _gsaGroups;
 
         public GsaStudent(Student student, Department department)
@@ -20,7 +21,6 @@ namespace IsuExtra.Entities
 
         public Student Student { get; }
         public Department Department { get; }
-        public int GsaLimit => 2;
         public int Id { get; }
         public IReadOnlyList<GsaGroup> GsaGroups => _gsaGroups;
         public Schedule Schedule { get; }
