@@ -1,6 +1,6 @@
 ﻿# is-oop-y24/Ar4eR-ValerA
 
-[![wakatime](https://wakatime.com/badge/github/is-oop-y24/Ar4eR-ValerA.svg)](https://wakatime.com/badge/github/is-oop-y24/Ar4eR-ValerA)
+[![wakatime](https://wakatime.com/badge/user/6f9f48c5-e4ed-4eb0-b0b7-caf743286d27.svg)](https://wakatime.com/@6f9f48c5-e4ed-4eb0-b0b7-caf743286d27)
 # [Лабораторная 0. Isu](Isu)
 
 **Цель:** ознакомиться с языком C#, базовыми механизмами ООП. В шаблонном репозитории описаны базовые сущности, требуется реализовать недостающие методы и написать тесты, которые бы проверили корректность работы.
