@@ -1,27 +1,37 @@
 ﻿@startuml
-'https://plantuml.com/class-diagram
 
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+class BackupService {
+    + BackupJob BackupJob
+    
+    + AddFile(File file)
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+class BackupJob {
+    + JobObject JobObject
+    + RestorePoint[] RestorePoints
+    + string[] FileNames
 }
+
+class RestorePoint {
+    + Storage[] Storages
+}
+
+class JobObject {
+    + string[] FileDestinations
+    + string[] FileNames
+}
+
+class Storage {
+    + string[] FileDestinations
+    + string[] FileNames
+    
+    + void UpLoad()
+    + void DownLoad()
+}
+
+BackupService o-- BackupJob
+BackupJob o-- RestorePoint
+BackupJob o-- JobObject
+RestorePoint o-- Storage
 
 @enduml
