@@ -3,35 +3,49 @@
 class BackupService {
     + BackupJob BackupJob
     
-    + AddFile(File file)
+    + void SetStorageMode(StorageMode mode)
+    + void AddFile(File file)
+    + RestorePoint CreateRestorePoint()
+    + void LoadRestorePoint(RestorePoint restorePoint)
 }
 
 class BackupJob {
     + JobObject JobObject
-    + RestorePoint[] RestorePoints
-    + string[] FileNames
-}
-
-class RestorePoint {
-    + Storage[] Storages
+    + StorageMode StorageMode
+    - RestorePoint[] RestorePoints
+    
+    ~ void Archivate()
 }
 
 class JobObject {
-    + string[] FileDestinations
-    + string[] FileNames
+    + File[] Files
+}
+
+class RestorePoint {
+    + string Name
+    - Storage[] Storages
 }
 
 class Storage {
-    + string[] FileDestinations
-    + string[] FileNames
-    
-    + void UpLoad()
-    + void DownLoad()
+    - File[] Files
+}
+
+class File {
+    + string Destination
+    + string Name
+}
+
+enum StorageMode {
+    Single
+    Split
 }
 
 BackupService o-- BackupJob
 BackupJob o-- RestorePoint
-BackupJob o-- JobObject
 RestorePoint o-- Storage
+BackupJob o-- StorageMode
+BackupJob o-- JobObject
+JobObject o-- File
+Storage o-- File
 
 @enduml
