@@ -1,0 +1,22 @@
+﻿@startuml
+
+actor User
+
+package Backup {
+    usecase BackupService
+    usecase BackupJob
+    usecase RestorePoint
+    usecase Storage   
+}
+
+usecase File
+
+User --> BackupService
+BackupService --> BackupJob
+BackupJob --> RestorePoint
+BackupJob --> Storage
+User --> File
+File --> BackupService
+
+
+@enduml
