@@ -5,24 +5,26 @@ class BackupService {
     
     + void SetStorageMode(StorageMode mode)
     + void AddFile(File file)
-    + RestorePoint CreateRestorePoint()
-    + void LoadRestorePoint(RestorePoint restorePoint)
+    + void SetupBackupJob()
+    + void SetupBackupJob(File[] files)
+    + RestorePoint CreateRestorePoint(string name)
+    + void LoadRestorePoint(string name)
 }
 
 class BackupJob {
-    + JobObject JobObject
-    + StorageMode StorageMode
+    ~ JobObject JobObject
+    ~ StorageMode StorageMode
     - RestorePoint[] RestorePoints
     
     ~ void Archivate()
 }
 
 class JobObject {
-    + File[] Files
+    ~ File[] Files
 }
 
 class RestorePoint {
-    + string Name
+    ~ string Name
     - Storage[] Storages
 }
 
