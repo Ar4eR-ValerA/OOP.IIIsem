@@ -1,38 +1,30 @@
 ﻿@startuml
 
-class BackupService {
-    + BackupJob BackupJob
-    
-    + void SetStorageMode(StorageMode mode)
-    + void AddFile(File file)
-    + void SetupBackupJob()
-    + void SetupBackupJob(File[] files)
-    + RestorePoint CreateRestorePoint(string name)
-    + void LoadRestorePoint(string name)
-}
-
 class BackupJob {
-    ~ JobObject JobObject
-    ~ StorageMode StorageMode
+    + StorageMode StorageMode
+    - JobObject JobObject
     - RestorePoint[] RestorePoints
     
-    ~ void Archivate()
+    + RestorePoint Archivate(string name)
 }
 
 class JobObject {
-    ~ File[] Files
+    + FileInfo[] FileInfos
 }
 
 class RestorePoint {
-    ~ string Name
+    ~ FileInfo[] LocalFileInfos
+    - string Name
     - Storage[] Storages
+    
+    + void ArchivateSingleMode(string destination, string name)
 }
 
 class Storage {
-    - File[] Files
+    - File[] FileInfos
 }
 
-class File {
+class FileInfo {
     + string Destination
     + string Name
 }
@@ -42,12 +34,11 @@ enum StorageMode {
     Split
 }
 
-BackupService o-- BackupJob
 BackupJob o-- RestorePoint
 RestorePoint o-- Storage
+Storage o-- FileInfo
 BackupJob o-- StorageMode
 BackupJob o-- JobObject
-JobObject o-- File
-Storage o-- File
+JobObject o-- FileInfo
 
 @enduml

@@ -1,0 +1,30 @@
+﻿@startuml
+
+actor User as UserSender
+actor User as UserTaker
+
+
+package Backup {
+    usecase BackupJob
+    usecase JobObject
+    usecase RestorePoint  
+    usecase Storage
+    usecase FileInfo as FileStorageInfo
+    usecase FileInfo as FileJobObjectInfo
+}
+
+usecase FileInfo as FileUserInfo
+usecase JobObject as JobObjectUser
+
+BackupJob <--> JobObject
+BackupJob --> RestorePoint
+RestorePoint <--> Storage
+Storage <--> FileStorageInfo
+JobObject <--> FileJobObjectInfo
+
+UserSender -> FileUserInfo
+FileUserInfo -> JobObjectUser
+JobObjectUser -> BackupJob
+RestorePoint --> UserTaker
+
+@enduml
