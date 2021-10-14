@@ -9,6 +9,7 @@ class BackupJob {
 }
 
 class IJobObject {
+    + void GetFiles(File file)
 }
 
 class FilesJobObject {
