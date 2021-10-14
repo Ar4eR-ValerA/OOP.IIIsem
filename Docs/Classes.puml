@@ -16,8 +16,6 @@ class RestorePoint {
     ~ FileInfo[] LocalFileInfos
     - string Name
     - Storage[] Storages
-    
-    + void ArchivateSingleMode(string destination, string name)
 }
 
 class Storage {
@@ -29,16 +27,16 @@ class FileInfo {
     + string Name
 }
 
-enum StorageMode {
-    Single
-    Split
+class ZipArchiver {
+    + void ArchiveSingleMode(RestorePoint restorePoint, string path)
+    + void ArchiveSplitMode(RestorePoint restorePoint, string path)
 }
 
 BackupJob o-- RestorePoint
 RestorePoint o-- Storage
 Storage o-- FileInfo
-BackupJob o-- StorageMode
 BackupJob o-- JobObject
 JobObject o-- FileInfo
+RestorePoint --> ZipArchiver
 
 @enduml
