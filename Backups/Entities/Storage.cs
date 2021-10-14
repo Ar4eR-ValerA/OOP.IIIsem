@@ -1,33 +1,33 @@
 ﻿using System.Collections.Generic;
-using Backups.Models;
+using System.IO;
 using Backups.Tools;
 
 namespace Backups.Entities
 {
     public class Storage
     {
-        private readonly List<FileData> _files;
+        private readonly List<FileInfo> _files;
 
         public Storage()
         {
-            _files = new List<FileData>();
+            _files = new List<FileInfo>();
         }
 
-        public Storage(List<FileData> files)
+        public Storage(List<FileInfo> files)
         {
             _files = files ?? throw new BackupsException("Null argument");
         }
 
-        public IReadOnlyList<FileData> Files => _files;
+        public IReadOnlyList<FileInfo> Files => _files;
 
-        internal void AddFile(FileData fileData)
+        internal void AddFile(FileInfo fileInfo)
         {
-            AddFiles(new List<FileData> { fileData ?? throw new BackupsException("Null argument") });
+            AddFiles(new List<FileInfo> { fileInfo ?? throw new BackupsException("Null argument") });
         }
 
-        internal void AddFiles(IReadOnlyList<FileData> files)
+        internal void AddFiles(IReadOnlyList<FileInfo> fileInfos)
         {
-            _files.AddRange(files ?? throw new BackupsException("Null argument"));
+            _files.AddRange(fileInfos ?? throw new BackupsException("Null argument"));
         }
     }
 }
