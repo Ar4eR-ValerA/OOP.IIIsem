@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Backups.Enums;
 using Backups.Tools;
 
 namespace Backups.Entities
@@ -8,14 +7,12 @@ namespace Backups.Entities
     {
         private readonly List<RestorePoint> _restorePoints;
 
-        public BackupJob(JobObject jobObject, StorageMode storageMode)
+        public BackupJob(JobObject jobObject)
         {
             _restorePoints = new List<RestorePoint>();
             JobObject = jobObject;
-            StorageMode = storageMode;
         }
 
-        public StorageMode StorageMode { get; set; }
         public JobObject JobObject { get; }
         public IReadOnlyList<RestorePoint> RestorePoints => _restorePoints;
 

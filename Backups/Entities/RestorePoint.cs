@@ -21,20 +21,6 @@ namespace Backups.Entities
         public IReadOnlyList<FileData> LocalFileDatas => _localFileDatas;
         public Storage RemoteStorage { get; }
 
-        public void ArchivateSingleMode(string path)
-        {
-            Directory.CreateDirectory(path ?? throw new BackupsException("Null argument"));
-            foreach (FileData fileData in _localFileDatas)
-            {
-                File.Move(fileData.FullPath, path);
-            }
-
-            // TODO:проверить, что оно работает
-            string pathZip = @$"{path}.zip";
-            ZipFile.CreateFromDirectory(path, pathZip);
-            Directory.Delete(path);
-        }
-
         internal void AddLocalFile(FileData fileData)
         {
             AddLocalFiles(new List<FileData> { fileData ?? throw new BackupsException("Null argument") });
