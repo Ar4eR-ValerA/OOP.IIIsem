@@ -6,7 +6,7 @@ actor User as UserTaker
 
 package Backup {
     usecase BackupJob
-    usecase JobObject
+    usecase IJobObject
     usecase RestorePoint  
     usecase Storage
     usecase FileInfo as FileStorageInfo
@@ -14,14 +14,14 @@ package Backup {
 }
 
 usecase FileInfo as FileUserInfo
-usecase JobObject as JobObjectUser
+usecase IJobObject as JobObjectUser
 usecase ZipArchiver
 
-BackupJob <--> JobObject
+BackupJob <--> IJobObject
 BackupJob --> RestorePoint
 RestorePoint <--> Storage
 Storage <--> FileStorageInfo
-JobObject <--> FileJobObjectInfo
+IJobObject <--> FileJobObjectInfo
 
 UserSender -> FileUserInfo
 FileUserInfo -> JobObjectUser

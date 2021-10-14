@@ -2,14 +2,25 @@
 
 class BackupJob {
     + StorageMode StorageMode
-    - JobObject JobObject
+    - IJobObject[] JobObject
     - RestorePoint[] RestorePoints
     
-    + RestorePoint Archivate(string name)
+    + RestorePoint Archive(string name)
 }
 
-class JobObject {
-    + FileInfo[] FileInfos
+class IJobObject {
+}
+
+class FilesJobObject {
+    + File[] Files
+}
+
+class FileJobObject {
+    + File File
+}
+
+class DirectoryJobObject {
+    + Directory Directory
 }
 
 class RestorePoint {
@@ -19,12 +30,7 @@ class RestorePoint {
 }
 
 class Storage {
-    - File[] FileInfos
-}
-
-class FileInfo {
-    + string Destination
-    + string Name
+    - File[] Files
 }
 
 class ZipArchiver {
@@ -34,9 +40,10 @@ class ZipArchiver {
 
 BackupJob o-- RestorePoint
 RestorePoint o-- Storage
-Storage o-- FileInfo
-BackupJob o-- JobObject
-JobObject o-- FileInfo
+BackupJob o-- IJobObject
 RestorePoint --> ZipArchiver
+FilesJobObject <|-- IJobObject
+FileJobObject <|-- IJobObject
+DirectoryJobObject <|-- IJobObject
 
 @enduml
