@@ -5,12 +5,14 @@ using Backups.Entities;
 using Backups.Entities.JobObjects;
 using Backups.Interfaces;
 using Backups.Tools;
+using NUnit.Framework;
 
-namespace Backups
+namespace Backups.Tests
 {
-    internal class Program
+    public class Tests
     {
-        private static void Main()
+        [Test]
+        public void Setup()
         {
             var fileInfo1 = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test1.txt");
             var fileInfo2 = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test2.txt");

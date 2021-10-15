@@ -1,51 +1,61 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using Backups.Entities;
+using Backups.Entities.Storages;
 
 namespace Backups.Tools
 {
     public static class ZipArchiver
     {
-        public static void ArchiveSingleMode(RestorePoint restorePoint, string path, string name)
+        /// <summary>
+        /// Archiving files from restore point to single zip file that indicated in path.
+        /// </summary>
+        /// <param name="restorePoint"> Restore point which archiving. </param>
+        /// <param name="path"> Path must points to .zip file. </param>
+        public static void ArchiveSingleMode(RestorePoint restorePoint, string path)
         {
-            string fullPath = $@"{path ?? throw new BackupsException("Null argument")}\" +
-                              $@"{name ?? throw new BackupsException("Null argument")}";
-
-            if (Directory.Exists(fullPath))
-            {
-                Directory.Delete(fullPath, true);
-            }
-
-            Directory.CreateDirectory(fullPath);
-            foreach (FileInfo fileInfo in restorePoint.LocalFileInfos)
-            {
-                fileInfo.CopyTo($@"{fullPath}\{fileInfo.Name}");
-            }
-
-            string pathZip = @$"{fullPath}.zip";
-            if (File.Exists(pathZip))
-            {
-                File.Delete(pathZip);
-            }
-
-            ZipFile.CreateFromDirectory(fullPath, pathZip);
-            Directory.Delete(fullPath, true);
-        }
-
-        public static void ArchiveSplitMode(RestorePoint restorePoint, string path)
-        {
-            if (path is null)
+            if (path is null || restorePoint is null)
             {
                 throw new BackupsException("Null argument");
             }
 
-            string tempDirPath = $@"{path}\TempDir";
-            if (Directory.Exists(tempDirPath))
+            if (!path.EndsWith(".zip"))
             {
-                Directory.Delete(tempDirPath, true);
+                throw new BackupsException("Path must ends with .zip file");
             }
 
-            Directory.CreateDirectory(tempDirPath);
+            string tempDirPath = $"{path}temp";
+            SafeCreateDirectory(tempDirPath);
+            foreach (FileInfo fileInfo in restorePoint.LocalFileInfos)
+            {
+                fileInfo.CopyTo($@"{tempDirPath}\{fileInfo.Name}");
+            }
+
+            SafeCreateZipFile(tempDirPath, path);
+            restorePoint.AddStorage(new FileStorage(new FileInfo(path)));
+
+            Directory.Delete(tempDirPath, true);
+        }
+
+        /// <summary>
+        /// Archiving files from restore point to several zip files in directory that indicated in path.
+        /// </summary>
+        /// <param name="restorePoint"> Restore point which archiving. </param>
+        /// <param name="path"> Path must points to directory where zip files will be located. </param>
+        public static void ArchiveSplitMode(RestorePoint restorePoint, string path)
+        {
+            if (path is null || restorePoint is null)
+            {
+                throw new BackupsException("Null argument");
+            }
+
+            if (!Directory.Exists(path))
+            {
+                throw new BackupsException("Path must points to directory");
+            }
+
+            string tempDirPath = $@"{path}\TempDir";
+            SafeCreateDirectory(tempDirPath);
 
             foreach (FileInfo fileInfo in restorePoint.LocalFileInfos)
             {
@@ -53,16 +63,33 @@ namespace Backups.Tools
                 fileInfo.CopyTo(tempFullPath);
 
                 string pathZip = @$"{path}\{fileInfo.Name}.zip";
-                if (File.Exists(pathZip))
-                {
-                    File.Delete(pathZip);
-                }
+                SafeCreateZipFile(tempDirPath, pathZip);
+                restorePoint.AddStorage(new FileStorage(new FileInfo(pathZip)));
 
-                ZipFile.CreateFromDirectory(tempDirPath, pathZip);
                 File.Delete(tempFullPath);
             }
 
             Directory.Delete(tempDirPath, true);
+        }
+
+        private static void SafeCreateDirectory(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
+
+            Directory.CreateDirectory(path);
+        }
+
+        private static void SafeCreateZipFile(string targetPath, string zipPath)
+        {
+            if (File.Exists(zipPath))
+            {
+                File.Delete(zipPath);
+            }
+
+            ZipFile.CreateFromDirectory(targetPath, zipPath);
         }
     }
 }

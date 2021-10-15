@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Backups.Interfaces;
 using Backups.Tools;
 
 namespace Backups.Entities
@@ -7,17 +8,18 @@ namespace Backups.Entities
     public class RestorePoint
     {
         private readonly List<FileInfo> _localFileInfos;
+        private readonly List<IStorage> _remoteStorages;
 
         public RestorePoint(string name)
         {
             Name = name ?? throw new BackupsException("Null argument");
             _localFileInfos = new List<FileInfo>();
-            RemoteStorage = new Storage();
+            _remoteStorages = new List<IStorage>();
         }
 
         public string Name { get; }
         public IReadOnlyList<FileInfo> LocalFileInfos => _localFileInfos;
-        public Storage RemoteStorage { get; }
+        public List<IStorage> RemoteStorages => _remoteStorages;
 
         internal void AddLocalFile(FileInfo fileInfo)
         {
@@ -27,6 +29,11 @@ namespace Backups.Entities
         internal void AddLocalFiles(IReadOnlyList<FileInfo> fileInfos)
         {
             _localFileInfos.AddRange(fileInfos ?? throw new BackupsException("Null argument"));
+        }
+
+        internal void AddStorage(IStorage storage)
+        {
+            _remoteStorages.Add(storage);
         }
     }
 }
