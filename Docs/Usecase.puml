@@ -8,7 +8,7 @@ package Backup {
     usecase BackupJob
     usecase IJobObject
     usecase RestorePoint  
-    usecase Storage
+    usecase IStorage
     usecase FileInfo as FileStorageInfo
     usecase FileInfo as FileJobObjectInfo
 }
@@ -19,8 +19,8 @@ usecase ZipArchiver
 
 BackupJob <--> IJobObject
 BackupJob --> RestorePoint
-RestorePoint <--> Storage
-Storage <--> FileStorageInfo
+RestorePoint <--> IStorage
+IStorage <--> FileStorageInfo
 IJobObject <--> FileJobObjectInfo
 
 UserSender -> FileUserInfo

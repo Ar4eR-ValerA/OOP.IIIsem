@@ -2,36 +2,38 @@
 
 class BackupJob {
     + StorageMode StorageMode
-    - IJobObject[] JobObject
+    - IJobObject JobObject
     - RestorePoint[] RestorePoints
     
     + RestorePoint Archive(string name)
 }
 
 class IJobObject {
-    + void GetFiles(File file)
+    + FileInfo[] GetFiles()
 }
 
-class FilesJobObject {
-    + File[] Files
-}
-
-class FileJobObject {
-    + File File
-}
-
-class DirectoryJobObject {
-    + Directory Directory
+package JobObjects {
+    class FilesJobObject {
+        + FileInfo[] FileInfos
+    }
+    
+    class FileJobObject {
+        + FileInfo FileInfo
+    }
+    
+    class DirectoryJobObject {
+        + DirectoryInfo DirectoryInfo
+    }
 }
 
 class RestorePoint {
     ~ FileInfo[] LocalFileInfos
     - string Name
-    - Storage[] Storages
+    - IStorage[] Storages
 }
 
-class Storage {
-    - File[] Files
+class IStorage {
+    + FileInfo[] GetFiles()
 }
 
 class ZipArchiver {
@@ -39,12 +41,23 @@ class ZipArchiver {
     + void ArchiveSplitMode(RestorePoint restorePoint, string path)
 }
 
+package Storages {
+    class FileStorage {
+        FileInfo FileInfo
+    }
+    
+    class DirectoryStorage {
+        DirectoryInfo DirectoryInfo
+    }
+}
+
 BackupJob o-- RestorePoint
-RestorePoint o-- Storage
+RestorePoint o-- IStorage
 BackupJob o-- IJobObject
 RestorePoint --> ZipArchiver
-FilesJobObject <|-- IJobObject
-FileJobObject <|-- IJobObject
-DirectoryJobObject <|-- IJobObject
+JobObjects <|-- IJobObject
+IStorage <-- ZipArchiver
+
+IStorage --|> Storages
 
 @enduml
