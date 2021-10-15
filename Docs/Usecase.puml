@@ -15,7 +15,6 @@ package Backup {
 
 usecase FileInfo as FileUserInfo
 usecase IJobObject as JobObjectUser
-usecase ZipArchiver
 
 BackupJob <--> IJobObject
 BackupJob --> RestorePoint
@@ -27,6 +26,11 @@ UserSender -> FileUserInfo
 FileUserInfo -> JobObjectUser
 JobObjectUser -> BackupJob
 RestorePoint --> UserTaker
-UserTaker --> ZipArchiver
+
+usecase ArchiverService
+usecase IArchiver
+
+UserTaker --> ArchiverService
+ArchiverService --> IArchiver
 
 @enduml
