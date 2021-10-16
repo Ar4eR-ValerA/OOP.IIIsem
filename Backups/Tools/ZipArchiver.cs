@@ -1,20 +1,20 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
-using Backups.Entities;
-using Backups.Entities.Storages;
+using Backups.Interfaces;
 
 namespace Backups.Tools
 {
-    public static class ZipArchiver
+    public class ZipArchiver : IArchiver
     {
         /// <summary>
         /// Archiving files from restore point to single zip file that indicated in path.
         /// </summary>
-        /// <param name="restorePoint"> Restore point which archiving. </param>
-        /// <param name="path"> Path must points to .zip file. </param>
-        public static void ArchiveSingleMode(RestorePoint restorePoint, string path)
+        /// <param name="fileInfos"> Files which archiving. </param>
+        /// <param name="path"> Path must points to .zip file, which will be created by method. </param>
+        public void ArchiveSingleMode(IReadOnlyList<FileInfo> fileInfos, string path)
         {
-            if (path is null || restorePoint is null)
+            if (path is null || fileInfos is null)
             {
                 throw new BackupsException("Null argument");
             }
@@ -26,13 +26,12 @@ namespace Backups.Tools
 
             string tempDirPath = $"{path}temp";
             SafeCreateDirectory(tempDirPath);
-            foreach (FileInfo fileInfo in restorePoint.LocalFileInfos)
+            foreach (FileInfo fileInfo in fileInfos)
             {
                 fileInfo.CopyTo($@"{tempDirPath}\{fileInfo.Name}");
             }
 
             SafeCreateZipFile(tempDirPath, path);
-            restorePoint.AddStorage(new FileStorage(new FileInfo(path)));
 
             Directory.Delete(tempDirPath, true);
         }
@@ -40,11 +39,13 @@ namespace Backups.Tools
         /// <summary>
         /// Archiving files from restore point to several zip files in directory that indicated in path.
         /// </summary>
-        /// <param name="restorePoint"> Restore point which archiving. </param>
-        /// <param name="path"> Path must points to directory where zip files will be located. </param>
-        public static void ArchiveSplitMode(RestorePoint restorePoint, string path)
+        /// <param name="fileInfos"> Restore point which archiving. </param>
+        /// <param name="path">
+        /// Path must points to directory where zip files will be located. Method will create directory.
+        /// </param>
+        public void ArchiveSplitMode(IReadOnlyList<FileInfo> fileInfos, string path)
         {
-            if (path is null || restorePoint is null)
+            if (path is null || fileInfos is null)
             {
                 throw new BackupsException("Null argument");
             }
@@ -57,14 +58,13 @@ namespace Backups.Tools
             string tempDirPath = $@"{path}\TempDir";
             SafeCreateDirectory(tempDirPath);
 
-            foreach (FileInfo fileInfo in restorePoint.LocalFileInfos)
+            foreach (FileInfo fileInfo in fileInfos)
             {
                 string tempFullPath = $@"{tempDirPath}\{fileInfo.Name}";
                 fileInfo.CopyTo(tempFullPath);
 
                 string pathZip = @$"{path}\{fileInfo.Name}.zip";
                 SafeCreateZipFile(tempDirPath, pathZip);
-                restorePoint.AddStorage(new FileStorage(new FileInfo(pathZip)));
 
                 File.Delete(tempFullPath);
             }

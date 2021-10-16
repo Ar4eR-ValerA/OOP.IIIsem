@@ -19,7 +19,7 @@ namespace Backups.Entities
 
         public string Name { get; }
         public IReadOnlyList<FileInfo> LocalFileInfos => _localFileInfos;
-        public List<IStorage> RemoteStorages => _remoteStorages;
+        public IReadOnlyList<IStorage> RemoteStorages => _remoteStorages;
 
         internal void AddLocalFile(FileInfo fileInfo)
         {

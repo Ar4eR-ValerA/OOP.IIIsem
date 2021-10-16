@@ -28,8 +28,8 @@ package JobObjects {
 
 class RestorePoint {
     ~ FileInfo[] LocalFileInfos
+    ~ IStorage[] Storages
     - string Name
-    - IStorage[] Storages
 }
 
 interface IStorage {
@@ -43,13 +43,15 @@ package Archivers {
 }
 
 interface IArchiver {
-    + void Archive(FileInfo[] FileInfos, string path)
+    + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
+    + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
 }
 
 class ArchiveService {
     + IArchiver Archiver
     
-    + Archive(RestorePoint restorePoint)
+    + ArchiveSingleMode(RestorePoint restorePoint, string path)
+    + ArchiveSplitMode(RestorePoint restorePoint, string path)
 }
 
 package Storages {
@@ -65,7 +67,7 @@ package Storages {
 BackupJob o-- RestorePoint
 RestorePoint o-- IStorage
 BackupJob o-- IJobObject
-RestorePoint --> ArchiveService
+RestorePoint <--> ArchiveService
 JobObjects <|- IJobObject
 IStorage --|> Storages
 IArchiver -o ArchiveService
