@@ -17,10 +17,6 @@ package JobObjects {
         + FileInfo[] FileInfos
     }
     
-    class FileJobObject {
-        + FileInfo FileInfo
-    }
-    
     class DirectoryJobObject {
         + DirectoryInfo DirectoryInfo
     }
@@ -38,7 +34,8 @@ interface IStorage {
 
 package Archivers {
     class ZipArchiver {
-        + void Archive(FileInfo[] FileInfos, string path)
+        + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
+        + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
     }
 }
 

@@ -8,7 +8,7 @@ namespace Backups.Tools
     public class ZipArchiver : IArchiver
     {
         /// <summary>
-        /// Archiving files from restore point to single zip file that indicated in path.
+        /// Archiving files to single zip file that indicated in path.
         /// </summary>
         /// <param name="fileInfos"> Files which archiving. </param>
         /// <param name="path"> Path must points to .zip file, which will be created by method. </param>
@@ -37,9 +37,9 @@ namespace Backups.Tools
         }
 
         /// <summary>
-        /// Archiving files from restore point to several zip files in directory that indicated in path.
+        /// Archiving each file to his own zip file in directory that indicated in path.
         /// </summary>
-        /// <param name="fileInfos"> Restore point which archiving. </param>
+        /// <param name="fileInfos"> Files which archiving. </param>
         /// <param name="path">
         /// Path must points to directory where zip files will be located. Method will create directory.
         /// </param>

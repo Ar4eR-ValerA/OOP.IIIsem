@@ -15,5 +15,10 @@ namespace Backups.Entities.JobObjects
         }
 
         public IReadOnlyList<FileInfo> FileInfos => _directoryInfo.GetFiles();
+
+        public void RemoveFile(FileInfo fileInfo)
+        {
+            File.Delete(fileInfo.FullName);
+        }
     }
 }

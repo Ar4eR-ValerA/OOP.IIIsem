@@ -13,7 +13,7 @@ namespace Backups.Interfaces
         public void ArchiveSingleMode(IReadOnlyList<FileInfo> fileInfos, string path);
 
         /// <summary>
-        /// Archiving each file to his own zip file in directory that indicated in path.
+        /// Archiving each file to his own archive file in directory that indicated in path.
         /// </summary>
         /// <param name="fileInfos"> Files which archiving. </param>
         /// <param name="path">

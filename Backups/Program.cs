@@ -4,6 +4,7 @@ using System.IO;
 using Backups.Entities;
 using Backups.Entities.JobObjects;
 using Backups.Interfaces;
+using Backups.Services;
 using Backups.Tools;
 
 namespace Backups
@@ -21,11 +22,13 @@ namespace Backups
             var backupJob = new BackupJob(jobObject);
 
             RestorePoint restorePoint = backupJob.CreateRestorePoint("Test restore point");
-            ZipArchiver.ArchiveSingleMode(
+
+            var archiveService = new ArchiveService(new ZipArchiver());
+            archiveService.ArchiveSingleMode(
                 restorePoint,
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip");
 
-            ZipArchiver.ArchiveSplitMode(restorePoint, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            archiveService.ArchiveSplitMode(restorePoint, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
             fileInfo1.Delete();
             fileInfo2.Delete();
         }
