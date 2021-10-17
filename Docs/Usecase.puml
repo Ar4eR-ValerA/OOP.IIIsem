@@ -4,7 +4,7 @@ actor User as UserSender
 actor User as UserTaker
 
 
-package Backup {
+package Backups {
     usecase BackupJob
     usecase IJobObject
     usecase RestorePoint  
@@ -30,7 +30,24 @@ RestorePoint --> UserTaker
 usecase ArchiverService
 usecase IArchiver
 
+package Backups.Server {
+    usecase Taker
+}
+
+package Backups.Client {
+    usecase ServerArchiveService
+    usecase FileSender
+    usecase FileServerStorage
+}
+
 UserTaker --> ArchiverService
 ArchiverService --> IArchiver
+UserTaker --> ServerArchiveService
+ServerArchiveService --> FileSender
+FileSender --> FileServerStorage
+
+FileServerStorage --> Taker
+
+
 
 @enduml

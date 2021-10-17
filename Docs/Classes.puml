@@ -1,63 +1,100 @@
 ﻿@startuml
 
-class BackupJob {
-    + StorageMode StorageMode
-    - IJobObject JobObject
-    - RestorePoint[] RestorePoints
-    
-    + RestorePoint Archive(string name)
-}
+hide empty members
 
-interface IJobObject {
-    + FileInfo[] GetFiles()
-}
-
-package JobObjects {
-    class FilesJobObject {
-        + FileInfo[] FileInfos
+package Backups {
+    class BackupJob {
+        + StorageMode StorageMode
+        - IJobObject JobObject
+        - RestorePoint[] RestorePoints
+        
+        + RestorePoint Archive(string name)
     }
     
-    class DirectoryJobObject {
-        + DirectoryInfo DirectoryInfo
+    interface IJobObject {
+        + FileInfo[] GetFiles()
     }
-}
-
-class RestorePoint {
-    ~ FileInfo[] LocalFileInfos
-    ~ IStorage[] Storages
-    - string Name
-}
-
-interface IStorage {
-    + FileInfo[] GetFiles()
-}
-
-package Archivers {
-    class ZipArchiver {
+    
+    package JobObjects {
+        class FilesJobObject {
+            + FileInfo[] FileInfos
+        }
+    }
+    
+    class RestorePoint {
+        ~ FileInfo[] LocalFileInfos
+        ~ IStorage[] Storages
+        - string Name
+    }
+    
+    interface IStorage {
+        + FileInfo[] GetFileInfos()
+    }
+    
+    package Archivers {
+        class ZipArchiver {
+            + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
+            + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
+        }
+    }
+    
+    interface IArchiver {
         + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
         + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
     }
-}
-
-interface IArchiver {
-    + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
-    + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
-}
-
-class ArchiveService {
-    + IArchiver Archiver
     
-    + ArchiveSingleMode(RestorePoint restorePoint, string path)
-    + ArchiveSplitMode(RestorePoint restorePoint, string path)
-}
-
-package Storages {
-    class FileStorage {
-        FileInfo FileInfo
+    class ArchiveService {
+        + IArchiver Archiver
+        
+        + ArchiveSingleMode(RestorePoint restorePoint, string path)
+        + ArchiveSplitMode(RestorePoint restorePoint, string path)
     }
     
-    class DirectoryStorage {
-        DirectoryInfo DirectoryInfo
+    package Storages {
+        class FileStorage {
+            + FileInfo FileInfo
+        }
+        
+        class DirectoryStorage {
+            + DirectoryInfo DirectoryInfo
+        }
+    }
+}
+
+package Backups.Client {
+    class ServerArchiveService {
+        + IArchiver Archiver
+        + IPAddress IpAddress
+        + int Port
+                
+        + ArchiveSingleMode(RestorePoint restorePoint, string path)
+        + ArchiveSplitMode(RestorePoint restorePoint, string path)
+    }
+    
+    package ServerStorages {
+        class FileServerStorage {
+            + FileInfo FileInfo
+            + IPAddress IpAddress
+            + int Port
+            
+            + FileInfo[] GetFileInfos()
+        }
+    }
+    
+    interface IServerStorage {
+        + FileInfo[] GetFileInfos()
+        + IPAddress IpAddress
+        + int Port
+    }
+    
+    class FileSender {
+        + void SendFile(FileInfo localFileInfo, FileServerInfo fileServerStorage)
+    }
+}
+
+package Backups.Server {
+    class Taker {
+        + void TakeFile(int port)
     }
 }
 
@@ -65,9 +102,17 @@ BackupJob o-- RestorePoint
 RestorePoint o-- IStorage
 BackupJob o-- IJobObject
 RestorePoint <--> ArchiveService
-JobObjects <|- IJobObject
+JobObjects <|-- IJobObject
 IStorage --|> Storages
 IArchiver -o ArchiveService
 IArchiver --|> Archivers
+Backups --> Backups.Client
+Backups.Client --> Backups.Server
+
+ServerArchiveService <-- IServerStorage
+ServerArchiveService <-- FileSender
+IServerStorage --|> ServerStorages
+
+
 
 @enduml
