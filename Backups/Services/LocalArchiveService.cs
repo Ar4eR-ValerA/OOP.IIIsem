@@ -6,9 +6,9 @@ using Backups.Tools;
 
 namespace Backups.Services
 {
-    public class ArchiveService
+    public class LocalArchiveService
     {
-        public ArchiveService(IArchiver archiver)
+        public LocalArchiveService(IArchiver archiver)
         {
             Archiver = archiver;
         }
@@ -19,7 +19,7 @@ namespace Backups.Services
         /// Archiving files from restore point to single file that indicated in path.
         /// </summary>
         /// <param name="restorePoint"> Restore point which archiving. </param>
-        /// /// <param name="path"> Path must points to archive file, which will be created by method. </param>
+        /// <param name="path"> Path must points to archive file, which will be created by method. </param>
         public void ArchiveSingleMode(RestorePoint restorePoint, string path)
         {
             if (path is null || restorePoint is null)
@@ -48,7 +48,7 @@ namespace Backups.Services
 
             Archiver.ArchiveSplitMode(restorePoint.LocalFileInfos, path);
 
-            restorePoint.AddStorage(new DirectoryStorages(new DirectoryInfo(path)));
+            restorePoint.AddStorage(new DirectoryStorage(new DirectoryInfo(path)));
         }
     }
 }

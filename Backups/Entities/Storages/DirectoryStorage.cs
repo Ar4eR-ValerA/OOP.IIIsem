@@ -5,11 +5,11 @@ using Backups.Tools;
 
 namespace Backups.Entities.Storages
 {
-    public class DirectoryStorages : IStorage
+    public class DirectoryStorage : IStorage
     {
         private readonly DirectoryInfo _directoryInfo;
 
-        public DirectoryStorages(DirectoryInfo directory)
+        public DirectoryStorage(DirectoryInfo directory)
         {
             _directoryInfo = directory ?? throw new BackupsException("Null argument");
         }

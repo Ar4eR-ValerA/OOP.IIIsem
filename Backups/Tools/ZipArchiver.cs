@@ -50,11 +50,6 @@ namespace Backups.Tools
                 throw new BackupsException("Null argument");
             }
 
-            if (!Directory.Exists(path))
-            {
-                throw new BackupsException("Path must points to directory");
-            }
-
             string tempDirPath = $@"{path}\TempDir";
             SafeCreateDirectory(tempDirPath);
 

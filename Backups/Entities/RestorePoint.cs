@@ -21,19 +21,24 @@ namespace Backups.Entities
         public IReadOnlyList<FileInfo> LocalFileInfos => _localFileInfos;
         public IReadOnlyList<IStorage> RemoteStorages => _remoteStorages;
 
-        internal void AddLocalFile(FileInfo fileInfo)
+        public void AddLocalFile(FileInfo fileInfo)
         {
             AddLocalFiles(new List<FileInfo> { fileInfo ?? throw new BackupsException("Null argument") });
         }
 
-        internal void AddLocalFiles(IReadOnlyList<FileInfo> fileInfos)
+        public void AddLocalFiles(IReadOnlyList<FileInfo> fileInfos)
         {
             _localFileInfos.AddRange(fileInfos ?? throw new BackupsException("Null argument"));
         }
 
-        internal void AddStorage(IStorage storage)
+        public void AddStorage(IStorage storage)
         {
-            _remoteStorages.Add(storage);
+            _remoteStorages.Add(storage ?? throw new BackupsException("Null argument"));
+        }
+
+        public void RemoveStorage(IStorage storage)
+        {
+            _remoteStorages.Remove(storage ?? throw new BackupsException("Null argument"));
         }
     }
 }

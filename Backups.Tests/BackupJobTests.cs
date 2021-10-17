@@ -14,7 +14,8 @@ namespace Backups.Tests
     public class Tests
     {
         [Test]
-        public void CreateSplitStorages_SplitStoragesCreated()
+        [TestCase(2, 2)]
+        public void CreateSplitStorages_SplitStoragesCreated(int restorePointsAmount, int storagesAmount)
         {
             var fileInfo1 = new FileInfo(@"Test1.txt");
             var fileInfo2 = new FileInfo(@"Test2.txt");
@@ -24,7 +25,7 @@ namespace Backups.Tests
 
             RestorePoint restorePoint1 = backupJob.CreateRestorePoint("Test restore point 1");
 
-            var archiveService = new ArchiveService(new TestArchiver());
+            var archiveService = new LocalArchiveService(new TestArchiver());
             archiveService.ArchiveSplitMode(
                 restorePoint1,
                 "Test");
@@ -36,14 +37,15 @@ namespace Backups.Tests
                 restorePoint2,
                 "Test");
 
-            Assert.AreEqual(2, backupJob.RestorePoints.Count);
+            Assert.AreEqual(restorePointsAmount, backupJob.RestorePoints.Count);
             
             int storagesCount = backupJob.RestorePoints.Sum(point => point.RemoteStorages.Count);
-            Assert.AreEqual(2, storagesCount);
+            Assert.AreEqual(storagesAmount, storagesCount);
         }
 
         [Test]
-        public void CreateSingleStorages_SingleStoragesCreated()
+        [TestCase(2, 2)]
+        public void CreateSingleStorages_SingleStoragesCreated(int restorePointsAmount, int storagesAmount)
         {
             var fileInfo1 = new FileInfo(@"Test1.txt");
             var fileInfo2 = new FileInfo(@"Test2.txt");
@@ -53,7 +55,7 @@ namespace Backups.Tests
 
             RestorePoint restorePoint1 = backupJob.CreateRestorePoint("Test restore point 1");
 
-            var archiveService = new ArchiveService(new TestArchiver());
+            var archiveService = new LocalArchiveService(new TestArchiver());
             archiveService.ArchiveSingleMode(
                 restorePoint1,
                 @"Test.test");
@@ -64,9 +66,9 @@ namespace Backups.Tests
             archiveService.ArchiveSingleMode(restorePoint2,
                 @"Test.test");
 
-            Assert.AreEqual(2, backupJob.RestorePoints.Count);
+            Assert.AreEqual(restorePointsAmount, backupJob.RestorePoints.Count);
             int storagesCount = backupJob.RestorePoints.Sum(point => point.RemoteStorages.Count);
-            Assert.AreEqual(2, storagesCount);
+            Assert.AreEqual(storagesAmount, storagesCount);
         }
     }
 }
