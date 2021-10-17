@@ -11,7 +11,7 @@ namespace Backups.Entities
         public BackupJob(IJobObject jobObject)
         {
             _restorePoints = new List<RestorePoint>();
-            JobObject = jobObject ?? throw new BackupsException("Null argument");;
+            JobObject = jobObject ?? throw new BackupsException("Null argument");
         }
 
         public IJobObject JobObject { get; }
