@@ -97,7 +97,7 @@ package Backups.Client {
 
 package Backups.Server {
     class Receiver {
-        + void ReceiveFile(int port)
+        + void ReceiveFile(IPAddress ipAddress, int port)
     }
 }
 

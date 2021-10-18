@@ -24,6 +24,9 @@ namespace Backups.Client.Tools
             streamWriter.Flush();
 
             tcpClient.Client.SendFile(localFileInfo.FullName);
+            
+            streamWriter.Close();
+            tcpClient.Close();
         }
     }
 }

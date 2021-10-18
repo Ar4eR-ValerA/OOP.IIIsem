@@ -7,9 +7,9 @@ namespace Backups.Server
 {
     public static class Receiver
     {
-        public static void ReceiveFile(int port)
+        public static void ReceiveFile(IPAddress ipAddress, int port)
         {
-            var tcpListener = new TcpListener(IPAddress.Any, port);
+            var tcpListener = new TcpListener(ipAddress, port);
             tcpListener.Start();
 
             while (true)
