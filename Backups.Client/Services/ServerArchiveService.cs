@@ -10,7 +10,7 @@ using Backups.Tools;
 
 namespace Backups.Client.Services
 {
-    public class ServerArchiveService
+    public class ServerArchiveService : IArchiveService
     {
         public ServerArchiveService(IArchiver archiver, IPAddress ipAddress, int port)
         {
@@ -53,7 +53,7 @@ namespace Backups.Client.Services
         /// </summary>
         /// <param name="restorePoint"> Restore point which archiving. </param>
         /// <param name="path">
-        /// Path must points to directory where zip files will be located. Method will create directory.
+        /// Path must points to directory where zip files will be located. Directory must exists.
         /// </param>
         public void ArchiveSplitMode(RestorePoint restorePoint, string path)
         {

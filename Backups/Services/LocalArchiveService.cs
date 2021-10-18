@@ -6,7 +6,7 @@ using Backups.Tools;
 
 namespace Backups.Services
 {
-    public class LocalArchiveService
+    public class LocalArchiveService : IArchiveService
     {
         public LocalArchiveService(IArchiver archiver)
         {

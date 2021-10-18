@@ -29,9 +29,9 @@ namespace Backups.Client
                 new ZipArchiver(), 
                 new IPAddress(new byte[] { 127, 0, 0, 1 }),
                 8888); 
-            archiveService.ArchiveSingleMode(restorePoint, @"E:\Test.zip");
+            archiveService.ArchiveSingleMode(restorePoint, @"D:\Test.zip");
 
-            archiveService.ArchiveSplitMode(restorePoint, @"E:\");
+            archiveService.ArchiveSplitMode(restorePoint, @"D:\");
             
             fileInfo1.Delete();
             fileInfo2.Delete();
