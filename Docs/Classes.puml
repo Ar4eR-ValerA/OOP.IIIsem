@@ -15,10 +15,9 @@ package Backups {
         + FileInfo[] GetFiles()
     }
     
-    package JobObjects {
-        class FilesJobObject {
-            + FileInfo[] FileInfos
-        }
+
+    class FilesJobObject {
+        + FileInfo[] FileInfos
     }
     
     class RestorePoint {
@@ -31,11 +30,15 @@ package Backups {
         + FileInfo[] GetFileInfos()
     }
     
-    package Archivers {
-        class ZipArchiver {
-            + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
-            + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
-        }
+    interface IArchiveService {
+        + IArchiver Archiver
+        
+        + ArchiveRestorePoint(RestorePoint restorePoint, string path)
+    }
+    
+    class ZipArchiver {
+        + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
+        + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
     }
     
     interface IArchiver {
@@ -43,21 +46,24 @@ package Backups {
         + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
     }
     
-    class LocalArchiveService {
+    class LocalArchiveServiceSingleMode {
         + IArchiver Archiver
         
-        + ArchiveSingleMode(RestorePoint restorePoint, string path)
-        + ArchiveSplitMode(RestorePoint restorePoint, string path)
+        + ArchiveRestorePoint(RestorePoint restorePoint, string path)
     }
     
-    package Storages {
-        class FileStorage {
-            + FileInfo FileInfo
+    class LocalArchiveServiceSplitMode {
+            + IArchiver Archiver
+            
+            + ArchiveRestorePoint(RestorePoint restorePoint, string path)
         }
-        
-        class DirectoryStorage {
-            + DirectoryInfo DirectoryInfo
-        }
+    
+    class FileStorage {
+        + FileInfo FileInfo
+    }
+    
+    class DirectoryStorage {
+        + DirectoryInfo DirectoryInfo
     }
 }
 
@@ -67,18 +73,15 @@ package Backups.Client {
         + IPAddress IpAddress
         + int Port
                 
-        + ArchiveSingleMode(RestorePoint restorePoint, string path)
-        + ArchiveSplitMode(RestorePoint restorePoint, string path)
+        + ArchiveRestorePoint(RestorePoint restorePoint, string path)
     }
     
-    package ServerStorages {
-        class FileServerStorage {
-            + FileInfo FileInfo
-            + IPAddress IpAddress
-            + int Port
-            
-            + FileInfo[] GetFileInfos()
-        }
+    class FileServerStorage {
+        + FileInfo FileInfo
+        + IPAddress IpAddress
+        + int Port
+        
+        + FileInfo[] GetFileInfos()
     }
     
     interface IServerStorage {
@@ -98,30 +101,24 @@ package Backups.Server {
     }
 }
 
-interface IArchiveService {
-    + IArchiver Archiver
-    
-    + ArchiveSingleMode(RestorePoint restorePoint, string path)
-    + ArchiveSplitMode(RestorePoint restorePoint, string path)
-}
-
 BackupJob o-- RestorePoint
 RestorePoint o-- IStorage
 BackupJob o-- IJobObject
-RestorePoint <--> LocalArchiveService
-JobObjects <|-- IJobObject
-IStorage --|> Storages
-IArchiver -o LocalArchiveService
-IArchiver --|> Archivers
+RestorePoint <--> IArchiveService
+IJobObject ..> FilesJobObject
+IStorage ..> FileStorage
+IStorage ..> DirectoryStorage
+IArchiver -o IArchiveService
+IArchiver ..> ZipArchiver
 Backups --> Backups.Client
 Backups.Client --> Backups.Server
 
 ServerArchiveService <-- IServerStorage
 ServerArchiveService <-- FileSender
-IServerStorage --|> ServerStorages
+IServerStorage ..> FileServerStorage
 
-IArchiveService ..> LocalArchiveService
-IArchiveService ..> ServerArchiveService
+IArchiveService ..> LocalArchiveServiceSingleMode
+IArchiveService ..> LocalArchiveServiceSplitMode
 
 
 @enduml
