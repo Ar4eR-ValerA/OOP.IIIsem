@@ -43,7 +43,7 @@ package Backups {
         + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
     }
     
-    class ArchiveService {
+    class LocalArchiveService {
         + IArchiver Archiver
         
         + ArchiveSingleMode(RestorePoint restorePoint, string path)
@@ -98,13 +98,20 @@ package Backups.Server {
     }
 }
 
+interface IArchiveService {
+    + IArchiver Archiver
+    
+    + ArchiveSingleMode(RestorePoint restorePoint, string path)
+    + ArchiveSplitMode(RestorePoint restorePoint, string path)
+}
+
 BackupJob o-- RestorePoint
 RestorePoint o-- IStorage
 BackupJob o-- IJobObject
-RestorePoint <--> ArchiveService
+RestorePoint <--> LocalArchiveService
 JobObjects <|-- IJobObject
 IStorage --|> Storages
-IArchiver -o ArchiveService
+IArchiver -o LocalArchiveService
 IArchiver --|> Archivers
 Backups --> Backups.Client
 Backups.Client --> Backups.Server
@@ -113,6 +120,8 @@ ServerArchiveService <-- IServerStorage
 ServerArchiveService <-- FileSender
 IServerStorage --|> ServerStorages
 
+IArchiveService ..> LocalArchiveService
+IArchiveService ..> ServerArchiveService
 
 
 @enduml
