@@ -25,13 +25,17 @@ namespace Backups.Client
 
             RestorePoint restorePoint = backupJob.CreateRestorePoint("Test restore point");
 
-            var archiveService = new ServerArchiveService(
+            var archiveServiceSingle = new ServerArchiveServiceSingleMode(
                 new ZipArchiver(), 
                 new IPAddress(new byte[] { 127, 0, 0, 1 }),
                 8888); 
-            archiveService.ArchiveSingleMode(restorePoint, @"D:\Test.zip");
+            archiveServiceSingle.ArchiveRestorePoint(restorePoint, @"D:\Test.zip");
 
-            archiveService.ArchiveSplitMode(restorePoint, @"D:\");
+            var archiveServiceSplit = new ServerArchiveServiceSplitMode(
+                new ZipArchiver(), 
+                new IPAddress(new byte[] { 127, 0, 0, 1 }),
+                8888); 
+            archiveServiceSplit.ArchiveRestorePoint(restorePoint, @"D:\");
             
             fileInfo1.Delete();
             fileInfo2.Delete();

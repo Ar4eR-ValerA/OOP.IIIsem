@@ -1,6 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
+using Backups.Client.Interfaces;
 using Backups.Client.ServerStorages;
 using Backups.Client.Tools;
 using Backups.Entities;
@@ -10,9 +10,9 @@ using Backups.Tools;
 
 namespace Backups.Client.Services
 {
-    public class ServerArchiveService : IArchiveService
+    public class ServerArchiveServiceSplitMode : IServerArchiveService
     {
-        public ServerArchiveService(IArchiver archiver, IPAddress ipAddress, int port)
+        public ServerArchiveServiceSplitMode(IArchiver archiver, IPAddress ipAddress, int port)
         {
             Archiver = archiver ?? throw new BackupsException("Null argument");
             IpAddress = ipAddress ?? throw new BackupsException("Null argument");
@@ -24,38 +24,13 @@ namespace Backups.Client.Services
         public int Port { get; set; }
 
         /// <summary>
-        /// Archiving files from restore point to single file that indicated in path.
-        /// </summary>
-        /// <param name="restorePoint"> Restore point which archiving. </param>
-        /// <param name="path">
-        /// Path must points to archive file, which will be created by method.
-        /// </param>
-        public void ArchiveSingleMode(RestorePoint restorePoint, string path)
-        {
-            if (path is null || restorePoint is null)
-            {
-                throw new BackupsException("Null argument");
-            }
-
-            string tempFilePath = $"temp{new FileInfo(path).Name}";
-            Archiver.ArchiveSingleMode(restorePoint.LocalFileInfos, tempFilePath);
-            
-            FileSender.SendFile(
-                new FileInfo(tempFilePath),
-                new FileServerStorage(new FileInfo(path), IpAddress, Port));
-            File.Delete(tempFilePath);
-
-            restorePoint.AddStorage(new FileServerStorage(new FileInfo(path), IpAddress, Port));
-        }
-
-        /// <summary>
         /// Archiving files from restore point to several zip files in directory that indicated in path.
         /// </summary>
         /// <param name="restorePoint"> Restore point which archiving. </param>
         /// <param name="path">
         /// Path must points to directory where zip files will be located. Directory must exists.
         /// </param>
-        public void ArchiveSplitMode(RestorePoint restorePoint, string path)
+        public void ArchiveRestorePoint(RestorePoint restorePoint, string path)
         {
             if (path is null || restorePoint is null)
             {

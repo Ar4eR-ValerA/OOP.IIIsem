@@ -23,12 +23,13 @@ namespace Backups
 
             RestorePoint restorePoint = backupJob.CreateRestorePoint("Test restore point");
 
-            var archiveService = new LocalArchiveService(new ZipArchiver());
-            archiveService.ArchiveSingleMode(
+            var archiveServiceSingle = new LocalArchiveServiceSingleMode(new ZipArchiver());
+            archiveServiceSingle.ArchiveRestorePoint(
                 restorePoint,
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip");
 
-            archiveService.ArchiveSplitMode(restorePoint, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            var archiveServiceSplit = new LocalArchiveServiceSplitMode(new ZipArchiver());
+            archiveServiceSplit.ArchiveRestorePoint(restorePoint, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
             fileInfo1.Delete();
             fileInfo2.Delete();
         }

@@ -25,15 +25,15 @@ namespace Backups.Tests
 
             RestorePoint restorePoint1 = backupJob.CreateRestorePoint("Test restore point 1");
 
-            var archiveService = new LocalArchiveService(new TestArchiver());
-            archiveService.ArchiveSplitMode(
+            var archiveService = new LocalArchiveServiceSplitMode(new TestArchiver());
+            archiveService.ArchiveRestorePoint(
                 restorePoint1,
                 "Test");
 
             backupJob.JobObject.RemoveFile(fileInfo1);
             RestorePoint restorePoint2 = backupJob.CreateRestorePoint("Test restore point 2");
 
-            archiveService.ArchiveSplitMode(
+            archiveService.ArchiveRestorePoint(
                 restorePoint2,
                 "Test");
 
@@ -55,15 +55,15 @@ namespace Backups.Tests
 
             RestorePoint restorePoint1 = backupJob.CreateRestorePoint("Test restore point 1");
 
-            var archiveService = new LocalArchiveService(new TestArchiver());
-            archiveService.ArchiveSingleMode(
+            var archiveService = new LocalArchiveServiceSingleMode(new TestArchiver());
+            archiveService.ArchiveRestorePoint(
                 restorePoint1,
                 @"Test.test");
 
             backupJob.JobObject.RemoveFile(fileInfo1);
             RestorePoint restorePoint2 = backupJob.CreateRestorePoint("Test restore point 2");
 
-            archiveService.ArchiveSingleMode(restorePoint2,
+            archiveService.ArchiveRestorePoint(restorePoint2,
                 @"Test.test");
 
             Assert.AreEqual(restorePointsAmount, backupJob.RestorePoints.Count);
