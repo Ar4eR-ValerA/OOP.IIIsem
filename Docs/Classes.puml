@@ -93,8 +93,8 @@ package Backups.Client {
 }
 
 package Backups.Server {
-    class Taker {
-        + void TakeFile(int port)
+    class Receiver {
+        + void ReceiveFile(int port)
     }
 }
 

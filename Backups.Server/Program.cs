@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            Taker.TakeFile(8888);
+            Receiver.ReceiveFile(8888);
         }
     }
 }

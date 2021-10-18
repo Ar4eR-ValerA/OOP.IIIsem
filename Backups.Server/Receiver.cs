@@ -5,9 +5,9 @@ using System.Net.Sockets;
 
 namespace Backups.Server
 {
-    public static class Taker
+    public static class Receiver
     {
-        public static void TakeFile(int port)
+        public static void ReceiveFile(int port)
         {
             var tcpListener = new TcpListener(IPAddress.Any, port);
             tcpListener.Start();
