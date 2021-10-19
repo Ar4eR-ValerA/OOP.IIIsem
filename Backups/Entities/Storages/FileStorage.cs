@@ -15,5 +15,6 @@ namespace Backups.Entities.Storages
         }
 
         public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { _fileInfo };
+        public string Path => _fileInfo.FullName;
     }
 }

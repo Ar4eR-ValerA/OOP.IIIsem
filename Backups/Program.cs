@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Backups.Entities;
 using Backups.Entities.JobObjects;
+using Backups.Entities.Storages;
 using Backups.Interfaces;
 using Backups.Services;
 using Backups.Tools;
@@ -19,17 +20,21 @@ namespace Backups
             fileInfo1.Create().Close();
             fileInfo2.Create().Close();
             IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
-            var backupJob = new BackupJob(jobObject);
+            var archiveService = new LocalArchiveService(new SingleZipArchiver());
+            var backupJob = new BackupJob(jobObject, archiveService);
 
             RestorePoint restorePoint = backupJob.CreateRestorePoint("Test restore point");
-
-            var archiveServiceSingle = new LocalArchiveServiceSingleMode(new ZipArchiver());
-            archiveServiceSingle.ArchiveRestorePoint(
+            backupJob.Archive(
                 restorePoint,
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip");
+                new FileStorage(new FileInfo(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip")));
 
-            var archiveServiceSplit = new LocalArchiveServiceSplitMode(new ZipArchiver());
-            archiveServiceSplit.ArchiveRestorePoint(restorePoint, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            backupJob.Archiver = new SplitZipArchiver();
+            backupJob.Archive(
+                restorePoint,
+                new DirectoryStorage(new DirectoryInfo(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop))));
+
             fileInfo1.Delete();
             fileInfo2.Delete();
         }

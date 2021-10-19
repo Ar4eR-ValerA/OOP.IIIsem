@@ -16,6 +16,7 @@ namespace Backups.Client.ServerStorages
         }
 
         public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { FileInfo };
+        public string Path => FileInfo.FullName;
         public FileInfo FileInfo { get; }
 
         public IPAddress IpAddress { get; }

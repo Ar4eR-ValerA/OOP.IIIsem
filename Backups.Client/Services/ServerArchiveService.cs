@@ -10,9 +10,9 @@ using Backups.Tools;
 
 namespace Backups.Client.Services
 {
-    public class ServerArchiveServiceSplitMode : IServerArchiveService
+    public class ServerArchiveService : IServerArchiveService
     {
-        public ServerArchiveServiceSplitMode(IArchiver archiver, IPAddress ipAddress, int port)
+        public ServerArchiveService(IArchiver archiver, IPAddress ipAddress, int port)
         {
             Archiver = archiver ?? throw new BackupsException("Null argument");
             IpAddress = ipAddress ?? throw new BackupsException("Null argument");
@@ -23,33 +23,27 @@ namespace Backups.Client.Services
         public IPAddress IpAddress { get; set; }
         public int Port { get; set; }
 
-        /// <summary>
-        /// Archiving files from restore point to several zip files in directory that indicated in path.
-        /// </summary>
-        /// <param name="restorePoint"> Restore point which archiving. </param>
-        /// <param name="path">
-        /// Path must points to directory where zip files will be located. Directory must exists.
-        /// </param>
-        public void ArchiveRestorePoint(RestorePoint restorePoint, string path)
+        public void ArchiveRestorePoint(RestorePoint restorePoint, IStorage storage)
         {
-            if (path is null || restorePoint is null)
+            if (storage is null || restorePoint is null)
             {
                 throw new BackupsException("Null argument");
             }
 
             string tempDirPath = "temp";
-            Archiver.ArchiveSplitMode(restorePoint.LocalFileInfos, tempDirPath);
+            Archiver.Archive(restorePoint.LocalFileInfos, tempDirPath);
             var tempDir = new DirectoryInfo(tempDirPath);
+
             foreach (FileInfo localFileInfo in tempDir.GetFiles())
             {
-                var serverFileInfo = new FileInfo(@$"{path}{localFileInfo.Name}");
-                
+                var serverFileInfo = new FileInfo(@$"{storage.Path} {localFileInfo.Name}");
+
                 FileSender.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
             }
-            
+
             tempDir.Delete(true);
 
-            restorePoint.AddStorage(new DirectoryStorage(new DirectoryInfo(path)));
+            restorePoint.AddStorage(storage);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Net;
 using Backups.Client.Services;
 using Backups.Entities;
 using Backups.Entities.JobObjects;
+using Backups.Entities.Storages;
 using Backups.Interfaces;
 using Backups.Tools;
 
@@ -21,21 +22,16 @@ namespace Backups.Client
             fileInfo2.Create().Close();
 
             IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
-            var backupJob = new BackupJob(jobObject);
+            var backupJob = new BackupJob(
+                jobObject, 
+                new ServerArchiveService(new SingleZipArchiver(), IPAddress.Parse("127.0.0.1"), 8888));
 
             RestorePoint restorePoint = backupJob.CreateRestorePoint("Test restore point");
+            
+            backupJob.Archive(restorePoint, new FileStorage(new FileInfo(@"D:\Test.zip")));
 
-            var archiveServiceSingle = new ServerArchiveServiceSingleMode(
-                new ZipArchiver(), 
-                new IPAddress(new byte[] { 127, 0, 0, 1 }),
-                8888); 
-            archiveServiceSingle.ArchiveRestorePoint(restorePoint, @"D:\Test.zip");
-
-            var archiveServiceSplit = new ServerArchiveServiceSplitMode(
-                new ZipArchiver(), 
-                new IPAddress(new byte[] { 127, 0, 0, 1 }),
-                8888); 
-            archiveServiceSplit.ArchiveRestorePoint(restorePoint, @"D:\");
+            backupJob.Archiver = new SplitZipArchiver();
+            backupJob.Archive(restorePoint, new DirectoryStorage(new DirectoryInfo(@"D:\")));
             
             fileInfo1.Delete();
             fileInfo2.Delete();

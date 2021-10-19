@@ -7,6 +7,7 @@ namespace Backups.Entities
 {
     public class RestorePoint
     {
+        // TODO: Тут не должно быть локальных файлов. Если ресторе поинт создана, то файлы уже отправлены.
         private readonly List<FileInfo> _localFileInfos;
         private readonly List<IStorage> _remoteStorages;
 
