@@ -7,38 +7,45 @@ namespace Backups.Entities
     public class BackupJob
     {
         private readonly List<RestorePoint> _restorePoints;
+        private IJobObject _jobObject;
+        private IArchiveService _archiveService;
 
         public BackupJob(IJobObject jobObject, IArchiveService archiveService)
         {
             _restorePoints = new List<RestorePoint>();
-            JobObject = jobObject ?? throw new BackupsException("Null argument");
-            ArchiveService = archiveService ?? throw new BackupsException("Null argument");
+            JobObject = jobObject;
+            ArchiveService = archiveService;
         }
 
-        public IJobObject JobObject { get; }
-        public IArchiveService ArchiveService { get; }
+        public IJobObject JobObject
+        {
+            get => _jobObject;
+            set => _jobObject = value ?? throw new BackupsException("Null argument");
+        }
+
+        public IArchiveService ArchiveService
+        {
+            get => _archiveService;
+            set => _archiveService = value ?? throw new BackupsException("Null argument");
+        }
 
         public IArchiver Archiver
         {
             get => ArchiveService.Archiver;
-            set => ArchiveService.Archiver = value;
+            set => ArchiveService.Archiver = value ?? throw new BackupsException("Null argument");
         }
 
         public IReadOnlyList<RestorePoint> RestorePoints => _restorePoints;
 
-        public RestorePoint CreateRestorePoint(string name)
+        public void ArchiveRestorePoint(RestorePoint restorePoint)
         {
-            var restorePoint = new RestorePoint(name ?? throw new BackupsException("Null argument"));
-            restorePoint.AddLocalFiles(JobObject.FileInfos);
+            if (restorePoint is null)
+            {
+                throw new BackupsException("Null argument");
+            }
 
+            ArchiveService.ArchiveRestorePoint(JobObject, restorePoint);
             _restorePoints.Add(restorePoint);
-
-            return restorePoint;
-        }
-
-        public void Archive(RestorePoint restorePoint, IStorage storage)
-        {
-            ArchiveService.ArchiveRestorePoint(restorePoint, storage);
         }
     }
 }

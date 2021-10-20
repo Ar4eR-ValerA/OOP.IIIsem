@@ -12,38 +12,49 @@ namespace Backups.Client.Services
 {
     public class ServerArchiveService : IServerArchiveService
     {
+        private IArchiver _archiver;
+        private IPAddress _address;
+
         public ServerArchiveService(IArchiver archiver, IPAddress ipAddress, int port)
         {
-            Archiver = archiver ?? throw new BackupsException("Null argument");
-            IpAddress = ipAddress ?? throw new BackupsException("Null argument");
+            Archiver = archiver;
+            IpAddress = ipAddress;
             Port = port;
         }
 
-        public IArchiver Archiver { get; set; }
-        public IPAddress IpAddress { get; set; }
+        public IArchiver Archiver
+        {
+            get => _archiver;
+            set => _archiver = value ?? throw new BackupsException("Null argument");
+        }
+
+        public IPAddress IpAddress
+        {
+            get => _address;
+            set => _address = value ?? throw new BackupsException("Null argument");
+        }
+
         public int Port { get; set; }
 
-        public void ArchiveRestorePoint(RestorePoint restorePoint, IStorage storage)
+        public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
         {
-            if (storage is null || restorePoint is null)
+            if (jobObject is null || restorePoint is null)
             {
                 throw new BackupsException("Null argument");
             }
 
             string tempDirPath = "temp";
-            Archiver.Archive(restorePoint.LocalFileInfos, tempDirPath);
+            Archiver.Archive(jobObject.FileInfos, tempDirPath);
             var tempDir = new DirectoryInfo(tempDirPath);
 
             foreach (FileInfo localFileInfo in tempDir.GetFiles())
             {
-                var serverFileInfo = new FileInfo(@$"{storage.Path} {localFileInfo.Name}");
+                var serverFileInfo = new FileInfo(@$"{restorePoint.Storage.Path} {localFileInfo.Name}");
 
                 FileSender.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
             }
 
             tempDir.Delete(true);
-
-            restorePoint.AddStorage(storage);
         }
     }
 }

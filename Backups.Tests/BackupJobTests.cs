@@ -24,16 +24,14 @@ namespace Backups.Tests
             IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
             var backupJob = new BackupJob(jobObject, new LocalArchiveService(new SplitTestArchiver()));
 
-            RestorePoint restorePoint1 = backupJob.CreateRestorePoint("Test restore point 1");
-            backupJob.Archive(restorePoint1, new DirectoryStorage(new DirectoryInfo("Test")));
+            backupJob.ArchiveRestorePoint(new RestorePoint("Test1", new DirectoryStorage(new DirectoryInfo("Test1"))));
 
             backupJob.JobObject.RemoveFile(fileInfo1);
-            RestorePoint restorePoint2 = backupJob.CreateRestorePoint("Test restore point 2");
-            backupJob.Archive(restorePoint2, new DirectoryStorage(new DirectoryInfo("Test")));
+            backupJob.ArchiveRestorePoint(new RestorePoint("Test2", new DirectoryStorage(new DirectoryInfo("Test2"))));
 
             Assert.AreEqual(restorePointsAmount, backupJob.RestorePoints.Count);
-            
-            int storagesCount = backupJob.RestorePoints.Sum(point => point.RemoteStorages.Count);
+
+            int storagesCount = backupJob.RestorePoints.Count;
             Assert.AreEqual(storagesAmount, storagesCount);
         }
 
@@ -47,16 +45,13 @@ namespace Backups.Tests
             IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
             var backupJob = new BackupJob(jobObject, new LocalArchiveService(new SingleTestArchiver()));
 
-            RestorePoint restorePoint1 = backupJob.CreateRestorePoint("Test restore point 1");
-            backupJob.Archive(restorePoint1, new FileStorage(new FileInfo("Test.test")));
+            backupJob.ArchiveRestorePoint(new RestorePoint("Test1", new FileStorage(new FileInfo("Test1.test"))));
 
             backupJob.JobObject.RemoveFile(fileInfo1);
-            RestorePoint restorePoint2 = backupJob.CreateRestorePoint("Test restore point 2");
-
-            backupJob.Archive(restorePoint2, new FileStorage(new FileInfo("Test.test")));
+            backupJob.ArchiveRestorePoint(new RestorePoint("Test2", new FileStorage(new FileInfo("Test2.test"))));
 
             Assert.AreEqual(restorePointsAmount, backupJob.RestorePoints.Count);
-            int storagesCount = backupJob.RestorePoints.Sum(point => point.RemoteStorages.Count);
+            int storagesCount = backupJob.RestorePoints.Count;
             Assert.AreEqual(storagesAmount, storagesCount);
         }
     }

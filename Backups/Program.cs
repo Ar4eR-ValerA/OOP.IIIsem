@@ -23,17 +23,16 @@ namespace Backups
             var archiveService = new LocalArchiveService(new SingleZipArchiver());
             var backupJob = new BackupJob(jobObject, archiveService);
 
-            RestorePoint restorePoint = backupJob.CreateRestorePoint("Test restore point");
-            backupJob.Archive(
-                restorePoint,
+            backupJob.ArchiveRestorePoint(new RestorePoint(
+                "Test 1",
                 new FileStorage(new FileInfo(
-                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip")));
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip"))));
 
             backupJob.Archiver = new SplitZipArchiver();
-            backupJob.Archive(
-                restorePoint,
+            backupJob.ArchiveRestorePoint(new RestorePoint(
+                "Test 2",
                 new DirectoryStorage(new DirectoryInfo(
-                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop))));
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop)))));
 
             fileInfo1.Delete();
             fileInfo2.Delete();

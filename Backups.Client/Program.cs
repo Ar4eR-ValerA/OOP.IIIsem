@@ -17,22 +17,19 @@ namespace Backups.Client
         {
             var fileInfo1 = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test1.txt");
             var fileInfo2 = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test2.txt");
-            
+
             fileInfo1.Create().Close();
             fileInfo2.Create().Close();
 
             IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
             var backupJob = new BackupJob(
-                jobObject, 
+                jobObject,
                 new ServerArchiveService(new SingleZipArchiver(), IPAddress.Parse("127.0.0.1"), 8888));
-
-            RestorePoint restorePoint = backupJob.CreateRestorePoint("Test restore point");
-            
-            backupJob.Archive(restorePoint, new FileStorage(new FileInfo(@"D:\Test.zip")));
+            backupJob.ArchiveRestorePoint(new RestorePoint("Test 1", new FileStorage(new FileInfo(@"E:\Test.zip"))));
 
             backupJob.Archiver = new SplitZipArchiver();
-            backupJob.Archive(restorePoint, new DirectoryStorage(new DirectoryInfo(@"D:\")));
-            
+            backupJob.ArchiveRestorePoint(new RestorePoint("Test 2", new DirectoryStorage(new DirectoryInfo(@"E:\"))));
+
             fileInfo1.Delete();
             fileInfo2.Delete();
         }

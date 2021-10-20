@@ -6,6 +6,6 @@ namespace Backups.Interfaces
     {
         public IArchiver Archiver { get; set; }
 
-        public void ArchiveRestorePoint(RestorePoint restorePoint, IStorage storage);
+        public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint);
     }
 }

@@ -4,11 +4,12 @@ hide empty members
 
 package Backups {
     class BackupJob {
-        + StorageMode StorageMode
-        - IJobObject JobObject
         - RestorePoint[] RestorePoints
+        + IJobObject JobObject
+        + IArchiveService ArchiveService
         
-        + RestorePoint Archive(string name)
+        + void SetArchiver(IArchiver archiver)
+        + void ArchiveRestorePoint(RestorePoint restorePoint)
     }
     
     interface IJobObject {
@@ -21,8 +22,7 @@ package Backups {
     }
     
     class RestorePoint {
-        ~ FileInfo[] LocalFileInfos
-        ~ IStorage[] Storages
+        - IStorage Storage
         - string Name
     }
     
@@ -33,30 +33,27 @@ package Backups {
     interface IArchiveService {
         + IArchiver Archiver
         
-        + ArchiveRestorePoint(RestorePoint restorePoint, string path)
+        + ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
     }
     
-    class ZipArchiver {
-        + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
-        + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
+    class SingleZipArchiver {
+    }
+    
+    class SplitZipArchiver {
+    }
+    
+    class SingleTestArchiver {
+    }
+    
+    class SplitTestArchiver {
     }
     
     interface IArchiver {
-        + void ArchiveSingleMode(FileInfo[] FileInfos, string path)
-        + void ArchiveSplitMode(FileInfo[] FileInfos, string path)
+        + void Archive(FileInfo[] FileInfos, string path)
     }
     
-    class LocalArchiveServiceSingleMode {
-        + IArchiver Archiver
-        
-        + ArchiveRestorePoint(RestorePoint restorePoint, string path)
+    class LocalArchiveService {
     }
-    
-    class LocalArchiveServiceSplitMode {
-            + IArchiver Archiver
-            
-            + ArchiveRestorePoint(RestorePoint restorePoint, string path)
-        }
     
     class FileStorage {
         + FileInfo FileInfo
@@ -104,12 +101,17 @@ package Backups.Server {
 BackupJob o-- RestorePoint
 RestorePoint o-- IStorage
 BackupJob o-- IJobObject
-RestorePoint <--> IArchiveService
+BackupJob o-- IArchiveService
 IJobObject ..> FilesJobObject
 IStorage ..> FileStorage
 IStorage ..> DirectoryStorage
 IArchiver -o IArchiveService
-IArchiver ..> ZipArchiver
+
+IArchiver ..> SingleZipArchiver
+IArchiver ..> SplitZipArchiver
+IArchiver ..> SingleTestArchiver
+IArchiver ..> SplitTestArchiver
+
 Backups --> Backups.Client
 Backups.Client --> Backups.Server
 
@@ -117,8 +119,7 @@ ServerArchiveService <-- IServerStorage
 ServerArchiveService <-- FileSender
 IServerStorage ..> FileServerStorage
 
-IArchiveService ..> LocalArchiveServiceSingleMode
-IArchiveService ..> LocalArchiveServiceSplitMode
+IArchiveService ..> LocalArchiveService
 
 
 @enduml
