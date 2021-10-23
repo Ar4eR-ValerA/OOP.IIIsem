@@ -5,11 +5,11 @@ hide empty members
 package Backups {
     class BackupJob {
         - RestorePoint[] RestorePoints
-        + IJobObject JobObject
-        + IArchiveService ArchiveService
+        - IJobObject JobObject
+        - IArchiveService ArchiveService
         
         + void SetArchiver(IArchiver archiver)
-        + void ArchiveRestorePoint(RestorePoint restorePoint)
+        + void CreateRestorePoint(RestorePoint restorePoint)
     }
     
     interface IJobObject {
@@ -18,7 +18,6 @@ package Backups {
     
 
     class FilesJobObject {
-        + FileInfo[] FileInfos
     }
     
     class RestorePoint {
@@ -31,7 +30,7 @@ package Backups {
     }
     
     interface IArchiveService {
-        + IArchiver Archiver
+        - IArchiver Archiver
         
         + ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
     }
@@ -40,12 +39,6 @@ package Backups {
     }
     
     class SplitZipArchiver {
-    }
-    
-    class SingleTestArchiver {
-    }
-    
-    class SplitTestArchiver {
     }
     
     interface IArchiver {
@@ -109,8 +102,6 @@ IArchiver -o IArchiveService
 
 IArchiver ..> SingleZipArchiver
 IArchiver ..> SplitZipArchiver
-IArchiver ..> SingleTestArchiver
-IArchiver ..> SplitTestArchiver
 
 Backups --> Backups.Client
 Backups.Client --> Backups.Server

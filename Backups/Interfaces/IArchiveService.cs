@@ -4,7 +4,7 @@ namespace Backups.Interfaces
 {
     public interface IArchiveService
     {
-        public IArchiver Archiver { get; set; }
+        public IArchiver Archiver { get; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint);
     }

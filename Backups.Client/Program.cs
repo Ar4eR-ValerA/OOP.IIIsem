@@ -22,13 +22,15 @@ namespace Backups.Client
             fileInfo2.Create().Close();
 
             IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
-            var backupJob = new BackupJob(
+            var backupJob1 = new BackupJob(
                 jobObject,
                 new ServerArchiveService(new SingleZipArchiver(), IPAddress.Parse("127.0.0.1"), 8888));
-            backupJob.ArchiveRestorePoint(new RestorePoint("Test 1", new FileStorage(new FileInfo(@"E:\Test.zip"))));
+            backupJob1.CreateRestorePoint("Test 1", new FileStorage(new FileInfo(@"E:\Test.zip")));
 
-            backupJob.Archiver = new SplitZipArchiver();
-            backupJob.ArchiveRestorePoint(new RestorePoint("Test 2", new DirectoryStorage(new DirectoryInfo(@"E:\"))));
+            var backupJob2 = new BackupJob(
+                jobObject,
+                new ServerArchiveService(new SplitZipArchiver(), IPAddress.Parse("127.0.0.1"), 8888));
+            backupJob2.CreateRestorePoint("Test 2", new DirectoryStorage(new DirectoryInfo(@"E:\")));
 
             fileInfo1.Delete();
             fileInfo2.Delete();

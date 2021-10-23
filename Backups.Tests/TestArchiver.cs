@@ -2,9 +2,9 @@
 using System.IO;
 using Backups.Interfaces;
 
-namespace Backups.Tools
+namespace Backups.Tests
 {
-    public class SplitTestArchiver : IArchiver
+    public class TestArchiver : IArchiver
     {
         public void Archive(IReadOnlyList<FileInfo> fileInfos, string path)
         {

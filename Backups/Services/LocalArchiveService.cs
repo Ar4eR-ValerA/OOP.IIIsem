@@ -6,18 +6,12 @@ namespace Backups.Services
 {
     public class LocalArchiveService : IArchiveService
     {
-        private IArchiver _archiver;
-
         public LocalArchiveService(IArchiver archiver)
         {
             Archiver = archiver;
         }
 
-        public IArchiver Archiver
-        {
-            get => _archiver;
-            set => _archiver = value ?? throw new BackupsException("Null argument");
-        }
+        public IArchiver Archiver { get; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
         {

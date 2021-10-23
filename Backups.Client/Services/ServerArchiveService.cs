@@ -12,29 +12,18 @@ namespace Backups.Client.Services
 {
     public class ServerArchiveService : IServerArchiveService
     {
-        private IArchiver _archiver;
-        private IPAddress _address;
-
         public ServerArchiveService(IArchiver archiver, IPAddress ipAddress, int port)
         {
-            Archiver = archiver;
-            IpAddress = ipAddress;
+            Archiver = archiver ?? throw new BackupsException("Null argument");
+            IpAddress = ipAddress ?? throw new BackupsException("Null argument");
             Port = port;
         }
 
-        public IArchiver Archiver
-        {
-            get => _archiver;
-            set => _archiver = value ?? throw new BackupsException("Null argument");
-        }
+        public IArchiver Archiver { get; }
 
-        public IPAddress IpAddress
-        {
-            get => _address;
-            set => _address = value ?? throw new BackupsException("Null argument");
-        }
+        public IPAddress IpAddress { get; }
 
-        public int Port { get; set; }
+        public int Port { get; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
         {
