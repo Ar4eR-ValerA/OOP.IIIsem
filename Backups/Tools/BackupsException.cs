@@ -18,10 +18,5 @@ namespace Backups.Tools
             : base(message, innerException)
         {
         }
-
-        protected BackupsException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 }

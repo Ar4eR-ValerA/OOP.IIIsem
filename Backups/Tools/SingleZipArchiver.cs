@@ -21,7 +21,7 @@ namespace Backups.Tools
 
             if (!path.EndsWith(".zip"))
             {
-                if (!new DirectoryInfo(path).Exists)
+                if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
