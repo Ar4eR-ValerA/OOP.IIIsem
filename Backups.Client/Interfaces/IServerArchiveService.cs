@@ -5,7 +5,7 @@ namespace Backups.Client.Interfaces
 {
     public interface IServerArchiveService : IArchiveService
     {
-        public IPAddress IpAddress { get; }
-        public int Port { get; }
+        IPAddress IpAddress { get; }
+        int Port { get; }
     }
 }

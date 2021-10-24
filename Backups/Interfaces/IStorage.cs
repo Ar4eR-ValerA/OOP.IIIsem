@@ -5,7 +5,7 @@ namespace Backups.Interfaces
 {
     public interface IStorage
     {
-        public IReadOnlyList<FileInfo> FileInfos { get; }
-        public string Path { get; }
+        IReadOnlyList<FileInfo> FileInfos { get; }
+        string Path { get; }
     }
 }
