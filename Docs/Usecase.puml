@@ -1,0 +1,53 @@
+﻿@startuml
+
+actor User as UserSender
+actor User as UserTaker
+
+
+package Backups {
+    usecase BackupJob
+    usecase IJobObject
+    usecase RestorePoint  
+    usecase IStorage
+    usecase FileInfo as FileStorageInfo
+    usecase FileInfo as FileJobObjectInfo
+}
+
+usecase FileInfo as FileUserInfo
+usecase IJobObject as JobObjectUser
+
+BackupJob <--> IJobObject
+BackupJob --> RestorePoint
+RestorePoint <--> IStorage
+IStorage <--> FileStorageInfo
+IJobObject <--> FileJobObjectInfo
+
+UserSender -> FileUserInfo
+FileUserInfo -> JobObjectUser
+JobObjectUser -> BackupJob
+RestorePoint --> UserTaker
+
+usecase ArchiverService
+usecase IArchiver
+
+package Backups.Server {
+    usecase Taker
+}
+
+package Backups.Client {
+    usecase ServerArchiveService
+    usecase FileSender
+    usecase FileServerStorage
+}
+
+UserTaker --> ArchiverService
+ArchiverService --> IArchiver
+UserTaker --> ServerArchiveService
+ServerArchiveService --> FileSender
+FileSender --> FileServerStorage
+
+FileServerStorage --> Taker
+
+
+
+@enduml

@@ -1,0 +1,116 @@
+﻿@startuml
+
+hide empty members
+
+package Backups {
+    class BackupJob {
+        - RestorePoint[] RestorePoints
+        - IJobObject JobObject
+        - IArchiveService ArchiveService
+        
+        + void SetArchiver(IArchiver archiver)
+        + void CreateRestorePoint(RestorePoint restorePoint)
+    }
+    
+    interface IJobObject {
+        + FileInfo[] GetFiles()
+    }
+    
+
+    class FilesJobObject {
+    }
+    
+    class RestorePoint {
+        - IStorage Storage
+        - string Name
+    }
+    
+    interface IStorage {
+        + FileInfo[] GetFileInfos()
+    }
+    
+    interface IArchiveService {
+        - IArchiver Archiver
+        
+        + ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
+    }
+    
+    class SingleZipArchiver {
+    }
+    
+    class SplitZipArchiver {
+    }
+    
+    interface IArchiver {
+        + void Archive(FileInfo[] FileInfos, string path)
+    }
+    
+    class LocalArchiveService {
+    }
+    
+    class FileStorage {
+        + FileInfo FileInfo
+    }
+    
+    class DirectoryStorage {
+        + DirectoryInfo DirectoryInfo
+    }
+}
+
+package Backups.Client {
+    class ServerArchiveService {
+        + IArchiver Archiver
+        + IPAddress IpAddress
+        + int Port
+                
+        + ArchiveRestorePoint(RestorePoint restorePoint, string path)
+    }
+    
+    class FileServerStorage {
+        + FileInfo FileInfo
+        + IPAddress IpAddress
+        + int Port
+        
+        + FileInfo[] GetFileInfos()
+    }
+    
+    interface IServerStorage {
+        + FileInfo[] GetFileInfos()
+        + IPAddress IpAddress
+        + int Port
+    }
+    
+    class FileSender {
+        + void SendFile(FileInfo localFileInfo, FileServerInfo fileServerStorage)
+    }
+}
+
+package Backups.Server {
+    class Receiver {
+        + void ReceiveFile(IPAddress ipAddress, int port)
+    }
+}
+
+BackupJob o-- RestorePoint
+RestorePoint o-- IStorage
+BackupJob o-- IJobObject
+BackupJob o-- IArchiveService
+IJobObject ..> FilesJobObject
+IStorage ..> FileStorage
+IStorage ..> DirectoryStorage
+IArchiver -o IArchiveService
+
+IArchiver ..> SingleZipArchiver
+IArchiver ..> SplitZipArchiver
+
+Backups --> Backups.Client
+Backups.Client --> Backups.Server
+
+ServerArchiveService <-- IServerStorage
+ServerArchiveService <-- FileSender
+IServerStorage ..> FileServerStorage
+
+IArchiveService ..> LocalArchiveService
+
+
+@enduml
