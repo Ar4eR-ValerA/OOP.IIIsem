@@ -11,12 +11,12 @@ namespace Backups.Entities.JobObjects
 
         public FilesJobObject(List<FileInfo> files)
         {
-            _fileInfos = files ?? throw new BackupsException("Null argument");
+            _fileInfos = files ?? throw new BackupsException("Files is null");
         }
 
         public FilesJobObject(FileInfo fileInfo)
         {
-            _fileInfos = new List<FileInfo> { fileInfo ?? throw new BackupsException("Null argument") };
+            _fileInfos = new List<FileInfo> { fileInfo ?? throw new BackupsException("FileInfo is null") };
         }
 
         public FilesJobObject()
@@ -28,12 +28,12 @@ namespace Backups.Entities.JobObjects
 
         public void AddFile(FileInfo fileInfo)
         {
-            _fileInfos.Add(fileInfo ?? throw new BackupsException("Null argument"));
+            _fileInfos.Add(fileInfo ?? throw new BackupsException("FileInfo is null"));
         }
 
         public void RemoveFile(FileInfo fileInfo)
         {
-            _fileInfos.Remove(fileInfo ?? throw new BackupsException("Null argument"));
+            _fileInfos.Remove(fileInfo ?? throw new BackupsException("FileInfo is null"));
         }
     }
 }

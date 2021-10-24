@@ -11,8 +11,8 @@ namespace Backups.Entities
         public BackupJob(IJobObject jobObject, IArchiveService archiveService)
         {
             _restorePoints = new List<RestorePoint>();
-            JobObject = jobObject ?? throw new BackupsException("Null argument");
-            ArchiveService = archiveService ?? throw new BackupsException("Null argument");
+            JobObject = jobObject ?? throw new BackupsException("JobObject is null");
+            ArchiveService = archiveService ?? throw new BackupsException("ArchiveService is null");
         }
 
         public IJobObject JobObject { get; }
@@ -25,12 +25,10 @@ namespace Backups.Entities
 
         public RestorePoint CreateRestorePoint(string name, IStorage storage)
         {
-            if (name is null || storage is null)
-            {
-                throw new BackupsException("Null argument");
-            }
+            var restorePoint = new RestorePoint(
+                name ?? throw new BackupsException("Name is null"),
+                storage ?? throw new BackupsException("Storage is null"));
 
-            var restorePoint = new RestorePoint(name, storage);
             ArchiveService.ArchiveRestorePoint(JobObject, restorePoint);
             _restorePoints.Add(restorePoint);
 

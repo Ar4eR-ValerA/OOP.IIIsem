@@ -9,9 +9,9 @@ namespace Backups.Entities.Storages
     {
         private readonly DirectoryInfo _directoryInfo;
 
-        public DirectoryStorage(DirectoryInfo directory)
+        public DirectoryStorage(DirectoryInfo directoryInfo)
         {
-            _directoryInfo = directory ?? throw new BackupsException("Null argument");
+            _directoryInfo = directoryInfo ?? throw new BackupsException("DirectoryInfo is null");
         }
 
         public IReadOnlyList<FileInfo> FileInfos => _directoryInfo.GetFiles();

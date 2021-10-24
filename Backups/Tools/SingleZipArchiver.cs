@@ -9,9 +9,14 @@ namespace Backups.Tools
     {
         public void Archive(IReadOnlyList<FileInfo> fileInfos, string path)
         {
-            if (path is null || fileInfos is null)
+            if (path is null)
             {
-                throw new BackupsException("Null argument");
+                throw new BackupsException("Path is null");
+            }
+
+            if (fileInfos is null)
+            {
+                throw new BackupsException("FileInfos is null");
             }
 
             if (!path.EndsWith(".zip"))
@@ -38,7 +43,7 @@ namespace Backups.Tools
 
         private static void SafeCreateDirectory(string path)
         {
-            if (Directory.Exists(path))
+            if (Directory.Exists(path ?? throw new BackupsException("Path is null")))
             {
                 Directory.Delete(path, true);
             }
@@ -48,7 +53,7 @@ namespace Backups.Tools
 
         private static void SafeCreateZipFile(string targetPath, string zipPath)
         {
-            if (File.Exists(zipPath))
+            if (File.Exists(zipPath ?? throw new BackupsException("ZipPath is null")))
             {
                 File.Delete(zipPath);
             }

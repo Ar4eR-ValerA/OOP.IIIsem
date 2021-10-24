@@ -9,10 +9,16 @@ namespace Backups.Client.Tools
     {
         public static void SendFile(FileInfo localFileInfo, FileServerStorage fileServerStorage)
         {
-            if (localFileInfo is null || fileServerStorage is null)
+            if (fileServerStorage is null)
             {
-                throw new BackupsException("Null argument");
+                throw new BackupsException("FileServerStorage is null");
             }
+
+            if (localFileInfo is null)
+            {
+                throw new BackupsException("LocalFileInfo is null");
+            }
+
             var tcpClient = new TcpClient(fileServerStorage.IpAddress.ToString(), fileServerStorage.Port);
             byte[] bytes = File.ReadAllBytes(localFileInfo.FullName);
 
@@ -24,7 +30,7 @@ namespace Backups.Client.Tools
             streamWriter.Flush();
 
             tcpClient.Client.SendFile(localFileInfo.FullName);
-            
+
             streamWriter.Close();
             tcpClient.Close();
         }

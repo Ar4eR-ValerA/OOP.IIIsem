@@ -14,8 +14,8 @@ namespace Backups.Client.Services
     {
         public ServerArchiveService(IArchiver archiver, IPAddress ipAddress, int port)
         {
-            Archiver = archiver ?? throw new BackupsException("Null argument");
-            IpAddress = ipAddress ?? throw new BackupsException("Null argument");
+            Archiver = archiver ?? throw new BackupsException("Archiver is null");
+            IpAddress = ipAddress ?? throw new BackupsException("IpAddress is null");
             Port = port;
         }
 
@@ -27,9 +27,14 @@ namespace Backups.Client.Services
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
         {
-            if (jobObject is null || restorePoint is null)
+            if (restorePoint is null)
             {
-                throw new BackupsException("Null argument");
+                throw new BackupsException("RestorePoint is null");
+            }
+            
+            if (jobObject is null)
+            {
+                throw new BackupsException("JobObject is null");
             }
 
             string tempDirPath = "temp";

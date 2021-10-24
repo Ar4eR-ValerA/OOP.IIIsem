@@ -8,7 +8,7 @@ namespace Backups.Services
     {
         public LocalArchiveService(IArchiver archiver)
         {
-            Archiver = archiver;
+            Archiver = archiver ?? throw new BackupsException("Archiver is null");
         }
 
         public IArchiver Archiver { get; }
@@ -17,7 +17,12 @@ namespace Backups.Services
         {
             if (restorePoint is null)
             {
-                throw new BackupsException("Null argument");
+                throw new BackupsException("RestorePoint is null");
+            }
+
+            if (restorePoint is null)
+            {
+                throw new BackupsException("JobObject is null");
             }
 
             Archiver.Archive(jobObject.FileInfos, restorePoint.Storage.Path);

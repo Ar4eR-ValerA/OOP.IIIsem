@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using Backups.Tools;
 
 namespace Backups.Server
 {
@@ -9,7 +10,10 @@ namespace Backups.Server
     {
         public static void ReceiveFile(IPAddress ipAddress, int port)
         {
-            var tcpListener = new TcpListener(ipAddress, port);
+            var tcpListener = new TcpListener(
+                ipAddress ?? throw new BackupsException("IpAddress is null"), 
+                port);
+            
             tcpListener.Start();
 
             while (true)

@@ -9,8 +9,8 @@ namespace Backups.Entities
     {
         public RestorePoint(string name, IStorage storage)
         {
-            Name = name ?? throw new BackupsException("Null argument");
-            Storage = storage;
+            Name = name ?? throw new BackupsException("Name is null");
+            Storage = storage ?? throw new BackupsException("Storage is null");
         }
 
         public string Name { get; }

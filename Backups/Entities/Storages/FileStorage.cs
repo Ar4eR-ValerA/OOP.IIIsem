@@ -9,9 +9,9 @@ namespace Backups.Entities.Storages
     {
         private readonly FileInfo _fileInfo;
 
-        public FileStorage(FileInfo file)
+        public FileStorage(FileInfo fileInfo)
         {
-            _fileInfo = file ?? throw new BackupsException("Null argument");
+            _fileInfo = fileInfo ?? throw new BackupsException("FileInfo is null");
         }
 
         public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { _fileInfo };

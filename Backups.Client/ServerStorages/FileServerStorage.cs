@@ -10,9 +10,9 @@ namespace Backups.Client.ServerStorages
     {
         public FileServerStorage(FileInfo fileInfo, IPAddress ipAddress, int port)
         {
-            IpAddress = ipAddress ?? throw new BackupsException("Null argument");
+            IpAddress = ipAddress ?? throw new BackupsException("IpAddress is null");
             Port = port;
-            FileInfo = fileInfo ?? throw new BackupsException("Null argument");
+            FileInfo = fileInfo ?? throw new BackupsException("FileInfo is null");
         }
 
         public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { FileInfo };
