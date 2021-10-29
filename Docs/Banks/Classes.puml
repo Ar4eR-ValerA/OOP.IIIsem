@@ -1,0 +1,55 @@
+﻿@startuml
+
+hide empty members
+
+class CentralBank {
+    + map<GUID, Transaction> Transactions { get; }
+    + map<GUID, Bank> Banks { get; }
+    + map<GUID, Client> Client { get; }
+
+    + GUID Transaction(Bill from, Bill to, ITradeObject tradeObject())
+    + void CancelTransaction(GUID, gUID)
+    + GUID RegisterClient(Client client)
+    + GUID RegisterBank(Bank bank)
+    + GUID OpenBill(Bank bank, Client client)
+}
+
+class Bank {
+    ~ GUID GUID { get; set; }
+    + map<GUID, Bill> Bills { get; }
+    + GUID OpenBill(Client client)
+}
+
+class Bill {
+    ~ GUID GUID { get; set; }
+    ~ GUID Client { get; set; }
+    ~ ITradeObject tradeObject { get; set; }
+}
+
+interface ITradeObject {
+    + int Amount { get; }
+
+    + ITradeObject +(ITradeObject tradeObject)
+    + ITradeObject -(ITradeObject tradeObject)
+}
+
+class Dollars implements ITradeObject {
+}
+
+class Client {
+    ~ GUID GUID { get; set; }
+}
+
+class Transaction {
+    ~ GUID GUID { get; set; }
+}
+
+CentralBank o-- Bank
+Bank o-- Bill
+Bill o-- ITradeObject
+
+CentralBank o-- Client
+
+CentralBank o-- Transaction
+
+@enduml
