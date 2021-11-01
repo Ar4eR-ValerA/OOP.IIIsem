@@ -3,53 +3,67 @@
 hide empty members
 
 class CentralBank {
-    + map<GUID, Transaction> Transactions { get; }
-    + map<GUID, Bank> Banks { get; }
-    + map<GUID, Client> Client { get; }
+    + ICentralBankRepository Repository { get; }
+    + List<Guid> TransactionsIds { get; }
+    + List<Guid> BanksIds { get; }
+    + List<Guid> ClientsIds { get; }
+    + List<Guid> BillsIds { get; }
 
-    + GUID Transaction(Bill from, Bill to, ITradeObject tradeObject())
-    + void CancelTransaction(GUID, gUID)
-    + GUID RegisterClient(Client client)
-    + GUID RegisterBank(Bank bank)
-    + GUID OpenBill(Bank bank, Client client)
+    + Guid MakeTransaction(Guid from, Guid to, int amount)
+    + void CancelTransaction(Guid guid)
+    + Guid RegisterClient(Client client)
+    + Guid RegisterBank(Bank bank)
+    + Guid OpenBill(Guid bankId, Guid clientId, ITradeObject tradeObject)
 }
 
 class Bank {
-    ~ GUID GUID { get; set; }
-    + map<GUID, Bill> Bills { get; }
-    + GUID OpenBill(Client client)
+    + Guid Id { get; }
+    + string Name { get; }
+    + Guid OpenBill(Client client)
 }
 
 class Bill {
-    ~ GUID GUID { get; set; }
-    ~ GUID Client { get; set; }
-    ~ ITradeObject tradeObject { get; set; }
+    + Guid Id { get; }
+    + Guid BankId { get; }
+    + Guid ClientId { get; }
+    + decimal Money { get; }
 }
 
-interface ITradeObject {
-    + int Amount { get; }
+interface ICentralBankRepository {
+    + List<Client> Clients { get; }
+    + List<Bank> Banks { get; }
+    + List<Transaction> Transactions { get; }
+    + List<Bill> Bills { get; }
 
-    + ITradeObject +(ITradeObject tradeObject)
-    + ITradeObject -(ITradeObject tradeObject)
+    + void AddClient(Client client)
+    + void AddBank(Bank bank)
+    + void AddTransaction(Transaction transaction)
+    + void AddBill(Bill bill)
 }
 
-class Dollars implements ITradeObject {
+class CentralBankBd implements ICentralBankRepository {
+    - CentralBankContext CentralBankContext { get; }
 }
 
 class Client {
-    ~ GUID GUID { get; set; }
+    + Guid Id { get; }
+    + string Name { get; }
+    + string Surname { get; }
 }
 
 class Transaction {
-    ~ GUID GUID { get; set; }
+    + Guid Id { get; }
+    + Guid From { get; }
+    + Guid To { get; }
 }
 
 CentralBank o-- Bank
 Bank o-- Bill
-Bill o-- ITradeObject
 
 CentralBank o-- Client
 
 CentralBank o-- Transaction
+
+CentralBank o-- ICentralBankRepository
 
 @enduml
