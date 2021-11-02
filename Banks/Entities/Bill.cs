@@ -20,6 +20,6 @@ namespace Banks.Entities
         public Guid Id { get; private set; }
         public Guid BankId { get; private set; }
         public Guid ClientId { get; private set; }
-        public decimal Money { get; private set; }
+        public decimal Money { get; internal set; }
     }
 }

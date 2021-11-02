@@ -9,10 +9,10 @@ class CentralBank {
     + List<Guid> ClientsIds { get; }
     + List<Guid> BillsIds { get; }
 
-    + Guid MakeTransaction(Guid from, Guid to, int amount)
+    + Guid MakeTransaction(Guid billFrom, Guid billTo, int amount)
     + void CancelTransaction(Guid guid)
-    + Guid RegisterClient(Client client)
-    + Guid RegisterBank(Bank bank)
+    + void RegisterClient(string name, string surname)
+    + void RegisterBank(string nme)
     + Guid OpenBill(Guid bankId, Guid clientId, ITradeObject tradeObject)
 }
 

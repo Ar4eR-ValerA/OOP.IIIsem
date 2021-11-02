@@ -1,6 +1,6 @@
-﻿using Banks.Contexts;
+﻿using System;
+using Banks.Contexts;
 using Banks.Entities;
-using Banks.Repositories;
 
 namespace Banks
 {
@@ -8,14 +8,18 @@ namespace Banks
     {
         private static void Main()
         {
-            var db = new CentralBankContext("file.db");
-            var bank = new Bank("ads");
-            var client = new Client("ads", "fd");
-            var centralBank = new CentralBank(new CentralBankDb(db));
-            centralBank.Repository.AddBank(bank);
-            centralBank.Repository.AddClient(client);
-            centralBank.OpenBill(bank.Id, client.Id, 10);
-            db.SaveChanges();
+            var centralBank = new CentralBank(new CentralBankContext("file.db"));
+
+            Guid bankId = centralBank.RegisterBank("Valera's BANK");
+            Guid clientId = centralBank.RegisterClient("Valera", "Shevchenko");
+
+            Guid bill1Id = centralBank.OpenBill(bankId, clientId, 100);
+            Guid bill2Id = centralBank.OpenBill(bankId, clientId, 200);
+
+            centralBank.MakeTransaction(bill1Id, bill2Id, 5);
+            Guid transactionId = centralBank.MakeTransaction(bill1Id, bill2Id, 40);
+
+            centralBank.CancelTransaction(transactionId);
         }
     }
 }
