@@ -1,4 +1,7 @@
 ﻿using Banks.Entities;
+using Banks.Entities.Bills;
+using Banks.Models;
+using Banks.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace Banks.Contexts
@@ -7,20 +10,32 @@ namespace Banks.Contexts
     {
         public CentralBankContext(string fileName)
         {
-            FileName = fileName;
+            FileName = fileName ?? throw new BanksException("File name is null");
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
         internal DbSet<Client> Clients { get; set; }
         internal DbSet<Bank> Banks { get; set; }
         internal DbSet<Transaction> Transactions { get; set; }
-        internal DbSet<Bill> Bills { get; set; }
+        internal DbSet<BaseBill> Bills { get; set; }
+        internal DbSet<DebitBill> DebitBills { get; set; }
+        internal DbSet<DepositBill> DepositBills { get; set; }
+        internal DbSet<CreditBill> CreditBills { get; set; }
+        internal DbSet<Notification> Notifications { get; set; }
 
         private string FileName { get; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite($"Filename={FileName}");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Bank>()
+                .HasMany("_depositMoneyGaps");
+            modelBuilder.Entity<Bank>().HasMany("_clients");
         }
     }
 }

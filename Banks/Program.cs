@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Banks.Contexts;
 using Banks.Entities;
+using Banks.Models;
+using Banks.Models.Infos;
+using Banks.Ui;
 
 namespace Banks
 {
@@ -8,18 +12,53 @@ namespace Banks
     {
         private static void Main()
         {
-            var centralBank = new CentralBank(new CentralBankContext("file.db"));
+            var centralBank = new CentralBank(new CentralBankContext("file.db"), DateTime.Now);
 
-            Guid bankId = centralBank.RegisterBank("Valera's BANK");
-            Guid clientId = centralBank.RegisterClient("Valera", "Shevchenko");
+            var bankInfo1 = new BankInfo(
+                "Sber",
+                3,
+                7,
+                -800000,
+                new List<DepositMoneyGap>
+                {
+                    new DepositMoneyGap(100, 200, 2),
+                    new DepositMoneyGap(200, 20000, 5),
+                },
+                5,
+                200000);
 
-            Guid bill1Id = centralBank.OpenBill(bankId, clientId, 100);
-            Guid bill2Id = centralBank.OpenBill(bankId, clientId, 200);
+            var bankInfo2 = new BankInfo(
+                "Tinkoff",
+                5,
+                9,
+                -100000,
+                new List<DepositMoneyGap>
+                {
+                    new DepositMoneyGap(100, 2000, 3),
+                    new DepositMoneyGap(2000, 25000, 8),
+                },
+                8,
+                4000);
 
-            centralBank.MakeTransaction(bill1Id, bill2Id, 5);
-            Guid transactionId = centralBank.MakeTransaction(bill1Id, bill2Id, 40);
+            var bankInfo3 = new BankInfo(
+                "Alpha",
+                2,
+                3,
+                -15000,
+                new List<DepositMoneyGap>
+                {
+                    new DepositMoneyGap(100, 20000, 5),
+                    new DepositMoneyGap(20000, 800000, 10),
+                },
+                5,
+                1000);
 
-            centralBank.CancelTransaction(transactionId);
+            centralBank.RegisterBank(bankInfo1);
+            centralBank.RegisterBank(bankInfo2);
+            centralBank.RegisterBank(bankInfo3);
+
+            var ui = new UiService(centralBank);
+            ui.Run();
         }
     }
 }

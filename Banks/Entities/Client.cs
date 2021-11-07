@@ -1,24 +1,47 @@
 ﻿using System;
+using Banks.Models.Infos;
 using Banks.Tools;
 
 namespace Banks.Entities
 {
     public class Client
     {
-        public Client(string name, string surname)
+        public Client(ClientInfo clientInfo)
         {
-            Name = name ?? throw new BanksException("Name is null");
-            Surname = surname ?? throw new BanksException("Surname is null");
+            if (clientInfo is null)
+            {
+                throw new BanksException("Client's info is null");
+            }
+
+            Name = clientInfo.Name;
+            Surname = clientInfo.Surname;
             Id = Guid.NewGuid();
+            EnableNotification = false;
+            Address = clientInfo.Address;
+            Passport = clientInfo.Passport;
+
+            if (Address is null || Passport == 0)
+            {
+                Reliable = false;
+            }
+            else
+            {
+                Reliable = true;
+            }
         }
 
-        public Client()
+        internal Client()
         {
             Id = Guid.NewGuid();
+            Reliable = false;
         }
 
+        public bool Reliable { get; internal set; }
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Surname { get; private set; }
+        public string Address { get; internal set; }
+        public int Passport { get; internal set; }
+        public bool EnableNotification { get; internal set; }
     }
 }
