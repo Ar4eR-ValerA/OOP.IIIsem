@@ -11,7 +11,6 @@ namespace Banks.Contexts
         public CentralBankContext(string fileName)
         {
             FileName = fileName ?? throw new BanksException("File name is null");
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -28,7 +27,7 @@ namespace Banks.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Filename={FileName}");
+            optionsBuilder.UseInMemoryDatabase($"Filename={FileName}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

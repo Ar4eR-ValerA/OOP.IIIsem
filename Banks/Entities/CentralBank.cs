@@ -24,14 +24,19 @@ namespace Banks.Entities
         public IReadOnlyList<Transaction> Transactions => CentralBankContext.Transactions.ToList();
         private CentralBankContext CentralBankContext { get; }
 
-        public Bank GetBank(Guid bankId)
+        public Bank FindBank(Guid bankId)
         {
             return CentralBankContext.Banks.Find(bankId);
         }
 
-        public BaseBill GetBill(Guid billId)
+        public BaseBill FindBill(Guid billId)
         {
             return CentralBankContext.Bills.Find(billId);
+        }
+
+        public Client FindClient(Guid clientId)
+        {
+            return CentralBankContext.Clients.Find(clientId);
         }
 
         public Guid MakeTransaction(Guid billFromId, Guid billToId, decimal money)
@@ -51,12 +56,14 @@ namespace Banks.Entities
 
             if (!billFrom.Reliable && money > billFrom.UnreliableLimit)
             {
-                throw new BanksException("BillFrom has Unreliable limit");
+                throw new BanksException(
+                    $"BillFrom has Unreliable limit\nLimit: {billFrom.UnreliableLimit}\nTried: {money}");
             }
 
             if (!billTo.Reliable && money > billTo.UnreliableLimit)
             {
-                throw new BanksException("BillTo has Unreliable limit");
+                throw new BanksException(
+                    "BillTo has Unreliable limit\nLimit: {billFrom.UnreliableLimit}\nTried: {money}");
             }
 
             billFrom.Money -= money;
@@ -293,7 +300,41 @@ namespace Banks.Entities
             CentralBankContext.SaveChanges();
         }
 
-        public void ServiceBill(BaseBill bill, DateTime dateNow)
+        public void EnableNotification(Guid clientId)
+        {
+            Client client = CentralBankContext.Clients.Find(clientId);
+            client.EnableNotification = true;
+            CentralBankContext.Clients.Update(client);
+
+            CentralBankContext.SaveChanges();
+        }
+
+        public void ChangeBankInfo(Guid bankId, BankInfo bankInfo)
+        {
+            if (bankInfo is null)
+            {
+                throw new BanksException("Bank's info is null");
+            }
+
+            Bank bank = CentralBankContext.Banks.Find(bankId);
+            bank.ChangeInfo(bankInfo);
+
+            CentralBankContext.Banks.Update(bank);
+
+            foreach (Client client in bank.Clients)
+            {
+                if (!client.EnableNotification) continue;
+
+                CentralBankContext.Notifications.Add(new Notification(
+                    client.Id,
+                    $"Conditions of your bank: {bank.Id} has changed, please check conditions",
+                    DateNow));
+            }
+
+            CentralBankContext.SaveChanges();
+        }
+
+        private void ServiceBill(BaseBill bill, DateTime dateNow)
         {
             if (bill is null)
             {
@@ -321,40 +362,6 @@ namespace Banks.Entities
             if (bill.Money < 0)
             {
                 MakeBankTransaction(bill.BankId, bill.Id, -bill.Commission);
-            }
-
-            CentralBankContext.SaveChanges();
-        }
-
-        public void EnableNotification(Guid clientId)
-        {
-            Client client = CentralBankContext.Clients.Find(clientId);
-            client.EnableNotification = true;
-            CentralBankContext.Clients.Update(client);
-
-            CentralBankContext.SaveChanges();
-        }
-
-        public void ChangeBankInfo(Guid bankId, BankInfo bankInfo, DateTime dateNow)
-        {
-            if (bankInfo is null)
-            {
-                throw new BanksException("Bank's info is null");
-            }
-
-            Bank bank = CentralBankContext.Banks.Find(bankId);
-            bank.ChangeInfo(bankInfo);
-
-            CentralBankContext.Banks.Update(bank);
-
-            foreach (Client client in bank.Clients)
-            {
-                if (!client.EnableNotification) continue;
-
-                CentralBankContext.Notifications.Add(new Notification(
-                    client.Id,
-                    $"Conditions of your bank: {bank.Id} has changed, please check conditions",
-                    dateNow));
             }
 
             CentralBankContext.SaveChanges();

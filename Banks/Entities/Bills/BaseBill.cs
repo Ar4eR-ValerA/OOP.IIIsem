@@ -14,7 +14,8 @@ namespace Banks.Entities.Bills
             decimal percent,
             decimal commission,
             decimal limit,
-            DateTime endDate)
+            DateTime endDate,
+            decimal unreliableLimit)
         {
             Id = Guid.NewGuid();
             BankId = bankId;
@@ -26,6 +27,7 @@ namespace Banks.Entities.Bills
             Percent = percent;
             Commission = commission;
             EndDate = endDate;
+            UnreliableLimit = unreliableLimit;
         }
 
         public BaseBill()

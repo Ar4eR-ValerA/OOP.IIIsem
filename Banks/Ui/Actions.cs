@@ -65,8 +65,8 @@ namespace Banks.Ui
         {
             AnsiConsole.Clear();
 
-            Table bankTable = _tableCreator.CreateBankPersonalTable(centralBank.GetBank(bankId));
-            _tableFiller.FillBankPersonalTable(bankTable, centralBank.GetBank(bankId));
+            Table bankTable = _tableCreator.CreateBankPersonalTable(centralBank.FindBank(bankId));
+            _tableFiller.FillBankPersonalTable(bankTable, centralBank.FindBank(bankId));
 
             AnsiConsole.Write(bankTable);
 
@@ -77,8 +77,8 @@ namespace Banks.Ui
         {
             AnsiConsole.Clear();
 
-            Table billTable = _tableCreator.CreateBillPersonalTable(centralBank.GetBill(billId));
-            _tableFiller.FillBillPersonalTable(billTable, centralBank.GetBill(billId));
+            Table billTable = _tableCreator.CreateBillPersonalTable(centralBank.FindBill(billId));
+            _tableFiller.FillBillPersonalTable(billTable, centralBank.FindBill(billId));
 
             AnsiConsole.Write(billTable);
 

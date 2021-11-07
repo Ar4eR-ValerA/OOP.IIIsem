@@ -28,6 +28,7 @@ namespace Banks.Entities
             _clients = new List<Client>();
             Id = Guid.NewGuid();
             BillDurationYears = bankInfo.BillDurationYears;
+            UnreliableLimit = bankInfo.UnreliableLimit;
         }
 
         public Bank()
@@ -74,6 +75,10 @@ namespace Banks.Entities
 
             Name = bankInfo.Name;
             DebitPercent = bankInfo.DebitPercent;
+
+            _depositMoneyGaps.Clear();
+            _depositMoneyGaps.AddRange(bankInfo.DepositMoneyGaps);
+
             _depositMoneyGaps = bankInfo.DepositMoneyGaps;
             CreditCommission = bankInfo.CreditCommission;
             Limit = bankInfo.Limit;

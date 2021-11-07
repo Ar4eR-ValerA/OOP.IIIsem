@@ -6,7 +6,15 @@ namespace Banks.Entities.Bills
     public class DebitBill : BaseBill
     {
         internal DebitBill(DebitBillInfo billInfo)
-            : base(billInfo.BankId, billInfo.ClientId, billInfo.Money, billInfo.Percent, 0, 0, billInfo.EndDate)
+            : base(
+                billInfo.BankId,
+                billInfo.ClientId,
+                billInfo.Money,
+                billInfo.Percent,
+                0,
+                0,
+                billInfo.EndDate,
+                billInfo.UnreliableLimit)
         {
             OpenDate = DateTime.Now;
             DailyProfits = 0;

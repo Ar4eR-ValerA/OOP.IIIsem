@@ -13,7 +13,8 @@ namespace Banks.Entities.Bills
                 0,
                 billInfo.Commission,
                 billInfo.Limit,
-                billInfo.EndDate)
+                billInfo.EndDate,
+                billInfo.UnreliableLimit)
         {
             OpenDate = DateTime.Now;
             DailyProfits = 0;
