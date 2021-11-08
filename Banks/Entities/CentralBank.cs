@@ -22,6 +22,7 @@ namespace Banks.Entities
         public IReadOnlyList<Client> Clients => CentralBankContext.Clients.ToList();
         public IReadOnlyList<BaseBill> Bills => CentralBankContext.Bills.ToList();
         public IReadOnlyList<Transaction> Transactions => CentralBankContext.Transactions.ToList();
+        public IReadOnlyList<Notification> Notifications => CentralBankContext.Notifications.ToList();
         private CentralBankContext CentralBankContext { get; }
 
         public Bank FindBank(Guid bankId)
@@ -42,6 +43,11 @@ namespace Banks.Entities
         public Transaction FindTransaction(Guid transactionId)
         {
             return CentralBankContext.Transactions.Find(transactionId);
+        }
+
+        public Notification FindNotification(Guid notificationId)
+        {
+            return CentralBankContext.Notifications.Find(notificationId);
         }
 
         public Guid MakeTransaction(Guid billFromId, Guid billToId, decimal money)

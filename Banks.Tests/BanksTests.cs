@@ -186,7 +186,7 @@ namespace Banks.Tests
             Assert.AreEqual(true, _centralBank.FindBill(billId1).Reliable);
             Assert.AreEqual(true, _centralBank.FindBill(billId2).Reliable);
         }
-        
+
         [Test]
         public void MakeInvalidTransaction_ThrowException()
         {
@@ -216,7 +216,35 @@ namespace Banks.Tests
             {
                 _centralBank.MakeTransaction(billId1, billId2, 150);
             });
+        }
 
+        [Test]
+        public void EnableNotifications_NotificationsSending()
+        {
+            var bankInfo = new BankInfo(
+                "Sber",
+                3,
+                7,
+                -800000,
+                new List<DepositMoneyGap>
+                {
+                    new DepositMoneyGap(100, 200, 2),
+                    new DepositMoneyGap(200, 20000, 5),
+                },
+                5,
+                200000);
+            Guid bankId = _centralBank.RegisterBank(bankInfo);
+
+            var clientInfo1 = new ClientInfo("Valera", "Shevchenko");
+            Guid clientId1 = _centralBank.RegisterClient(clientInfo1);
+            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId1, 100));
+
+            _centralBank.EnableNotification(clientId1);
+
+            bankInfo.CreditCommission = 9;
+            _centralBank.ChangeBankInfo(bankId, bankInfo);
+
+            Assert.AreEqual(1, _centralBank.Notifications.Count);
         }
     }
 }
