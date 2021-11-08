@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using Banks.Entities;
 using Banks.Entities.Bills;
@@ -10,7 +9,7 @@ namespace Banks.Ui.Tools
 {
     public class TableFiller
     {
-        public void FillMainTable(Table banksTable, Table billsTable, CentralBank centralBank)
+        public void FillMainTable(Table banksTable, Table billsTable, Table transactionsTable, CentralBank centralBank)
         {
             foreach (Bank bank in centralBank.Banks)
             {
@@ -19,7 +18,15 @@ namespace Banks.Ui.Tools
 
             foreach (BaseBill bill in centralBank.Bills)
             {
-                billsTable.AddRow(bill.GetType().ToString().Split(".").Last(), bill.Id.ToString());
+                billsTable.AddRow(
+                    centralBank.FindClient(bill.ClientId).Name,
+                    bill.GetType().ToString().Split(".").Last(),
+                    bill.Id.ToString());
+            }
+
+            foreach (Transaction transaction in centralBank.Transactions)
+            {
+                transactionsTable.AddRow(transaction.Id.ToString());
             }
         }
 
@@ -56,6 +63,14 @@ namespace Banks.Ui.Tools
                 bill.Percent.ToString(CultureInfo.InvariantCulture),
                 bill.Commission.ToString(CultureInfo.InvariantCulture),
                 bill.Limit.ToString(CultureInfo.InvariantCulture));
+        }
+
+        public void FillTransactionPersonalTable(Table transactionTable, Transaction transaction)
+        {
+            transactionTable.AddRow(
+                transaction.From.ToString(),
+                transaction.To.ToString(),
+                transaction.Money.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

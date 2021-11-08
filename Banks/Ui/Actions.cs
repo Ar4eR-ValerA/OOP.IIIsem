@@ -24,9 +24,10 @@ namespace Banks.Ui
             Table mainTable;
             Table banksTable;
             Table billsTable;
+            Table transactionsTable;
 
-            (mainTable, banksTable, billsTable) = _tableCreator.CreateMainTable();
-            _tableFiller.FillMainTable(banksTable, billsTable, centralBank);
+            (mainTable, banksTable, billsTable, transactionsTable) = _tableCreator.CreateMainTable();
+            _tableFiller.FillMainTable(banksTable, billsTable, transactionsTable, centralBank);
 
             AnsiConsole.Write(mainTable);
         }
@@ -85,12 +86,30 @@ namespace Banks.Ui
             _asker.AskExit(string.Empty);
         }
 
+        public void ShowTransaction(CentralBank centralBank, Guid transactionId)
+        {
+            AnsiConsole.Clear();
+
+            Table transactionTable =
+                _tableCreator.CreateTransactionPersonalTable(centralBank.FindTransaction(transactionId));
+            _tableFiller.FillTransactionPersonalTable(transactionTable, centralBank.FindTransaction(transactionId));
+
+            AnsiConsole.Write(transactionTable);
+
+            _asker.AskExit(string.Empty);
+        }
+
         public void RewindTime(CentralBank centralBank, int monthAmount)
         {
             DateTime targetDate = centralBank.DateNow;
             targetDate = targetDate.AddMonths(monthAmount);
 
             centralBank.RewindTime(targetDate);
+        }
+
+        public void MakeTransaction(CentralBank centralBank, Guid billFrom, Guid billTo, decimal money)
+        {
+            centralBank.MakeTransaction(billFrom, billTo, money);
         }
     }
 }

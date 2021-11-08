@@ -39,6 +39,11 @@ namespace Banks.Entities
             return CentralBankContext.Clients.Find(clientId);
         }
 
+        public Transaction FindTransaction(Guid transactionId)
+        {
+            return CentralBankContext.Transactions.Find(transactionId);
+        }
+
         public Guid MakeTransaction(Guid billFromId, Guid billToId, decimal money)
         {
             if (CentralBankContext.Bills.Find(billFromId) is null)

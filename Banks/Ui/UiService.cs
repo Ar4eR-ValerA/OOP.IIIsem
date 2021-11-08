@@ -47,8 +47,14 @@ namespace Banks.Ui
                     "show bill",
                     () => _executor.ExecuteShowBill(_centralBank)),
                 new Command(
+                    "show transaction",
+                    () => _executor.ExecuteShowTransaction(_centralBank)),
+                new Command(
                     "rewind time",
                     () => _executor.ExecuteRewindTime(_centralBank)),
+                new Command(
+                    "make transaction",
+                    () => _executor.ExecuteMakeTransaction(_centralBank, _clientId)),
                 new Command("exit"),
             };
 

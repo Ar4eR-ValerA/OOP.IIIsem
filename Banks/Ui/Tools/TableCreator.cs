@@ -7,25 +7,31 @@ namespace Banks.Ui.Tools
 {
     public class TableCreator
     {
-        public (Table, Table, Table) CreateMainTable()
+        public (Table, Table, Table, Table) CreateMainTable()
         {
             var mainTable = new Table();
             var banksTable = new Table();
             var billsTable = new Table();
+            var transactionsTable = new Table();
 
             mainTable.AddColumn("Banks");
             mainTable.AddColumn("Bills");
-            mainTable.AddRow(banksTable, billsTable);
+            mainTable.AddColumn("Transactions");
+            mainTable.AddRow(banksTable, billsTable, transactionsTable);
 
             banksTable.AddColumn("Name:");
             banksTable.AddColumn("id:");
             banksTable.Border = TableBorder.None;
 
+            billsTable.AddColumn("owner:");
             billsTable.AddColumn("Type:");
             billsTable.AddColumn("id:");
             billsTable.Border = TableBorder.None;
 
-            return (mainTable, banksTable, billsTable);
+            transactionsTable.AddColumn("id:");
+            transactionsTable.Border = TableBorder.None;
+
+            return (mainTable, banksTable, billsTable, transactionsTable);
         }
 
         public Table CreateBankPersonalTable(Bank bank)
@@ -48,12 +54,12 @@ namespace Banks.Ui.Tools
 
         public Table CreateBillPersonalTable(BaseBill bill)
         {
-            var bankTable = new Table
+            var billTable = new Table
             {
                 Title = new TableTitle($"{bill.GetType().ToString().Split(".").Last()} id: {bill.Id}"),
             };
 
-            bankTable.AddColumns(
+            billTable.AddColumns(
                 "Bank id",
                 "Client id",
                 "Open date",
@@ -63,7 +69,22 @@ namespace Banks.Ui.Tools
                 "Commission",
                 "Limit");
 
-            return bankTable;
+            return billTable;
+        }
+
+        public Table CreateTransactionPersonalTable(Transaction transaction)
+        {
+            var transactionTable = new Table
+            {
+                Title = new TableTitle($"id: {transaction.Id}"),
+            };
+
+            transactionTable.AddColumns(
+                "Bill from",
+                "Bill to",
+                "Money");
+
+            return transactionTable;
         }
     }
 }

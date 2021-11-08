@@ -33,7 +33,28 @@ namespace Banks.Ui.Tools
         public Guid InputBillId(IEnumerable<Guid> bills)
         {
             return _asker.AskChoices(
-                "Enter id of bank:",
+                "Enter id of bill:",
+                bills);
+        }
+
+        public Guid InputTransactionId(IEnumerable<Guid> transactions)
+        {
+            return _asker.AskChoices(
+                "Enter id of transaction:",
+                transactions);
+        }
+
+        public Guid InputBillToId(IEnumerable<Guid> bills)
+        {
+            return _asker.AskChoices(
+                "Enter id of bill, which you want to send money:",
+                bills);
+        }
+
+        public Guid InputBillFromId(IEnumerable<Guid> bills)
+        {
+            return _asker.AskChoices(
+                "Enter id of bill, where you want to debited money from:",
                 bills);
         }
 

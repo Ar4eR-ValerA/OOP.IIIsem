@@ -135,6 +135,20 @@ namespace Banks.Ui.Tools
             }
         }
 
+        public void ExecuteShowTransaction(CentralBank centralBank)
+        {
+            try
+            {
+                _actions.ShowTransaction(
+                    centralBank,
+                    _inputter.InputTransactionId(centralBank.Transactions.Select(transaction => transaction.Id)));
+            }
+            catch (BanksException exception)
+            {
+                _asker.AskExit(exception.Message);
+            }
+        }
+
         public void ExecuteShowBill(CentralBank centralBank)
         {
             try
@@ -156,6 +170,24 @@ namespace Banks.Ui.Tools
                 _actions.RewindTime(
                     centralBank,
                     _inputter.InputMonthAmount());
+            }
+            catch (BanksException exception)
+            {
+                _asker.AskExit(exception.Message);
+            }
+        }
+
+        public void ExecuteMakeTransaction(CentralBank centralBank, Guid clientId)
+        {
+            try
+            {
+                _actions.MakeTransaction(
+                    centralBank,
+                    _inputter.InputBillFromId(centralBank.Bills
+                        .Where(bill => bill.ClientId == clientId)
+                        .Select(bill => bill.Id)),
+                    _inputter.InputBillToId(centralBank.Bills.Select(bill => bill.Id)),
+                    _inputter.InputMoney());
             }
             catch (BanksException exception)
             {

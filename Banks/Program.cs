@@ -53,10 +53,13 @@ namespace Banks
                 5,
                 1000);
 
-            Guid id = centralBank.RegisterBank(bankInfo1);
+            Guid bankId1 = centralBank.RegisterBank(bankInfo1);
             centralBank.RegisterBank(bankInfo2);
             centralBank.RegisterBank(bankInfo3);
-            centralBank.ChangeBankInfo(id, bankInfo2);
+
+            var clientInfo = new ClientInfo("Max", "Shevchenko", "Dom 21", 1111);
+            Guid clientId = centralBank.RegisterClient(clientInfo);
+            centralBank.OpenBill(new DebitBillInfo(bankId1, clientId, 1000));
 
             var ui = new UiService(centralBank);
             ui.Run();
