@@ -320,6 +320,15 @@ namespace Banks.Entities
             CentralBankContext.SaveChanges();
         }
 
+        public void ForbidNotification(Guid clientId)
+        {
+            Client client = CentralBankContext.Clients.Find(clientId);
+            client.EnableNotification = false;
+            CentralBankContext.Clients.Update(client);
+
+            CentralBankContext.SaveChanges();
+        }
+
         public void ChangeBankInfo(Guid bankId, BankInfo bankInfo)
         {
             if (bankInfo is null)

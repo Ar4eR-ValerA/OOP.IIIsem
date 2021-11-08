@@ -245,6 +245,11 @@ namespace Banks.Tests
             _centralBank.ChangeBankInfo(bankId, bankInfo);
 
             Assert.AreEqual(1, _centralBank.Notifications.Count);
+
+            _centralBank.ForbidNotification(clientId1);
+            bankInfo.CreditCommission = 2;
+
+            Assert.AreEqual(1, _centralBank.Notifications.Count);
         }
     }
 }

@@ -25,9 +25,12 @@ namespace Banks.Ui
             Table banksTable;
             Table billsTable;
             Table transactionsTable;
+            Table notificationsTable;
 
-            (mainTable, banksTable, billsTable, transactionsTable) = _tableCreator.CreateMainTable();
-            _tableFiller.FillMainTable(banksTable, billsTable, transactionsTable, centralBank);
+            (mainTable, banksTable, billsTable, transactionsTable, notificationsTable) =
+                _tableCreator.CreateMainTable();
+
+            _tableFiller.FillMainTable(banksTable, billsTable, transactionsTable, notificationsTable, centralBank);
 
             AnsiConsole.Write(mainTable);
         }
@@ -99,6 +102,19 @@ namespace Banks.Ui
             _asker.AskExit(string.Empty);
         }
 
+        public void ShowNotification(CentralBank centralBank, Guid notificationId)
+        {
+            AnsiConsole.Clear();
+
+            Table notificationTable =
+                _tableCreator.CreateNotificationPersonalTable(centralBank.FindNotification(notificationId));
+            _tableFiller.FillNotificationPersonalTable(notificationTable, centralBank.FindNotification(notificationId));
+
+            AnsiConsole.Write(notificationTable);
+
+            _asker.AskExit(string.Empty);
+        }
+
         public void RewindTime(CentralBank centralBank, int monthAmount)
         {
             DateTime targetDate = centralBank.DateNow;
@@ -110,6 +126,16 @@ namespace Banks.Ui
         public void MakeTransaction(CentralBank centralBank, Guid billFrom, Guid billTo, decimal money)
         {
             centralBank.MakeTransaction(billFrom, billTo, money);
+        }
+
+        public void EnableNotifications(CentralBank centralBank, Guid clientId)
+        {
+            centralBank.EnableNotification(clientId);
+        }
+
+        public void ForbidNotifications(CentralBank centralBank, Guid clientId)
+        {
+            centralBank.EnableNotification(clientId);
         }
     }
 }

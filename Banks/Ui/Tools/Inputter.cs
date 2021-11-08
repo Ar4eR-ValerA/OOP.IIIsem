@@ -58,6 +58,11 @@ namespace Banks.Ui.Tools
                 bills);
         }
 
+        public Guid InputNotificationId(IEnumerable<Guid> notifications)
+        {
+            return _asker.AskChoices("Enter id of notification", notifications);
+        }
+
         public int InputMoney()
         {
             return _asker.AskInt("Enter how mush money transfer to bill:\n");

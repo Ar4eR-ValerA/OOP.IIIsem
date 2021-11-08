@@ -149,13 +149,31 @@ namespace Banks.Ui.Tools
             }
         }
 
-        public void ExecuteShowBill(CentralBank centralBank)
+        public void ExecuteShowBill(CentralBank centralBank, Guid clientId)
         {
             try
             {
                 _actions.ShowBill(
                     centralBank,
-                    _inputter.InputBillId(centralBank.Bills.Select(bill => bill.Id)));
+                    _inputter.InputBillId(centralBank.Bills
+                        .Where(bill => bill.Id == clientId)
+                        .Select(bill => bill.Id)));
+            }
+            catch (BanksException exception)
+            {
+                _asker.AskExit(exception.Message);
+            }
+        }
+
+        public void ExecuteShowNotification(CentralBank centralBank, Guid clientId)
+        {
+            try
+            {
+                _actions.ShowNotification(
+                    centralBank,
+                    _inputter.InputNotificationId(centralBank.Notifications
+                        .Where(bill => bill.Id == clientId)
+                        .Select(bill => bill.Id)));
             }
             catch (BanksException exception)
             {
@@ -188,6 +206,30 @@ namespace Banks.Ui.Tools
                         .Select(bill => bill.Id)),
                     _inputter.InputBillToId(centralBank.Bills.Select(bill => bill.Id)),
                     _inputter.InputMoney());
+            }
+            catch (BanksException exception)
+            {
+                _asker.AskExit(exception.Message);
+            }
+        }
+
+        public void ExecuteEnableNotifications(CentralBank centralBank, Guid clientId)
+        {
+            try
+            {
+                _actions.EnableNotifications(centralBank, clientId);
+            }
+            catch (BanksException exception)
+            {
+                _asker.AskExit(exception.Message);
+            }
+        }
+
+        public void ExecuteForbidNotifications(CentralBank centralBank, Guid clientId)
+        {
+            try
+            {
+                _actions.ForbidNotifications(centralBank, clientId);
             }
             catch (BanksException exception)
             {

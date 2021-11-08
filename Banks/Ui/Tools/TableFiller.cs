@@ -9,7 +9,12 @@ namespace Banks.Ui.Tools
 {
     public class TableFiller
     {
-        public void FillMainTable(Table banksTable, Table billsTable, Table transactionsTable, CentralBank centralBank)
+        public void FillMainTable(
+            Table banksTable,
+            Table billsTable,
+            Table transactionsTable,
+            Table notificationTable,
+            CentralBank centralBank)
         {
             foreach (Bank bank in centralBank.Banks)
             {
@@ -27,6 +32,13 @@ namespace Banks.Ui.Tools
             foreach (Transaction transaction in centralBank.Transactions)
             {
                 transactionsTable.AddRow(transaction.Id.ToString());
+            }
+
+            foreach (Notification notification in centralBank.Notifications)
+            {
+                notificationTable.AddRow(
+                    centralBank.FindClient(notification.ClientId).Name,
+                    notification.Id.ToString());
             }
         }
 
@@ -71,6 +83,13 @@ namespace Banks.Ui.Tools
                 transaction.From.ToString(),
                 transaction.To.ToString(),
                 transaction.Money.ToString(CultureInfo.InvariantCulture));
+        }
+
+        public void FillNotificationPersonalTable(Table notificationTable, Notification notification)
+        {
+            notificationTable.AddRow(
+                notification.ClientId.ToString(),
+                notification.Message);
         }
     }
 }

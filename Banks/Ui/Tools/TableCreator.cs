@@ -1,23 +1,26 @@
 ﻿using System.Linq;
 using Banks.Entities;
 using Banks.Entities.Bills;
+using Banks.Models;
 using Spectre.Console;
 
 namespace Banks.Ui.Tools
 {
     public class TableCreator
     {
-        public (Table, Table, Table, Table) CreateMainTable()
+        public (Table, Table, Table, Table, Table) CreateMainTable()
         {
             var mainTable = new Table();
             var banksTable = new Table();
             var billsTable = new Table();
             var transactionsTable = new Table();
+            var notificationsTable = new Table();
 
             mainTable.AddColumn("Banks");
             mainTable.AddColumn("Bills");
             mainTable.AddColumn("Transactions");
-            mainTable.AddRow(banksTable, billsTable, transactionsTable);
+            mainTable.AddColumn("Notifications");
+            mainTable.AddRow(banksTable, billsTable, transactionsTable, notificationsTable);
 
             banksTable.AddColumn("Name:");
             banksTable.AddColumn("id:");
@@ -31,7 +34,11 @@ namespace Banks.Ui.Tools
             transactionsTable.AddColumn("id:");
             transactionsTable.Border = TableBorder.None;
 
-            return (mainTable, banksTable, billsTable, transactionsTable);
+            notificationsTable.AddColumn("owner:");
+            notificationsTable.AddColumn("id:");
+            notificationsTable.Border = TableBorder.None;
+
+            return (mainTable, banksTable, billsTable, transactionsTable, notificationsTable);
         }
 
         public Table CreateBankPersonalTable(Bank bank)
@@ -85,6 +92,20 @@ namespace Banks.Ui.Tools
                 "Money");
 
             return transactionTable;
+        }
+
+        public Table CreateNotificationPersonalTable(Notification notification)
+        {
+            var notificationTable = new Table
+            {
+                Title = new TableTitle($"id: {notification.Id}"),
+            };
+
+            notificationTable.AddColumns(
+                "Client id",
+                "Message");
+
+            return notificationTable;
         }
     }
 }

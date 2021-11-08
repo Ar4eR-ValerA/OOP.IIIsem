@@ -45,16 +45,25 @@ namespace Banks.Ui
                     () => _executor.ExecuteShowBank(_centralBank)),
                 new Command(
                     "show bill",
-                    () => _executor.ExecuteShowBill(_centralBank)),
+                    () => _executor.ExecuteShowBill(_centralBank, _clientId)),
                 new Command(
                     "show transaction",
                     () => _executor.ExecuteShowTransaction(_centralBank)),
+                new Command(
+                    "show notification",
+                    () => _executor.ExecuteShowNotification(_centralBank, _clientId)),
                 new Command(
                     "rewind time",
                     () => _executor.ExecuteRewindTime(_centralBank)),
                 new Command(
                     "make transaction",
                     () => _executor.ExecuteMakeTransaction(_centralBank, _clientId)),
+                new Command(
+                    "Enable notifications",
+                    () => _executor.ExecuteEnableNotifications(_centralBank, _clientId)),
+                new Command(
+                    "Forbid notifications",
+                    () => _executor.ExecuteForbidNotifications(_centralBank, _clientId)),
                 new Command("exit"),
             };
 
