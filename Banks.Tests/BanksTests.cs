@@ -186,5 +186,37 @@ namespace Banks.Tests
             Assert.AreEqual(true, _centralBank.FindBill(billId1).Reliable);
             Assert.AreEqual(true, _centralBank.FindBill(billId2).Reliable);
         }
+        
+        [Test]
+        public void MakeInvalidTransaction_ThrowException()
+        {
+            var bankInfo = new BankInfo(
+                "Sber",
+                3,
+                7,
+                -800000,
+                new List<DepositMoneyGap>
+                {
+                    new DepositMoneyGap(100, 200, 2),
+                    new DepositMoneyGap(200, 20000, 5),
+                },
+                5,
+                200000);
+            Guid bankId = _centralBank.RegisterBank(bankInfo);
+
+            var clientInfo1 = new ClientInfo("Valera", "Shevchenko");
+            var clientInfo2 = new ClientInfo("Max", "Shevchenko");
+            Guid clientId1 = _centralBank.RegisterClient(clientInfo1);
+            Guid clientId2 = _centralBank.RegisterClient(clientInfo2);
+
+            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId1, 100));
+            Guid billId2 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId2, 100));
+
+            Assert.Catch<BanksException>(() =>
+            {
+                _centralBank.MakeTransaction(billId1, billId2, 150);
+            });
+
+        }
     }
 }
