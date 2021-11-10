@@ -156,7 +156,7 @@ namespace Banks.Ui.Tools
                 _actions.ShowBill(
                     centralBank,
                     _inputter.InputBillId(centralBank.Bills
-                        .Where(bill => bill.Id == clientId)
+                        .Where(bill => bill.ClientId == clientId)
                         .Select(bill => bill.Id)));
             }
             catch (BanksException exception)
@@ -172,7 +172,7 @@ namespace Banks.Ui.Tools
                 _actions.ShowNotification(
                     centralBank,
                     _inputter.InputNotificationId(centralBank.Notifications
-                        .Where(bill => bill.Id == clientId)
+                        .Where(bill => bill.ClientId == clientId)
                         .Select(bill => bill.Id)));
             }
             catch (BanksException exception)
