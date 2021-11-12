@@ -6,19 +6,14 @@ namespace Banks.Entities
 {
     public class Client
     {
-        public Client(ClientBuilder clientBuilder)
+        public Client(string name, string surname, string address, int passport)
         {
-            if (clientBuilder is null)
-            {
-                throw new BanksException("Client's info is null");
-            }
-
-            Name = clientBuilder.Name;
-            Surname = clientBuilder.Surname;
+            Name = name ?? throw new BanksException("Name is null");
+            Surname = surname ?? throw new BanksException("Surname is null");
             Id = Guid.NewGuid();
             EnableNotification = false;
-            Address = clientBuilder.Address;
-            Passport = clientBuilder.Passport;
+            Address = address;
+            Passport = passport;
 
             if (Address is null || Passport == 0)
             {

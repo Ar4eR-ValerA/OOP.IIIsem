@@ -46,7 +46,15 @@ namespace Banks.Models.Builders
 
         internal override BaseBill CreateBill()
         {
-            return new DebitBill(this);
+            return new DebitBill(
+                BankId,
+                ClientId,
+                Money,
+                Percent,
+                EndDate,
+                UnreliableLimit,
+                OpenDate,
+                Reliable);
         }
     }
 }

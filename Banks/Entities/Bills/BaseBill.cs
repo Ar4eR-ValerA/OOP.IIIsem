@@ -8,7 +8,7 @@ namespace Banks.Entities.Bills
         private decimal _money;
         private decimal _dailyProfits;
 
-        public BaseBill(
+        internal BaseBill(
             Guid bankId,
             Guid clientId,
             decimal money,
@@ -35,7 +35,7 @@ namespace Banks.Entities.Bills
             Reliable = reliable;
         }
 
-        public BaseBill()
+        internal BaseBill()
         {
             Id = Guid.NewGuid();
         }

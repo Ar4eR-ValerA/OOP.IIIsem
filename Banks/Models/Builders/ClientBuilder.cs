@@ -45,7 +45,7 @@ namespace Banks.Models.Builders
 
         internal Client Build()
         {
-            return new Client(this);
+            return new Client(Name, Surname, Address, Passport);
         }
     }
 }

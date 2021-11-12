@@ -5,18 +5,27 @@ namespace Banks.Entities.Bills
 {
     public class CreditBill : BaseBill
     {
-        internal CreditBill(CreditBillBuilder billBuilder)
+        internal CreditBill(
+            Guid bankId,
+            Guid clientId,
+            decimal money,
+            decimal commission,
+            decimal limit,
+            DateTime endDate,
+            decimal unreliableLimit,
+            DateTime openDate,
+            bool reliable)
             : base(
-                billBuilder.BankId,
-                billBuilder.ClientId,
-                billBuilder.Money,
+                bankId,
+                clientId,
+                money,
                 0,
-                billBuilder.Commission,
-                billBuilder.Limit,
-                billBuilder.EndDate,
-                billBuilder.UnreliableLimit,
-                billBuilder.OpenDate,
-                billBuilder.Reliable)
+                commission,
+                limit,
+                endDate,
+                unreliableLimit,
+                openDate,
+                reliable)
         {
         }
 

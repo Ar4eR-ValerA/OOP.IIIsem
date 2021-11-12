@@ -5,18 +5,26 @@ namespace Banks.Entities.Bills
 {
     public class DebitBill : BaseBill
     {
-        internal DebitBill(DebitBillBuilder billBuilder)
+        internal DebitBill(
+            Guid bankId,
+            Guid clientId,
+            decimal money,
+            decimal percent,
+            DateTime endDate,
+            decimal unreliableLimit,
+            DateTime openDate,
+            bool reliable)
             : base(
-                billBuilder.BankId,
-                billBuilder.ClientId,
-                billBuilder.Money,
-                billBuilder.Percent,
+                bankId,
+                clientId,
+                money,
+                percent,
                 0,
                 0,
-                billBuilder.EndDate,
-                billBuilder.UnreliableLimit,
-                billBuilder.OpenDate,
-                billBuilder.Reliable)
+                endDate,
+                unreliableLimit,
+                openDate,
+                reliable)
         {
         }
 
