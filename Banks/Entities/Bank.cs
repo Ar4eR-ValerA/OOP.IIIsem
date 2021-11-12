@@ -10,8 +10,8 @@ namespace Banks.Entities
 {
     public class Bank
     {
+        private readonly List<Client> _clients;
         private List<DepositMoneyGap> _depositMoneyGaps;
-        private List<Client> _clients;
 
         public Bank(BankInfo bankInfo)
         {
@@ -55,15 +55,14 @@ namespace Banks.Entities
 
         public decimal GetDepositPercent(decimal money)
         {
-            foreach (DepositMoneyGap depositMoneyGap in DepositMoneyGaps)
+            DepositMoneyGap depositMoneyGap = DepositMoneyGaps.First(moneyGap => moneyGap.InMoneyGap(money));
+
+            if (depositMoneyGap is null)
             {
-                if (depositMoneyGap.InMoneyGap(money))
-                {
-                    return depositMoneyGap.Percent;
-                }
+                throw new BanksException("There is no suitable money gap for your money");
             }
 
-            throw new BanksException("There is no suitable money gap for your money");
+            return depositMoneyGap.Percent;
         }
 
         internal void ChangeInfo(BankInfo bankInfo)

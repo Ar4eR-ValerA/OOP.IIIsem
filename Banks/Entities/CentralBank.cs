@@ -52,30 +52,10 @@ namespace Banks.Entities
 
         public Guid MakeTransaction(Guid billFromId, Guid billToId, decimal money)
         {
-            if (CentralBankContext.Bills.Find(billFromId) is null)
-            {
-                throw new BanksException("BillFrom has not been registered");
-            }
-
-            if (CentralBankContext.Bills.Find(billToId) is null)
-            {
-                throw new BanksException("BillTo has not been registered");
-            }
-
             BaseBill billFrom = CentralBankContext.Bills.Find(billFromId);
             BaseBill billTo = CentralBankContext.Bills.Find(billToId);
 
-            if (!billFrom.Reliable && money > billFrom.UnreliableLimit)
-            {
-                throw new BanksException(
-                    $"BillFrom has Unreliable limit\nLimit: {billFrom.UnreliableLimit}\nTried: {money}");
-            }
-
-            if (!billTo.Reliable && money > billTo.UnreliableLimit)
-            {
-                throw new BanksException(
-                    "BillTo has Unreliable limit\nLimit: {billFrom.UnreliableLimit}\nTried: {money}");
-            }
+            Checks.MakeTransactionChecks(billFrom, billTo, money);
 
             billFrom.Money -= money;
             billTo.Money += money;
@@ -92,21 +72,12 @@ namespace Banks.Entities
 
         public Guid MakeBankTransaction(Guid bankId, Guid billToId, decimal money)
         {
-            if (CentralBankContext.Banks.Find(bankId) is null)
-            {
-                throw new BanksException("Bank has not been registered");
-            }
+            BaseBill billTo = CentralBankContext.Bills.Find(billToId);
 
-            if (CentralBankContext.Bills.Find(billToId) is null)
-            {
-                throw new BanksException("BillTo has not been registered");
-            }
+            Checks.MakeBankTransactionChecks(CentralBankContext.Banks.Find(bankId), billTo);
 
-            BaseBill baseBillTo = CentralBankContext.Bills.Find(billToId);
-
-            baseBillTo.Money += money;
-
-            CentralBankContext.Bills.Update(baseBillTo);
+            billTo.Money += money;
+            CentralBankContext.Bills.Update(billTo);
 
             var transaction = new Transaction(bankId, billToId, money);
             CentralBankContext.Transactions.Add(transaction);
@@ -117,23 +88,11 @@ namespace Banks.Entities
 
         public void CancelTransaction(Guid id)
         {
-            if (CentralBankContext.Transactions.Find(id) is null)
-            {
-                throw new BanksException("There is no such transaction");
-            }
-
             Transaction transaction = CentralBankContext.Transactions.Find(id);
-            if (CentralBankContext.Banks.Find(transaction.From) is not null)
-            {
-                throw new BanksException("You can't cancel bank transaction");
-            }
 
-            if (transaction.Valid == false)
-            {
-                throw new BanksException("Transaction already canceled");
-            }
+            Checks.CancelTransactionChecks(transaction, CentralBankContext.Banks);
 
-            Guid backTransaction = MakeTransaction(transaction.To, transaction.From, transaction.Money);
+            MakeTransaction(transaction.To, transaction.From, transaction.Money);
             transaction.Valid = false;
             CentralBankContext.Transactions.Update(transaction);
 
@@ -157,9 +116,10 @@ namespace Banks.Entities
         public void AddClientInfo(Guid id, string address, int passport)
         {
             Client client = CentralBankContext.Clients.Find(id);
-            client.Address = address ?? throw new BanksException("Address is null");
-            client.Passport = passport;
-            client.Reliable = true;
+
+            Checks.AddClientInfoChecks(client, address);
+
+            client.AddClientInfo(address, passport);
 
             foreach (BaseBill bill in CentralBankContext.Bills)
             {
@@ -168,6 +128,8 @@ namespace Banks.Entities
                     bill.Reliable = true;
                 }
             }
+
+            CentralBankContext.SaveChanges();
         }
 
         public Guid RegisterBank(BankInfo bankInfo)
@@ -192,30 +154,29 @@ namespace Banks.Entities
                 throw new BanksException("Bill's info is null");
             }
 
-            if (CentralBankContext.Banks.Find(billInfo.BankId) is null)
+            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
+            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
+            if (bank is null)
             {
                 throw new BanksException("This bank has not been registered");
             }
 
-            if (CentralBankContext.Clients.Find(billInfo.ClientId) is null)
+            if (client is null)
             {
                 throw new BanksException("This client has not been registered");
             }
 
-            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
-            billInfo.Percent = bank.GetDepositPercent(billInfo.Money);
-            billInfo.EndDate = DateTime.Now.AddYears(bank.BillDurationYears);
-            billInfo.UnreliableLimit = bank.UnreliableLimit;
+            billInfo.AddBankInfo(
+                bank.GetDepositPercent(billInfo.Money),
+                bank.UnreliableLimit,
+                DateNow,
+                DateNow.AddYears(bank.BillDurationYears),
+                client.Reliable);
 
-            var bill = new DepositBill(billInfo)
-            {
-                OpenDate = DateTime.Now,
-                Reliable = CentralBankContext.Clients.Find(billInfo.ClientId).Reliable,
-            };
-
+            var bill = new DepositBill(billInfo);
             CentralBankContext.Bills.Add(bill);
 
-            bank.AddClient(CentralBankContext.Clients.Find(billInfo.ClientId));
+            bank.AddClient(client);
             CentralBankContext.Banks.Update(bank);
 
             CentralBankContext.SaveChanges();
@@ -229,30 +190,29 @@ namespace Banks.Entities
                 throw new BanksException("Bill's info is null");
             }
 
-            if (CentralBankContext.Banks.Find(billInfo.BankId) is null)
+            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
+            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
+            if (bank is null)
             {
                 throw new BanksException("This bank has not been registered");
             }
 
-            if (CentralBankContext.Clients.Find(billInfo.ClientId) is null)
+            if (client is null)
             {
                 throw new BanksException("This client has not been registered");
             }
 
-            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
-            billInfo.Percent = bank.GetDepositPercent(billInfo.Money);
-            billInfo.EndDate = DateTime.Now.AddYears(bank.BillDurationYears);
-            billInfo.UnreliableLimit = bank.UnreliableLimit;
+            billInfo.AddBankInfo(
+                bank.DebitPercent,
+                bank.UnreliableLimit,
+                DateNow,
+                DateNow.AddYears(bank.BillDurationYears),
+                client.Reliable);
 
-            var bill = new DebitBill(billInfo)
-            {
-                OpenDate = DateTime.Now,
-                Reliable = CentralBankContext.Clients.Find(billInfo.ClientId).Reliable,
-            };
-
+            var bill = new DebitBill(billInfo);
             CentralBankContext.Bills.Add(bill);
 
-            bank.AddClient(CentralBankContext.Clients.Find(billInfo.ClientId));
+            bank.AddClient(client);
             CentralBankContext.Banks.Update(bank);
 
             CentralBankContext.SaveChanges();
@@ -266,31 +226,30 @@ namespace Banks.Entities
                 throw new BanksException("Bill's info is null");
             }
 
-            if (CentralBankContext.Banks.Find(billInfo.BankId) is null)
+            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
+            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
+            if (bank is null)
             {
                 throw new BanksException("This bank has not been registered");
             }
 
-            if (CentralBankContext.Clients.Find(billInfo.ClientId) is null)
+            if (client is null)
             {
                 throw new BanksException("This client has not been registered");
             }
 
-            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
-            billInfo.Commission = CentralBankContext.Banks.Find(billInfo.BankId).CreditCommission;
-            billInfo.Limit = CentralBankContext.Banks.Find(billInfo.BankId).Limit;
-            billInfo.EndDate = DateTime.Now.AddYears(bank.BillDurationYears);
-            billInfo.UnreliableLimit = bank.UnreliableLimit;
+            billInfo.AddBankInfo(
+                bank.Limit,
+                bank.CreditCommission,
+                bank.UnreliableLimit,
+                DateNow,
+                DateNow.AddYears(bank.BillDurationYears),
+                client.Reliable);
 
-            var bill = new CreditBill(billInfo)
-            {
-                OpenDate = DateTime.Now,
-                Reliable = CentralBankContext.Clients.Find(billInfo.ClientId).Reliable,
-            };
-
+            var bill = new CreditBill(billInfo);
             CentralBankContext.Bills.Add(bill);
 
-            bank.AddClient(CentralBankContext.Clients.Find(billInfo.ClientId));
+            bank.AddClient(client);
             CentralBankContext.Banks.Update(bank);
 
             CentralBankContext.SaveChanges();
@@ -338,7 +297,6 @@ namespace Banks.Entities
 
             Bank bank = CentralBankContext.Banks.Find(bankId);
             bank.ChangeInfo(bankInfo);
-
             CentralBankContext.Banks.Update(bank);
 
             foreach (Client client in bank.Clients)

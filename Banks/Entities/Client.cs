@@ -36,12 +36,19 @@ namespace Banks.Entities
             Reliable = false;
         }
 
-        public bool Reliable { get; internal set; }
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Surname { get; private set; }
-        public string Address { get; internal set; }
-        public int Passport { get; internal set; }
+        public string Address { get; private set; }
+        public int Passport { get; private set; }
+        public bool Reliable { get; private set; }
         public bool EnableNotification { get; internal set; }
+
+        internal void AddClientInfo(string address, int passport)
+        {
+            Address = address ?? throw new BanksException("Address is null");
+            Passport = passport;
+            Reliable = true;
+        }
     }
 }

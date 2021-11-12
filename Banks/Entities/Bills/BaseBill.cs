@@ -6,6 +6,7 @@ namespace Banks.Entities.Bills
     public abstract class BaseBill
     {
         private decimal _money;
+        private decimal _dailyProfits;
 
         public BaseBill(
             Guid bankId,
@@ -15,7 +16,9 @@ namespace Banks.Entities.Bills
             decimal commission,
             decimal limit,
             DateTime endDate,
-            decimal unreliableLimit)
+            decimal unreliableLimit,
+            DateTime openDate,
+            bool reliable)
         {
             Id = Guid.NewGuid();
             BankId = bankId;
@@ -28,6 +31,8 @@ namespace Banks.Entities.Bills
             Commission = commission;
             EndDate = endDate;
             UnreliableLimit = unreliableLimit;
+            OpenDate = openDate;
+            Reliable = reliable;
         }
 
         public BaseBill()
@@ -35,14 +40,27 @@ namespace Banks.Entities.Bills
             Id = Guid.NewGuid();
         }
 
-        public Guid Id { get; internal set; }
-        public Guid BankId { get; internal set; }
-        public Guid ClientId { get; internal set; }
-        public DateTime OpenDate { get; internal set; }
-        public DateTime EndDate { get; internal set; }
+        public Guid Id { get; private set; }
+        public Guid BankId { get; private set; }
+        public Guid ClientId { get; private set; }
+        public DateTime OpenDate { get; private set; }
+        public DateTime EndDate { get; private set; }
+        public decimal UnreliableLimit { get; private set; }
         public bool Reliable { get; internal set; }
-        public decimal UnreliableLimit { get; internal set; }
-        public decimal DailyProfits { get; internal set; }
+
+        public decimal DailyProfits
+        {
+            get => _dailyProfits;
+            internal set
+            {
+                if (value < 0)
+                {
+                    throw new BanksException($"Daily profits must be non-negative.\nYour value: {value}");
+                }
+
+                _dailyProfits = value;
+            }
+        }
 
         public decimal Money
         {
@@ -51,15 +69,17 @@ namespace Banks.Entities.Bills
             {
                 if (value < Limit)
                 {
-                    throw new BanksException($"You have reached the limit.\nYour money: {Money}\nYour limit: {Limit}");
+                    throw new BanksException($"You have reached the limit.\nYour money: {Money}" +
+                                             $"\nYou've tried withdraw: {value}" +
+                                             $"\nYour limit: {Limit}");
                 }
 
                 _money = value;
             }
         }
 
-        public decimal Percent { get; internal set; }
-        public decimal Commission { get; internal set; }
-        public decimal Limit { get; internal set; }
+        public decimal Percent { get; private set; }
+        public decimal Commission { get; private set; }
+        public decimal Limit { get; private set; }
     }
 }

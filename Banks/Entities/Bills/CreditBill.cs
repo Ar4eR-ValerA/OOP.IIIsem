@@ -14,11 +14,10 @@ namespace Banks.Entities.Bills
                 billInfo.Commission,
                 billInfo.Limit,
                 billInfo.EndDate,
-                billInfo.UnreliableLimit)
+                billInfo.UnreliableLimit,
+                billInfo.OpenDate,
+                billInfo.Reliable)
         {
-            OpenDate = DateTime.Now;
-            DailyProfits = 0;
-            Id = Guid.NewGuid();
         }
 
         internal CreditBill()
