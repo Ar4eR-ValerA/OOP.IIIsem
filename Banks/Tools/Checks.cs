@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Banks.Contexts;
 using Banks.Entities;
 using Banks.Entities.Bills;
 using Banks.Models.Infos;
@@ -7,9 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Banks.Tools
 {
-    public static class Checks
+    public class Checks
     {
-        public static void MakeTransactionChecks(BaseBill billFrom, BaseBill billTo, decimal money)
+        public Checks(CentralBankContext centralBankContext)
+        {
+            CentralBankContext = centralBankContext;
+        }
+
+        private CentralBankContext CentralBankContext { get; }
+
+        public void MakeTransactionChecks(BaseBill billFrom, BaseBill billTo, decimal money)
         {
             if (billFrom is null)
             {
@@ -34,7 +42,7 @@ namespace Banks.Tools
             }
         }
 
-        public static void MakeBankTransactionChecks(Bank bank, BaseBill billTo)
+        public void MakeBankTransactionChecks(Bank bank, BaseBill billTo)
         {
             if (bank is null)
             {
@@ -47,7 +55,7 @@ namespace Banks.Tools
             }
         }
 
-        public static void CancelTransactionChecks(Transaction transaction, DbSet<Bank> banks)
+        public void CancelTransactionChecks(Transaction transaction, DbSet<Bank> banks)
         {
             if (transaction is null)
             {
@@ -65,7 +73,7 @@ namespace Banks.Tools
             }
         }
 
-        public static void RegisterClientChecks(ClientInfo clientInfo)
+        public void RegisterClientChecks(ClientInfo clientInfo)
         {
             if (clientInfo is null)
             {
@@ -73,7 +81,7 @@ namespace Banks.Tools
             }
         }
 
-        public static void AddClientInfoChecks(Client client, string address)
+        public void AddClientInfoChecks(Client client, string address)
         {
             if (address is null)
             {
@@ -86,7 +94,7 @@ namespace Banks.Tools
             }
         }
 
-        public static void RegisterBankChecks(BankInfo bankInfo)
+        public void RegisterBankChecks(BankInfo bankInfo)
         {
             if (bankInfo is null)
             {
@@ -94,8 +102,11 @@ namespace Banks.Tools
             }
         }
 
-        public static void OpenBillChecks(BaseBillInfo billInfo, Bank bank, Client client)
+        public void OpenBillChecks(BaseBillInfo billInfo)
         {
+            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
+            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
+
             if (billInfo is null)
             {
                 throw new BanksException("Bill's info is null");
@@ -112,7 +123,15 @@ namespace Banks.Tools
             }
         }
 
-        public static void ChangeBankInfoChecks(Bank bank, BankInfo bankInfo)
+        public void NotificationChecks(Client client)
+        {
+            if (client is null)
+            {
+                throw new BanksException("This client has not been registered");
+            }
+        }
+
+        public void ChangeBankInfoChecks(Bank bank, BankInfo bankInfo)
         {
             if (bankInfo is null)
             {
@@ -125,7 +144,7 @@ namespace Banks.Tools
             }
         }
 
-        public static void ServiceBillChecks(BaseBill bill, DateTime dateNow)
+        public void ServiceBillChecks(BaseBill bill, DateTime dateNow)
         {
             if (bill is null)
             {

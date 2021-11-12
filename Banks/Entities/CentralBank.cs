@@ -15,6 +15,7 @@ namespace Banks.Entities
         {
             CentralBankContext = centralBankContext;
             DateNow = dateNow;
+            Checks = new Checks(centralBankContext);
         }
 
         public DateTime DateNow { get; private set; }
@@ -24,6 +25,7 @@ namespace Banks.Entities
         public IReadOnlyList<Transaction> Transactions => CentralBankContext.Transactions.ToList();
         public IReadOnlyList<Notification> Notifications => CentralBankContext.Notifications.ToList();
         private CentralBankContext CentralBankContext { get; }
+        private Checks Checks { get; }
 
         public Bank FindBank(Guid bankId)
         {
@@ -143,10 +145,10 @@ namespace Banks.Entities
 
         public Guid OpenBill(BaseBillInfo billInfo)
         {
+            Checks.OpenBillChecks(billInfo);
+
             Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
             Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
-
-            Checks.OpenBillChecks(billInfo, bank, client);
 
             billInfo.AddBankInfo(
                 bank.GetDepositPercent(billInfo.Money),
@@ -184,6 +186,9 @@ namespace Banks.Entities
         public void EnableNotification(Guid clientId)
         {
             Client client = CentralBankContext.Clients.Find(clientId);
+
+            Checks.NotificationChecks(client);
+
             client.EnableNotification = true;
             CentralBankContext.Clients.Update(client);
 
@@ -193,6 +198,9 @@ namespace Banks.Entities
         public void ForbidNotification(Guid clientId)
         {
             Client client = CentralBankContext.Clients.Find(clientId);
+
+            Checks.NotificationChecks(client);
+
             client.EnableNotification = false;
             CentralBankContext.Clients.Update(client);
 
