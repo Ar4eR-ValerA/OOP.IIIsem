@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Banks.Entities;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Tools;
 
 namespace Banks.Ui.Tools
@@ -20,7 +20,7 @@ namespace Banks.Ui.Tools
             _asker = new Asker();
         }
 
-        public ClientInfo ExecuteCreateClientInfo()
+        public ClientBuilder ExecuteCreateClientInfo()
         {
             try
             {
@@ -45,11 +45,11 @@ namespace Banks.Ui.Tools
             }
         }
 
-        public void ExecuteShowInfo(ClientInfo clientInfo, CentralBank centralBank)
+        public void ExecuteShowInfo(ClientBuilder clientBuilder, CentralBank centralBank)
         {
             try
             {
-                _actions.ShowInfo(clientInfo, centralBank);
+                _actions.ShowInfo(clientBuilder, centralBank);
             }
             catch (BanksException exception)
             {
@@ -57,11 +57,11 @@ namespace Banks.Ui.Tools
             }
         }
 
-        public Guid ExecuteRegisterClient(ClientInfo clientInfo, CentralBank centralBank)
+        public Guid ExecuteRegisterClient(ClientBuilder clientBuilder, CentralBank centralBank)
         {
             try
             {
-                return _actions.RegisterClient(clientInfo, centralBank);
+                return _actions.RegisterClient(clientBuilder, centralBank);
             }
             catch (BanksException exception)
             {
@@ -75,7 +75,7 @@ namespace Banks.Ui.Tools
             try
             {
                 _actions.OpenDebitBill(
-                    new DebitBillInfo(
+                    new DebitBillBuilder(
                         _inputter.InputBankId(centralBank.Banks.Select(bank => bank.Id)),
                         clientId,
                         _inputter.InputMoney()),
@@ -92,7 +92,7 @@ namespace Banks.Ui.Tools
             try
             {
                 _actions.OpenDepositBill(
-                    new DepositBillInfo(
+                    new DepositBillBuilder(
                         _inputter.InputBankId(centralBank.Banks.Select(bank => bank.Id)),
                         clientId,
                         _inputter.InputMoney()),
@@ -109,7 +109,7 @@ namespace Banks.Ui.Tools
             try
             {
                 _actions.OpenCreditBill(
-                    new CreditBillInfo(
+                    new CreditBillBuilder(
                         _inputter.InputBankId(centralBank.Banks.Select(bank => bank.Id)),
                         clientId,
                         _inputter.InputMoney()),

@@ -1,6 +1,6 @@
 ﻿using System;
 using Banks.Entities;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Ui.Tools;
 using Spectre.Console;
 
@@ -35,34 +35,34 @@ namespace Banks.Ui
             AnsiConsole.Write(mainTable);
         }
 
-        public ClientInfo CreateClientInfo(string name, string surname)
+        public ClientBuilder CreateClientInfo(string name, string surname)
         {
-            return new ClientInfo(name, surname);
+            return new ClientBuilder(name, surname);
         }
 
-        public void ShowInfo(ClientInfo clientInfo, CentralBank centralBank)
+        public void ShowInfo(ClientBuilder clientBuilder, CentralBank centralBank)
         {
-            AnsiConsole.Write($"{clientInfo.Name} {clientInfo.Surname}: {centralBank.DateNow}\n");
+            AnsiConsole.Write($"{clientBuilder.Name} {clientBuilder.Surname}: {centralBank.DateNow}\n");
         }
 
-        public Guid RegisterClient(ClientInfo clientInfo, CentralBank centralBank)
+        public Guid RegisterClient(ClientBuilder clientBuilder, CentralBank centralBank)
         {
-            return centralBank.RegisterClient(clientInfo);
+            return centralBank.RegisterClient(clientBuilder);
         }
 
-        public void OpenDebitBill(DebitBillInfo billInfo, CentralBank centralBank)
+        public void OpenDebitBill(DebitBillBuilder billBuilder, CentralBank centralBank)
         {
-            centralBank.OpenBill(billInfo);
+            centralBank.OpenBill(billBuilder);
         }
 
-        public void OpenDepositBill(DepositBillInfo billInfo, CentralBank centralBank)
+        public void OpenDepositBill(DepositBillBuilder billBuilder, CentralBank centralBank)
         {
-            centralBank.OpenBill(billInfo);
+            centralBank.OpenBill(billBuilder);
         }
 
-        public void OpenCreditBill(CreditBillInfo billInfo, CentralBank centralBank)
+        public void OpenCreditBill(CreditBillBuilder billBuilder, CentralBank centralBank)
         {
-            centralBank.OpenBill(billInfo);
+            centralBank.OpenBill(billBuilder);
         }
 
         public void ShowBank(CentralBank centralBank, Guid bankId)

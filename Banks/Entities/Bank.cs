@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Banks.Models;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Tools;
 
 namespace Banks.Entities
@@ -13,22 +13,22 @@ namespace Banks.Entities
         private readonly List<Client> _clients;
         private List<DepositMoneyGap> _depositMoneyGaps;
 
-        public Bank(BankInfo bankInfo)
+        public Bank(BankBuilder bankBuilder)
         {
-            if (bankInfo is null)
+            if (bankBuilder is null)
             {
                 throw new BanksException("Bank's info is null");
             }
 
-            Name = bankInfo.Name;
-            DebitPercent = bankInfo.DebitPercent;
-            _depositMoneyGaps = bankInfo.DepositMoneyGaps;
-            CreditCommission = bankInfo.CreditCommission;
-            Limit = bankInfo.Limit;
+            Name = bankBuilder.Name;
+            DebitPercent = bankBuilder.DebitPercent;
+            _depositMoneyGaps = bankBuilder.DepositMoneyGaps;
+            CreditCommission = bankBuilder.CreditCommission;
+            Limit = bankBuilder.Limit;
             _clients = new List<Client>();
             Id = Guid.NewGuid();
-            BillDurationYears = bankInfo.BillDurationYears;
-            UnreliableLimit = bankInfo.UnreliableLimit;
+            BillDurationYears = bankBuilder.BillDurationYears;
+            UnreliableLimit = bankBuilder.UnreliableLimit;
         }
 
         public Bank()
@@ -65,23 +65,23 @@ namespace Banks.Entities
             return depositMoneyGap.Percent;
         }
 
-        internal void ChangeInfo(BankInfo bankInfo)
+        internal void ChangeInfo(BankBuilder bankBuilder)
         {
-            if (bankInfo is null)
+            if (bankBuilder is null)
             {
                 throw new BanksException("Bank's info is null");
             }
 
-            Name = bankInfo.Name;
-            DebitPercent = bankInfo.DebitPercent;
+            Name = bankBuilder.Name;
+            DebitPercent = bankBuilder.DebitPercent;
 
             _depositMoneyGaps.Clear();
-            _depositMoneyGaps.AddRange(bankInfo.DepositMoneyGaps);
+            _depositMoneyGaps.AddRange(bankBuilder.DepositMoneyGaps);
 
-            _depositMoneyGaps = bankInfo.DepositMoneyGaps;
-            CreditCommission = bankInfo.CreditCommission;
-            Limit = bankInfo.Limit;
-            BillDurationYears = bankInfo.BillDurationYears;
+            _depositMoneyGaps = bankBuilder.DepositMoneyGaps;
+            CreditCommission = bankBuilder.CreditCommission;
+            Limit = bankBuilder.Limit;
+            BillDurationYears = bankBuilder.BillDurationYears;
         }
 
         internal void AddClient(Client client)

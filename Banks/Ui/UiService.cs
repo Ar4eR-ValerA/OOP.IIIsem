@@ -1,6 +1,6 @@
 ﻿using System;
 using Banks.Entities;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Ui.Tools;
 using Spectre.Console;
 
@@ -11,7 +11,7 @@ namespace Banks.Ui
         private readonly CentralBank _centralBank;
         private readonly Executor _executor;
         private readonly Asker _asker;
-        private ClientInfo _clientInfo;
+        private ClientBuilder _clientBuilder;
         private Guid _clientId;
 
         public UiService(CentralBank centralBank)
@@ -23,10 +23,10 @@ namespace Banks.Ui
 
         public void Run()
         {
-            _clientInfo = _executor.ExecuteCreateClientInfo();
-            _clientId = _executor.ExecuteRegisterClient(_clientInfo, _centralBank);
+            _clientBuilder = _executor.ExecuteCreateClientInfo();
+            _clientId = _executor.ExecuteRegisterClient(_clientBuilder, _centralBank);
 
-            _executor.ExecuteShowInfo(_clientInfo, _centralBank);
+            _executor.ExecuteShowInfo(_clientBuilder, _centralBank);
             _executor.ExecuteRenderMainTable(_centralBank);
 
             Command[] commands =
@@ -75,7 +75,7 @@ namespace Banks.Ui
 
                 AnsiConsole.Clear();
 
-                _executor.ExecuteShowInfo(_clientInfo, _centralBank);
+                _executor.ExecuteShowInfo(_clientBuilder, _centralBank);
                 _executor.ExecuteRenderMainTable(_centralBank);
                 command = _asker.AskChoices("Enter command", commands);
             }

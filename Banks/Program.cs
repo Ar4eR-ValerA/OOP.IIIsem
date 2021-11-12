@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Banks.Contexts;
 using Banks.Entities;
 using Banks.Models;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Ui;
 
 namespace Banks
@@ -14,7 +14,7 @@ namespace Banks
         {
             var centralBank = new CentralBank(new CentralBankContext("file.db"), DateTime.Now);
 
-            var bankInfo1 = new BankInfo(
+            var bankInfo1 = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -27,7 +27,7 @@ namespace Banks
                 5,
                 200000);
 
-            var bankInfo2 = new BankInfo(
+            var bankInfo2 = new BankBuilder(
                 "Tinkoff",
                 5,
                 9,
@@ -40,7 +40,7 @@ namespace Banks
                 8,
                 4000);
 
-            var bankInfo3 = new BankInfo(
+            var bankInfo3 = new BankBuilder(
                 "Alpha",
                 2,
                 3,
@@ -57,9 +57,9 @@ namespace Banks
             centralBank.RegisterBank(bankInfo2);
             centralBank.RegisterBank(bankInfo3);
 
-            var clientInfo = new ClientInfo("Max", "Shevchenko", "Dom 21", 1111);
+            var clientInfo = new ClientBuilder("Max", "Shevchenko", "Dom 21", 1111);
             Guid clientId = centralBank.RegisterClient(clientInfo);
-            centralBank.OpenBill(new DebitBillInfo(bankId1, clientId, 1000));
+            centralBank.OpenBill(new DebitBillBuilder(bankId1, clientId, 1000));
 
             var ui = new UiService(centralBank);
             ui.Run();

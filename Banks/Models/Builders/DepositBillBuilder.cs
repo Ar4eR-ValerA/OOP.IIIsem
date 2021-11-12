@@ -2,11 +2,11 @@
 using Banks.Entities.Bills;
 using Banks.Tools;
 
-namespace Banks.Models.Infos
+namespace Banks.Models.Builders
 {
-    public class CreditBillInfo : BaseBillInfo
+    public class DepositBillBuilder : BaseBillBuilder
     {
-        public CreditBillInfo(Guid bankId, Guid clientId, decimal money)
+        public DepositBillBuilder(Guid bankId, Guid clientId, decimal money)
             : base(bankId, clientId, money)
         {
             BankId = bankId;
@@ -23,9 +23,9 @@ namespace Banks.Models.Infos
             DateTime endDate,
             bool reliable)
         {
-            if (commission < 0)
+            if (percent < 0)
             {
-                throw new BanksException($"Commission must be non-negative. Your percent: {commission}");
+                throw new BanksException($"Percent must be non-negative. Your percent: {percent}");
             }
 
             if (openDate > endDate)
@@ -35,9 +35,9 @@ namespace Banks.Models.Infos
                                          $"\nOpen date: {endDate}");
             }
 
-            Percent = 0;
-            Limit = limit;
-            Commission = commission;
+            Percent = percent;
+            Limit = 0;
+            Commission = 0;
             OpenDate = openDate;
             EndDate = endDate;
             UnreliableLimit = unreliableLimit;
@@ -46,7 +46,7 @@ namespace Banks.Models.Infos
 
         internal override BaseBill CreateBill()
         {
-            return new CreditBill(this);
+            return new DepositBill(this);
         }
     }
 }

@@ -1,20 +1,21 @@
-﻿using Banks.Tools;
+﻿using Banks.Entities;
+using Banks.Tools;
 
-namespace Banks.Models.Infos
+namespace Banks.Models.Builders
 {
-    public class ClientInfo
+    public class ClientBuilder
     {
         private string _name;
         private string _surname;
         private string _address;
 
-        public ClientInfo(string name, string surname)
+        public ClientBuilder(string name, string surname)
         {
             Name = name;
             Surname = surname;
         }
 
-        public ClientInfo(string name, string surname, string address, int passport)
+        public ClientBuilder(string name, string surname, string address, int passport)
         {
             Name = name;
             Surname = surname;
@@ -41,5 +42,10 @@ namespace Banks.Models.Infos
         }
 
         public int Passport { get; set; }
+
+        internal Client Build()
+        {
+            return new Client(this);
+        }
     }
 }

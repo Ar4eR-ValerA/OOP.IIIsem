@@ -4,7 +4,7 @@ using System.Linq;
 using Banks.Contexts;
 using Banks.Entities.Bills;
 using Banks.Models;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Tools;
 
 namespace Banks.Entities
@@ -101,11 +101,11 @@ namespace Banks.Entities
             CentralBankContext.SaveChanges();
         }
 
-        public Guid RegisterClient(ClientInfo clientInfo)
+        public Guid RegisterClient(ClientBuilder clientBuilder)
         {
-            Checks.RegisterClientChecks(clientInfo);
+            Checks.RegisterClientChecks(clientBuilder);
 
-            var client = new Client(clientInfo);
+            Client client = clientBuilder.Build();
             CentralBankContext.Clients.Add(client);
 
             CentralBankContext.SaveChanges();
@@ -131,11 +131,11 @@ namespace Banks.Entities
             CentralBankContext.SaveChanges();
         }
 
-        public Guid RegisterBank(BankInfo bankInfo)
+        public Guid RegisterBank(BankBuilder bankBuilder)
         {
-            Checks.RegisterBankChecks(bankInfo);
+            Checks.RegisterBankChecks(bankBuilder);
 
-            var bank = new Bank(bankInfo);
+            Bank bank = bankBuilder.Build();
 
             CentralBankContext.Banks.Add(bank);
 
@@ -143,15 +143,15 @@ namespace Banks.Entities
             return bank.Id;
         }
 
-        public Guid OpenBill(BaseBillInfo billInfo)
+        public Guid OpenBill(BaseBillBuilder billBuilder)
         {
-            Checks.OpenBillChecks(billInfo, CentralBankContext);
+            Checks.OpenBillChecks(billBuilder, CentralBankContext);
 
-            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
-            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
+            Bank bank = CentralBankContext.Banks.Find(billBuilder.BankId);
+            Client client = CentralBankContext.Clients.Find(billBuilder.ClientId);
 
-            billInfo.AddBankInfo(
-                bank.GetDepositPercent(billInfo.Money),
+            billBuilder.AddBankInfo(
+                bank.GetDepositPercent(billBuilder.Money),
                 bank.Limit,
                 bank.CreditCommission,
                 bank.UnreliableLimit,
@@ -159,7 +159,7 @@ namespace Banks.Entities
                 DateNow.AddYears(bank.BillDurationYears),
                 client.Reliable);
 
-            BaseBill bill = billInfo.CreateBill();
+            BaseBill bill = billBuilder.CreateBill();
             CentralBankContext.Bills.Add(bill);
 
             bank.AddClient(client);
@@ -207,13 +207,13 @@ namespace Banks.Entities
             CentralBankContext.SaveChanges();
         }
 
-        public void ChangeBankInfo(Guid bankId, BankInfo bankInfo)
+        public void ChangeBankInfo(Guid bankId, BankBuilder bankBuilder)
         {
             Bank bank = CentralBankContext.Banks.Find(bankId);
 
-            Checks.ChangeBankInfoChecks(bank, bankInfo);
+            Checks.ChangeBankInfoChecks(bank, bankBuilder);
 
-            bank.ChangeInfo(bankInfo);
+            bank.ChangeInfo(bankBuilder);
             CentralBankContext.Banks.Update(bank);
 
             foreach (Client client in bank.Clients)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Banks.Contexts;
 using Banks.Entities;
 using Banks.Models;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Tools;
 using NUnit.Framework;
 
@@ -22,7 +22,7 @@ namespace Banks.Tests
         [Test]
         public void ChangeBankInfo_BankInfoChanged()
         {
-            var bankInfo1 = new BankInfo(
+            var bankInfo1 = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -57,7 +57,7 @@ namespace Banks.Tests
         [Test]
         public void OpenBills_BillsOpened()
         {
-            var bankInfo = new BankInfo(
+            var bankInfo = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -71,12 +71,12 @@ namespace Banks.Tests
                 200000);
             Guid bankId = _centralBank.RegisterBank(bankInfo);
 
-            var clientInfo = new ClientInfo("Valera", "Shevchenko");
+            var clientInfo = new ClientBuilder("Valera", "Shevchenko");
             Guid clientId = _centralBank.RegisterClient(clientInfo);
 
-            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId, 101));
-            Guid billId2 = _centralBank.OpenBill(new CreditBillInfo(bankId, clientId, 102));
-            Guid billId3 = _centralBank.OpenBill(new DepositBillInfo(bankId, clientId, 103));
+            Guid billId1 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId, 101));
+            Guid billId2 = _centralBank.OpenBill(new CreditBillBuilder(bankId, clientId, 102));
+            Guid billId3 = _centralBank.OpenBill(new DepositBillBuilder(bankId, clientId, 103));
 
             Assert.AreEqual(101, _centralBank.FindBill(billId1).Money);
             Assert.AreEqual(102, _centralBank.FindBill(billId2).Money);
@@ -86,7 +86,7 @@ namespace Banks.Tests
         [Test]
         public void MakeTransaction_TransactionMade()
         {
-            var bankInfo = new BankInfo(
+            var bankInfo = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -100,13 +100,13 @@ namespace Banks.Tests
                 200000);
             Guid bankId = _centralBank.RegisterBank(bankInfo);
 
-            var clientInfo1 = new ClientInfo("Valera", "Shevchenko");
-            var clientInfo2 = new ClientInfo("Max", "Shevchenko");
+            var clientInfo1 = new ClientBuilder("Valera", "Shevchenko");
+            var clientInfo2 = new ClientBuilder("Max", "Shevchenko");
             Guid clientId1 = _centralBank.RegisterClient(clientInfo1);
             Guid clientId2 = _centralBank.RegisterClient(clientInfo2);
 
-            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId1, 100));
-            Guid billId2 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId2, 100));
+            Guid billId1 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId1, 100));
+            Guid billId2 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId2, 100));
 
             _centralBank.MakeTransaction(billId1, billId2, 50);
 
@@ -117,7 +117,7 @@ namespace Banks.Tests
         [Test]
         public void CancelTransaction_TransactionCanceled()
         {
-            var bankInfo = new BankInfo(
+            var bankInfo = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -131,13 +131,13 @@ namespace Banks.Tests
                 200000);
             Guid bankId = _centralBank.RegisterBank(bankInfo);
 
-            var clientInfo1 = new ClientInfo("Valera", "Shevchenko");
-            var clientInfo2 = new ClientInfo("Max", "Shevchenko");
+            var clientInfo1 = new ClientBuilder("Valera", "Shevchenko");
+            var clientInfo2 = new ClientBuilder("Max", "Shevchenko");
             Guid clientId1 = _centralBank.RegisterClient(clientInfo1);
             Guid clientId2 = _centralBank.RegisterClient(clientInfo2);
 
-            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId1, 100));
-            Guid billId2 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId2, 100));
+            Guid billId1 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId1, 100));
+            Guid billId2 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId2, 100));
 
             Guid transactionId = _centralBank.MakeTransaction(billId1, billId2, 50);
             _centralBank.CancelTransaction(transactionId);
@@ -149,7 +149,7 @@ namespace Banks.Tests
         [Test]
         public void AddClientInfo_ClientInfoAdded()
         {
-            var bankInfo = new BankInfo(
+            var bankInfo = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -163,13 +163,13 @@ namespace Banks.Tests
                 100);
             Guid bankId = _centralBank.RegisterBank(bankInfo);
 
-            var clientInfo1 = new ClientInfo("Valera", "Shevchenko");
-            var clientInfo2 = new ClientInfo("Max", "Shevchenko", "Dom 21", 1111);
+            var clientInfo1 = new ClientBuilder("Valera", "Shevchenko");
+            var clientInfo2 = new ClientBuilder("Max", "Shevchenko", "Dom 21", 1111);
             Guid clientId1 = _centralBank.RegisterClient(clientInfo1);
             Guid clientId2 = _centralBank.RegisterClient(clientInfo2);
 
-            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId1, 200));
-            Guid billId2 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId2, 200));
+            Guid billId1 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId1, 200));
+            Guid billId2 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId2, 200));
 
             Assert.Catch<BanksException>(() =>
             {
@@ -190,7 +190,7 @@ namespace Banks.Tests
         [Test]
         public void MakeInvalidTransaction_ThrowException()
         {
-            var bankInfo = new BankInfo(
+            var bankInfo = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -204,13 +204,13 @@ namespace Banks.Tests
                 200000);
             Guid bankId = _centralBank.RegisterBank(bankInfo);
 
-            var clientInfo1 = new ClientInfo("Valera", "Shevchenko");
-            var clientInfo2 = new ClientInfo("Max", "Shevchenko");
+            var clientInfo1 = new ClientBuilder("Valera", "Shevchenko");
+            var clientInfo2 = new ClientBuilder("Max", "Shevchenko");
             Guid clientId1 = _centralBank.RegisterClient(clientInfo1);
             Guid clientId2 = _centralBank.RegisterClient(clientInfo2);
 
-            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId1, 100));
-            Guid billId2 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId2, 100));
+            Guid billId1 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId1, 100));
+            Guid billId2 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId2, 100));
 
             Assert.Catch<BanksException>(() =>
             {
@@ -221,7 +221,7 @@ namespace Banks.Tests
         [Test]
         public void EnableNotifications_NotificationsSending()
         {
-            var bankInfo = new BankInfo(
+            var bankInfo = new BankBuilder(
                 "Sber",
                 3,
                 7,
@@ -235,9 +235,9 @@ namespace Banks.Tests
                 200000);
             Guid bankId = _centralBank.RegisterBank(bankInfo);
 
-            var clientInfo1 = new ClientInfo("Valera", "Shevchenko");
+            var clientInfo1 = new ClientBuilder("Valera", "Shevchenko");
             Guid clientId1 = _centralBank.RegisterClient(clientInfo1);
-            Guid billId1 = _centralBank.OpenBill(new DebitBillInfo(bankId, clientId1, 100));
+            Guid billId1 = _centralBank.OpenBill(new DebitBillBuilder(bankId, clientId1, 100));
 
             _centralBank.EnableNotification(clientId1);
 

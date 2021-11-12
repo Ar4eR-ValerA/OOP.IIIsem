@@ -1,24 +1,24 @@
 ﻿using System;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Banks.Tools;
 
 namespace Banks.Entities
 {
     public class Client
     {
-        public Client(ClientInfo clientInfo)
+        public Client(ClientBuilder clientBuilder)
         {
-            if (clientInfo is null)
+            if (clientBuilder is null)
             {
                 throw new BanksException("Client's info is null");
             }
 
-            Name = clientInfo.Name;
-            Surname = clientInfo.Surname;
+            Name = clientBuilder.Name;
+            Surname = clientBuilder.Surname;
             Id = Guid.NewGuid();
             EnableNotification = false;
-            Address = clientInfo.Address;
-            Passport = clientInfo.Passport;
+            Address = clientBuilder.Address;
+            Passport = clientBuilder.Passport;
 
             if (Address is null || Passport == 0)
             {

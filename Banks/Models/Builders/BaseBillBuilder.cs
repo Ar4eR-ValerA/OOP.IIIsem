@@ -1,11 +1,11 @@
 ﻿using System;
 using Banks.Entities.Bills;
 
-namespace Banks.Models.Infos
+namespace Banks.Models.Builders
 {
-    public abstract class BaseBillInfo
+    public abstract class BaseBillBuilder
     {
-        internal BaseBillInfo(Guid bankId, Guid clientId, decimal money)
+        internal BaseBillBuilder(Guid bankId, Guid clientId, decimal money)
         {
             BankId = bankId;
             ClientId = clientId;

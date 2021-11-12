@@ -2,11 +2,11 @@
 using Banks.Entities.Bills;
 using Banks.Tools;
 
-namespace Banks.Models.Infos
+namespace Banks.Models.Builders
 {
-    public class DebitBillInfo : BaseBillInfo
+    public class DebitBillBuilder : BaseBillBuilder
     {
-        public DebitBillInfo(Guid bankId, Guid clientId, decimal money)
+        public DebitBillBuilder(Guid bankId, Guid clientId, decimal money)
             : base(bankId, clientId, money)
         {
             BankId = bankId;

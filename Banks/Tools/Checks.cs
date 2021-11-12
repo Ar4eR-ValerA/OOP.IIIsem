@@ -3,7 +3,7 @@ using System.Linq;
 using Banks.Contexts;
 using Banks.Entities;
 using Banks.Entities.Bills;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 using Microsoft.EntityFrameworkCore;
 
 namespace Banks.Tools
@@ -66,9 +66,9 @@ namespace Banks.Tools
             }
         }
 
-        public void RegisterClientChecks(ClientInfo clientInfo)
+        public void RegisterClientChecks(ClientBuilder clientBuilder)
         {
-            if (clientInfo is null)
+            if (clientBuilder is null)
             {
                 throw new BanksException("Client's info is null");
             }
@@ -87,20 +87,20 @@ namespace Banks.Tools
             }
         }
 
-        public void RegisterBankChecks(BankInfo bankInfo)
+        public void RegisterBankChecks(BankBuilder bankBuilder)
         {
-            if (bankInfo is null)
+            if (bankBuilder is null)
             {
                 throw new BanksException("Bank's info is null");
             }
         }
 
-        public void OpenBillChecks(BaseBillInfo billInfo, CentralBankContext centralBankContext)
+        public void OpenBillChecks(BaseBillBuilder billBuilder, CentralBankContext centralBankContext)
         {
-            Bank bank = centralBankContext.Banks.Find(billInfo.BankId);
-            Client client = centralBankContext.Clients.Find(billInfo.ClientId);
+            Bank bank = centralBankContext.Banks.Find(billBuilder.BankId);
+            Client client = centralBankContext.Clients.Find(billBuilder.ClientId);
 
-            if (billInfo is null)
+            if (billBuilder is null)
             {
                 throw new BanksException("Bill's info is null");
             }
@@ -124,9 +124,9 @@ namespace Banks.Tools
             }
         }
 
-        public void ChangeBankInfoChecks(Bank bank, BankInfo bankInfo)
+        public void ChangeBankInfoChecks(Bank bank, BankBuilder bankBuilder)
         {
-            if (bankInfo is null)
+            if (bankBuilder is null)
             {
                 throw new BanksException("Bank's info is null");
             }

@@ -1,22 +1,22 @@
 ﻿using System;
-using Banks.Models.Infos;
+using Banks.Models.Builders;
 
 namespace Banks.Entities.Bills
 {
     public class CreditBill : BaseBill
     {
-        internal CreditBill(CreditBillInfo billInfo)
+        internal CreditBill(CreditBillBuilder billBuilder)
             : base(
-                billInfo.BankId,
-                billInfo.ClientId,
-                billInfo.Money,
+                billBuilder.BankId,
+                billBuilder.ClientId,
+                billBuilder.Money,
                 0,
-                billInfo.Commission,
-                billInfo.Limit,
-                billInfo.EndDate,
-                billInfo.UnreliableLimit,
-                billInfo.OpenDate,
-                billInfo.Reliable)
+                billBuilder.Commission,
+                billBuilder.Limit,
+                billBuilder.EndDate,
+                billBuilder.UnreliableLimit,
+                billBuilder.OpenDate,
+                billBuilder.Reliable)
         {
         }
 

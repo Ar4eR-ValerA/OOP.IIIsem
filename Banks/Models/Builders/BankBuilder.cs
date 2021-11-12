@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using Banks.Entities;
 using Banks.Tools;
 
-namespace Banks.Models.Infos
+namespace Banks.Models.Builders
 {
-    public class BankInfo
+    public class BankBuilder
     {
         private string _name;
         private List<DepositMoneyGap> _depositMoneyGaps;
 
-        public BankInfo(
+        public BankBuilder(
             string name,
             decimal debitPercent,
             decimal creditCommission,
@@ -42,6 +43,11 @@ namespace Banks.Models.Infos
         {
             get => _depositMoneyGaps;
             set => _depositMoneyGaps = value ?? throw new BanksException("Deposit Money Gaps is null");
+        }
+
+        internal Bank Build()
+        {
+            return new Bank(this);
         }
     }
 }
