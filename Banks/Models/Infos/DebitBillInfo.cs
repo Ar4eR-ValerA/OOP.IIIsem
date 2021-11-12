@@ -1,28 +1,23 @@
 ﻿using System;
+using Banks.Entities.Bills;
 using Banks.Tools;
 
 namespace Banks.Models.Infos
 {
-    public class DebitBillInfo
+    public class DebitBillInfo : BaseBillInfo
     {
         public DebitBillInfo(Guid bankId, Guid clientId, decimal money)
+            : base(bankId, clientId, money)
         {
             BankId = bankId;
             ClientId = clientId;
             Money = money;
         }
 
-        public Guid BankId { get; set; }
-        public Guid ClientId { get; set; }
-        public decimal Money { get; set; }
-        public decimal Percent { get; private set; }
-        public decimal UnreliableLimit { get; private set; }
-        public DateTime EndDate { get; private set; }
-        public DateTime OpenDate { get; private set; }
-        public bool Reliable { get; private set; }
-
-        internal void AddBankInfo(
+        internal override void AddBankInfo(
             decimal percent,
+            decimal limit,
+            decimal commission,
             decimal unreliableLimit,
             DateTime openDate,
             DateTime endDate,
@@ -41,10 +36,17 @@ namespace Banks.Models.Infos
             }
 
             Percent = percent;
+            Limit = limit;
+            Commission = commission;
             OpenDate = openDate;
             EndDate = endDate;
             UnreliableLimit = unreliableLimit;
             Reliable = reliable;
+        }
+
+        internal override BaseBill CreateBill()
+        {
+            return new DebitBill(this);
         }
     }
 }

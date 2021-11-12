@@ -94,43 +94,7 @@ namespace Banks.Tools
             }
         }
 
-        public static void OpenBillChecks(DepositBillInfo billInfo, Bank bank, Client client)
-        {
-            if (billInfo is null)
-            {
-                throw new BanksException("Bill's info is null");
-            }
-
-            if (bank is null)
-            {
-                throw new BanksException("This bank has not been registered");
-            }
-
-            if (client is null)
-            {
-                throw new BanksException("This client has not been registered");
-            }
-        }
-
-        public static void OpenBillChecks(CreditBillInfo billInfo, Bank bank, Client client)
-        {
-            if (billInfo is null)
-            {
-                throw new BanksException("Bill's info is null");
-            }
-
-            if (bank is null)
-            {
-                throw new BanksException("This bank has not been registered");
-            }
-
-            if (client is null)
-            {
-                throw new BanksException("This client has not been registered");
-            }
-        }
-
-        public static void OpenBillChecks(DebitBillInfo billInfo, Bank bank, Client client)
+        public static void OpenBillChecks(BaseBillInfo billInfo, Bank bank, Client client)
         {
             if (billInfo is null)
             {

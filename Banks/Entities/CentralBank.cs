@@ -141,7 +141,7 @@ namespace Banks.Entities
             return bank.Id;
         }
 
-        public Guid OpenBill(DepositBillInfo billInfo)
+        public Guid OpenBill(BaseBillInfo billInfo)
         {
             Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
             Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
@@ -150,53 +150,6 @@ namespace Banks.Entities
 
             billInfo.AddBankInfo(
                 bank.GetDepositPercent(billInfo.Money),
-                bank.UnreliableLimit,
-                DateNow,
-                DateNow.AddYears(bank.BillDurationYears),
-                client.Reliable);
-
-            var bill = new DepositBill(billInfo);
-            CentralBankContext.Bills.Add(bill);
-
-            bank.AddClient(client);
-            CentralBankContext.Banks.Update(bank);
-
-            CentralBankContext.SaveChanges();
-            return bill.Id;
-        }
-
-        public Guid OpenBill(DebitBillInfo billInfo)
-        {
-            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
-            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
-
-            Checks.OpenBillChecks(billInfo, bank, client);
-
-            billInfo.AddBankInfo(
-                bank.DebitPercent,
-                bank.UnreliableLimit,
-                DateNow,
-                DateNow.AddYears(bank.BillDurationYears),
-                client.Reliable);
-
-            var bill = new DebitBill(billInfo);
-            CentralBankContext.Bills.Add(bill);
-
-            bank.AddClient(client);
-            CentralBankContext.Banks.Update(bank);
-
-            CentralBankContext.SaveChanges();
-            return bill.Id;
-        }
-
-        public Guid OpenBill(CreditBillInfo billInfo)
-        {
-            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
-            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
-
-            Checks.OpenBillChecks(billInfo, bank, client);
-
-            billInfo.AddBankInfo(
                 bank.Limit,
                 bank.CreditCommission,
                 bank.UnreliableLimit,
@@ -204,7 +157,7 @@ namespace Banks.Entities
                 DateNow.AddYears(bank.BillDurationYears),
                 client.Reliable);
 
-            var bill = new CreditBill(billInfo);
+            BaseBill bill = billInfo.CreateBill();
             CentralBankContext.Bills.Add(bill);
 
             bank.AddClient(client);
