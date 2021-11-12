@@ -15,7 +15,7 @@ namespace Banks.Entities
         {
             CentralBankContext = centralBankContext;
             DateNow = dateNow;
-            Checks = new Checks(centralBankContext);
+            Checks = new Checks();
         }
 
         public DateTime DateNow { get; private set; }
@@ -145,7 +145,7 @@ namespace Banks.Entities
 
         public Guid OpenBill(BaseBillInfo billInfo)
         {
-            Checks.OpenBillChecks(billInfo);
+            Checks.OpenBillChecks(billInfo, CentralBankContext);
 
             Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
             Client client = CentralBankContext.Clients.Find(billInfo.ClientId);

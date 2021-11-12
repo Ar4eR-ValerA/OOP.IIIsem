@@ -10,13 +10,6 @@ namespace Banks.Tools
 {
     public class Checks
     {
-        public Checks(CentralBankContext centralBankContext)
-        {
-            CentralBankContext = centralBankContext;
-        }
-
-        private CentralBankContext CentralBankContext { get; }
-
         public void MakeTransactionChecks(BaseBill billFrom, BaseBill billTo, decimal money)
         {
             if (billFrom is null)
@@ -102,10 +95,10 @@ namespace Banks.Tools
             }
         }
 
-        public void OpenBillChecks(BaseBillInfo billInfo)
+        public void OpenBillChecks(BaseBillInfo billInfo, CentralBankContext centralBankContext)
         {
-            Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
-            Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
+            Bank bank = centralBankContext.Banks.Find(billInfo.BankId);
+            Client client = centralBankContext.Clients.Find(billInfo.ClientId);
 
             if (billInfo is null)
             {
