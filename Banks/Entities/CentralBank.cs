@@ -101,10 +101,7 @@ namespace Banks.Entities
 
         public Guid RegisterClient(ClientInfo clientInfo)
         {
-            if (clientInfo is null)
-            {
-                throw new BanksException("Client's info is null");
-            }
+            Checks.RegisterClientChecks(clientInfo);
 
             var client = new Client(clientInfo);
             CentralBankContext.Clients.Add(client);
@@ -134,10 +131,7 @@ namespace Banks.Entities
 
         public Guid RegisterBank(BankInfo bankInfo)
         {
-            if (bankInfo is null)
-            {
-                throw new BanksException("Bank's info is null");
-            }
+            Checks.RegisterBankChecks(bankInfo);
 
             var bank = new Bank(bankInfo);
 
@@ -149,22 +143,10 @@ namespace Banks.Entities
 
         public Guid OpenBill(DepositBillInfo billInfo)
         {
-            if (billInfo is null)
-            {
-                throw new BanksException("Bill's info is null");
-            }
-
             Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
             Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
-            if (bank is null)
-            {
-                throw new BanksException("This bank has not been registered");
-            }
 
-            if (client is null)
-            {
-                throw new BanksException("This client has not been registered");
-            }
+            Checks.OpenBillChecks(billInfo, bank, client);
 
             billInfo.AddBankInfo(
                 bank.GetDepositPercent(billInfo.Money),
@@ -185,22 +167,10 @@ namespace Banks.Entities
 
         public Guid OpenBill(DebitBillInfo billInfo)
         {
-            if (billInfo is null)
-            {
-                throw new BanksException("Bill's info is null");
-            }
-
             Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
             Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
-            if (bank is null)
-            {
-                throw new BanksException("This bank has not been registered");
-            }
 
-            if (client is null)
-            {
-                throw new BanksException("This client has not been registered");
-            }
+            Checks.OpenBillChecks(billInfo, bank, client);
 
             billInfo.AddBankInfo(
                 bank.DebitPercent,
@@ -221,22 +191,10 @@ namespace Banks.Entities
 
         public Guid OpenBill(CreditBillInfo billInfo)
         {
-            if (billInfo is null)
-            {
-                throw new BanksException("Bill's info is null");
-            }
-
             Bank bank = CentralBankContext.Banks.Find(billInfo.BankId);
             Client client = CentralBankContext.Clients.Find(billInfo.ClientId);
-            if (bank is null)
-            {
-                throw new BanksException("This bank has not been registered");
-            }
 
-            if (client is null)
-            {
-                throw new BanksException("This client has not been registered");
-            }
+            Checks.OpenBillChecks(billInfo, bank, client);
 
             billInfo.AddBankInfo(
                 bank.Limit,
@@ -290,12 +248,10 @@ namespace Banks.Entities
 
         public void ChangeBankInfo(Guid bankId, BankInfo bankInfo)
         {
-            if (bankInfo is null)
-            {
-                throw new BanksException("Bank's info is null");
-            }
-
             Bank bank = CentralBankContext.Banks.Find(bankId);
+
+            Checks.ChangeBankInfoChecks(bank, bankInfo);
+
             bank.ChangeInfo(bankInfo);
             CentralBankContext.Banks.Update(bank);
 
@@ -303,10 +259,11 @@ namespace Banks.Entities
             {
                 if (!client.EnableNotification) continue;
 
-                CentralBankContext.Notifications.Add(new Notification(
-                    client.Id,
-                    $"Conditions of your bank: {bank.Id} has changed, please check conditions",
-                    DateNow));
+                CentralBankContext.Notifications.Add(
+                    new Notification(
+                        client.Id,
+                        $"Conditions of your bank: {bank.Id} has changed, please check conditions",
+                        DateNow));
             }
 
             CentralBankContext.SaveChanges();
@@ -314,15 +271,7 @@ namespace Banks.Entities
 
         private void ServiceBill(BaseBill bill, DateTime dateNow)
         {
-            if (bill is null)
-            {
-                throw new BanksException("Bill is null");
-            }
-
-            if (bill.EndDate < dateNow)
-            {
-                throw new BanksException("Your bill is closed");
-            }
+            Checks.ServiceBillChecks(bill, dateNow);
 
             if (bill.Money > 0)
             {

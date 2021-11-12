@@ -2,6 +2,7 @@
 using System.Linq;
 using Banks.Entities;
 using Banks.Entities.Bills;
+using Banks.Models.Infos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Banks.Tools
@@ -64,6 +65,14 @@ namespace Banks.Tools
             }
         }
 
+        public static void RegisterClientChecks(ClientInfo clientInfo)
+        {
+            if (clientInfo is null)
+            {
+                throw new BanksException("Client's info is null");
+            }
+        }
+
         public static void AddClientInfoChecks(Client client, string address)
         {
             if (address is null)
@@ -73,7 +82,95 @@ namespace Banks.Tools
 
             if (client is null)
             {
-                throw new BanksException("This client is not registered");
+                throw new BanksException("This client has not been registered");
+            }
+        }
+
+        public static void RegisterBankChecks(BankInfo bankInfo)
+        {
+            if (bankInfo is null)
+            {
+                throw new BanksException("Bank's info is null");
+            }
+        }
+
+        public static void OpenBillChecks(DepositBillInfo billInfo, Bank bank, Client client)
+        {
+            if (billInfo is null)
+            {
+                throw new BanksException("Bill's info is null");
+            }
+
+            if (bank is null)
+            {
+                throw new BanksException("This bank has not been registered");
+            }
+
+            if (client is null)
+            {
+                throw new BanksException("This client has not been registered");
+            }
+        }
+
+        public static void OpenBillChecks(CreditBillInfo billInfo, Bank bank, Client client)
+        {
+            if (billInfo is null)
+            {
+                throw new BanksException("Bill's info is null");
+            }
+
+            if (bank is null)
+            {
+                throw new BanksException("This bank has not been registered");
+            }
+
+            if (client is null)
+            {
+                throw new BanksException("This client has not been registered");
+            }
+        }
+
+        public static void OpenBillChecks(DebitBillInfo billInfo, Bank bank, Client client)
+        {
+            if (billInfo is null)
+            {
+                throw new BanksException("Bill's info is null");
+            }
+
+            if (bank is null)
+            {
+                throw new BanksException("This bank has not been registered");
+            }
+
+            if (client is null)
+            {
+                throw new BanksException("This client has not been registered");
+            }
+        }
+
+        public static void ChangeBankInfoChecks(Bank bank, BankInfo bankInfo)
+        {
+            if (bankInfo is null)
+            {
+                throw new BanksException("Bank's info is null");
+            }
+
+            if (bank is null)
+            {
+                throw new BanksException("This bank has not been registered");
+            }
+        }
+
+        public static void ServiceBillChecks(BaseBill bill, DateTime dateNow)
+        {
+            if (bill is null)
+            {
+                throw new BanksException("Bill is null");
+            }
+
+            if (bill.EndDate < dateNow)
+            {
+                throw new BanksException("Your bill is closed");
             }
         }
     }
