@@ -1,16 +1,15 @@
 ﻿using Banks.Entities;
 using Banks.Entities.Bills;
 using Banks.Models;
-using Banks.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace Banks.Contexts
 {
     public sealed class CentralBankContext : DbContext
     {
-        public CentralBankContext(string fileName)
+        public CentralBankContext(DbContextOptions<CentralBankContext> options)
+            : base(options)
         {
-            FileName = fileName ?? throw new BanksException("File name is null");
             Database.EnsureCreated();
         }
 
@@ -22,13 +21,6 @@ namespace Banks.Contexts
         internal DbSet<DepositBill> DepositBills { get; set; }
         internal DbSet<CreditBill> CreditBills { get; set; }
         internal DbSet<Notification> Notifications { get; set; }
-
-        private string FileName { get; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseInMemoryDatabase($"Filename={FileName}");
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

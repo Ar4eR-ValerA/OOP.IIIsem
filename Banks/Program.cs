@@ -5,6 +5,7 @@ using Banks.Entities;
 using Banks.Models;
 using Banks.Models.Builders;
 using Banks.Ui;
+using Microsoft.EntityFrameworkCore;
 
 namespace Banks
 {
@@ -12,7 +13,11 @@ namespace Banks
     {
         private static void Main()
         {
-            var centralBank = new CentralBank(new CentralBankContext("file.db"), DateTime.Now);
+            var optionsBuilder = new DbContextOptionsBuilder<CentralBankContext>();
+
+            var centralBank = new CentralBank(
+                new CentralBankContext(optionsBuilder.UseInMemoryDatabase("file.db").Options),
+                DateTime.Now);
 
             var bankInfo1 = new BankBuilder(
                 "Sber",

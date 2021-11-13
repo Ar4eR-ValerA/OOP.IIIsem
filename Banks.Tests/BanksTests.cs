@@ -5,6 +5,7 @@ using Banks.Entities;
 using Banks.Models;
 using Banks.Models.Builders;
 using Banks.Tools;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
 namespace Banks.Tests
@@ -16,7 +17,11 @@ namespace Banks.Tests
         [SetUp]
         public void SetUp()
         {
-            _centralBank = new CentralBank(new CentralBankContext("file.db"), DateTime.Now);
+            var optionsBuilder = new DbContextOptionsBuilder<CentralBankContext>();
+
+            _centralBank = new CentralBank(
+                new CentralBankContext(optionsBuilder.UseInMemoryDatabase("file.db").Options),
+                DateTime.Now);
         }
 
         [Test]
