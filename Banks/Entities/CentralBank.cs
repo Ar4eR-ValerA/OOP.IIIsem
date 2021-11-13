@@ -190,10 +190,8 @@ namespace Banks.Entities
             bank.ChangeInfo(bankBuilder);
             CentralBankContext.Banks.Update(bank);
 
-            foreach (Client client in bank.Clients)
+            foreach (Client client in bank.Clients.Where(client => client.EnableNotification))
             {
-                if (!client.EnableNotification) continue;
-
                 CentralBankContext.Notifications.Add(
                     new Notification(
                         client.Id,
