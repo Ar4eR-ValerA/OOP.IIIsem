@@ -68,8 +68,8 @@ namespace Banks.Entities
 
             Checks.CancelTransactionChecks(transaction, CentralBankContext.Banks);
 
+            transaction.Cancel();
             MakeTransaction(transaction.To, transaction.From, transaction.Money);
-            transaction.Valid = false;
             CentralBankContext.Transactions.Update(transaction);
 
             CentralBankContext.SaveChanges();

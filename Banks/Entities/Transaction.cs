@@ -57,5 +57,10 @@ namespace Banks.Entities
         public Guid To { get; private set; }
         public decimal Money { get; private set; }
         public bool Valid { get; internal set; }
+
+        internal void Cancel()
+        {
+            Valid = false;
+        }
     }
 }
