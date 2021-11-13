@@ -14,21 +14,11 @@ namespace Banks.Entities
             EnableNotification = false;
             Address = address;
             Passport = passport;
-
-            if (Address is null || Passport == 0)
-            {
-                Reliable = false;
-            }
-            else
-            {
-                Reliable = true;
-            }
         }
 
         internal Client()
         {
             Id = Guid.NewGuid();
-            Reliable = false;
         }
 
         public Guid Id { get; private set; }
@@ -36,14 +26,15 @@ namespace Banks.Entities
         public string Surname { get; private set; }
         public string Address { get; private set; }
         public int Passport { get; private set; }
-        public bool Reliable { get; private set; }
+
+        public bool Reliable => Address is not null && Passport != 0;
+
         public bool EnableNotification { get; internal set; }
 
         internal void AddClientInfo(string address, int passport)
         {
             Address = address ?? throw new BanksException("Address is null");
             Passport = passport;
-            Reliable = true;
         }
     }
 }
