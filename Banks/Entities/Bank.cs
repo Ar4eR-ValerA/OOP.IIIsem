@@ -65,6 +65,11 @@ namespace Banks.Entities
             return depositMoneyGap.Percent;
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         internal void ChangeInfo(BankBuilder bankBuilder)
         {
             if (bankBuilder is null)

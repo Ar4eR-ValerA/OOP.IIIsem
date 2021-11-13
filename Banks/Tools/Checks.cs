@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Banks.Tools
 {
-    public class Checks
+    public static class Checks
     {
-        public void MakeTransactionChecks(BaseBill billFrom, BaseBill billTo, decimal money)
+        public static void MakeTransactionChecks(BaseBill billFrom, BaseBill billTo, decimal money)
         {
             if (billFrom is null)
             {
@@ -35,7 +35,7 @@ namespace Banks.Tools
             }
         }
 
-        public void MakeBankTransactionChecks(Bank bank, BaseBill billTo)
+        public static void MakeBankTransactionChecks(Bank bank, BaseBill billTo)
         {
             if (bank is null)
             {
@@ -48,7 +48,20 @@ namespace Banks.Tools
             }
         }
 
-        public void CancelTransactionChecks(Transaction transaction, DbSet<Bank> banks)
+        public static void MakeBankTransactionChecks(BaseBill billFrom, Bank bank)
+        {
+            if (bank is null)
+            {
+                throw new BanksException("Bank has not been registered");
+            }
+
+            if (billFrom is null)
+            {
+                throw new BanksException("BillFrom has not been registered");
+            }
+        }
+
+        public static void CancelTransactionChecks(Transaction transaction, DbSet<Bank> banks)
         {
             if (transaction is null)
             {
@@ -66,7 +79,7 @@ namespace Banks.Tools
             }
         }
 
-        public void RegisterClientChecks(ClientBuilder clientBuilder)
+        public static void RegisterClientChecks(ClientBuilder clientBuilder)
         {
             if (clientBuilder is null)
             {
@@ -74,7 +87,7 @@ namespace Banks.Tools
             }
         }
 
-        public void AddClientInfoChecks(Client client, string address)
+        public static void AddClientInfoChecks(Client client, string address)
         {
             if (address is null)
             {
@@ -87,7 +100,7 @@ namespace Banks.Tools
             }
         }
 
-        public void RegisterBankChecks(BankBuilder bankBuilder)
+        public static void RegisterBankChecks(BankBuilder bankBuilder)
         {
             if (bankBuilder is null)
             {
@@ -95,10 +108,10 @@ namespace Banks.Tools
             }
         }
 
-        public void OpenBillChecks(BaseBillBuilder billBuilder, CentralBankContext centralBankContext)
+        public static void OpenBillChecks(BaseBillBuilder billBuilder, CentralBankContext centralBankContext)
         {
-            Bank bank = centralBankContext.Banks.Find(billBuilder.BankId);
-            Client client = centralBankContext.Clients.Find(billBuilder.ClientId);
+            Bank bank = centralBankContext.Banks.Find(billBuilder.Bank.Id);
+            Client client = centralBankContext.Clients.Find(billBuilder.Client.Id);
 
             if (billBuilder is null)
             {
@@ -116,7 +129,7 @@ namespace Banks.Tools
             }
         }
 
-        public void NotificationChecks(Client client)
+        public static void NotificationChecks(Client client)
         {
             if (client is null)
             {
@@ -124,7 +137,7 @@ namespace Banks.Tools
             }
         }
 
-        public void ChangeBankInfoChecks(Bank bank, BankBuilder bankBuilder)
+        public static void ChangeBankInfoChecks(Bank bank, BankBuilder bankBuilder)
         {
             if (bankBuilder is null)
             {
@@ -137,7 +150,7 @@ namespace Banks.Tools
             }
         }
 
-        public void ServiceBillChecks(BaseBill bill, DateTime dateNow)
+        public static void ServiceBillChecks(BaseBill bill, DateTime dateNow)
         {
             if (bill is null)
             {

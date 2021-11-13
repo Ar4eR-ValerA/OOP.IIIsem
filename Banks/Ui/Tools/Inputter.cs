@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Banks.Entities;
 
 namespace Banks.Ui.Tools
 {
@@ -23,10 +24,10 @@ namespace Banks.Ui.Tools
             return _asker.AskString("Enter your surname:\n");
         }
 
-        public Guid InputBankId(IEnumerable<Guid> banks)
+        public Bank InputBankId(IEnumerable<Bank> banks)
         {
             return _asker.AskChoices(
-                "Enter id of bank:",
+                "Enter bank:",
                 banks);
         }
 

@@ -9,8 +9,8 @@ namespace Banks.Entities.Bills
         private decimal _dailyProfits;
 
         internal BaseBill(
-            Guid bankId,
-            Guid clientId,
+            Bank bank,
+            Client client,
             decimal money,
             decimal percent,
             decimal commission,
@@ -21,8 +21,8 @@ namespace Banks.Entities.Bills
             bool reliable)
         {
             Id = Guid.NewGuid();
-            BankId = bankId;
-            ClientId = clientId;
+            Bank = bank;
+            Client = client;
             OpenDate = DateTime.Now;
             DailyProfits = 0;
             Limit = limit;
@@ -41,8 +41,8 @@ namespace Banks.Entities.Bills
         }
 
         public Guid Id { get; private set; }
-        public Guid BankId { get; private set; }
-        public Guid ClientId { get; private set; }
+        public Bank Bank { get; private set; }
+        public Client Client { get; private set; }
         public DateTime OpenDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public decimal UnreliableLimit { get; private set; }
@@ -81,5 +81,32 @@ namespace Banks.Entities.Bills
         public decimal Percent { get; private set; }
         public decimal Commission { get; private set; }
         public decimal Limit { get; private set; }
+
+        internal void ServiceDailyProfits()
+        {
+            if (Money <= 0) return;
+            DailyProfits += (DailyProfits + Money) * Percent / (365 * 100);
+        }
+
+        internal Transaction ServicePercent(DateTime dateNow)
+        {
+            if (!IsNewMonth(dateNow)) return null;
+            var transaction = new Transaction(Bank, this, _dailyProfits);
+            DailyProfits = 0;
+
+            return transaction;
+        }
+
+        internal Transaction ServiceCommission(DateTime dateNow)
+        {
+            if (!IsNewMonth(dateNow) || Money > 0) return null;
+
+            var transaction = new Transaction(this, Bank, _dailyProfits);
+            DailyProfits = 0;
+
+            return transaction;
+        }
+
+        private bool IsNewMonth(DateTime dateNow) => dateNow.Day == 1;
     }
 }

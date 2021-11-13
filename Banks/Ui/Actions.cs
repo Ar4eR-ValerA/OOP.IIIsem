@@ -65,12 +65,12 @@ namespace Banks.Ui
             centralBank.OpenBill(billBuilder);
         }
 
-        public void ShowBank(CentralBank centralBank, Guid bankId)
+        public void ShowBank(CentralBank centralBank, Bank bank)
         {
             AnsiConsole.Clear();
 
-            Table bankTable = _tableCreator.CreateBankPersonalTable(centralBank.FindBank(bankId));
-            _tableFiller.FillBankPersonalTable(bankTable, centralBank.FindBank(bankId));
+            Table bankTable = _tableCreator.CreateBankPersonalTable(bank);
+            _tableFiller.FillBankPersonalTable(bankTable, bank);
 
             AnsiConsole.Write(bankTable);
 

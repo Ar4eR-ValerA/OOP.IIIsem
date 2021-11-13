@@ -1,19 +1,20 @@
 ﻿using System;
+using Banks.Entities;
 using Banks.Entities.Bills;
 
 namespace Banks.Models.Builders
 {
     public abstract class BaseBillBuilder
     {
-        internal BaseBillBuilder(Guid bankId, Guid clientId, decimal money)
+        internal BaseBillBuilder(Bank bank, Client client, decimal money)
         {
-            BankId = bankId;
-            ClientId = clientId;
+            Bank = bank;
+            Client = client;
             Money = money;
         }
 
-        public Guid BankId { get; set; }
-        public Guid ClientId { get; set; }
+        public Bank Bank { get; set; }
+        public Client Client { get; set; }
         public decimal Money { get; set; }
         public decimal Percent { get; protected set; }
         public decimal UnreliableLimit { get; protected set; }

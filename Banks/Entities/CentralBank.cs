@@ -15,7 +15,6 @@ namespace Banks.Entities
         {
             CentralBankContext = centralBankContext;
             DateNow = dateNow;
-            Checks = new Checks();
         }
 
         public DateTime DateNow { get; private set; }
@@ -25,7 +24,6 @@ namespace Banks.Entities
         public IReadOnlyList<Transaction> Transactions => CentralBankContext.Transactions.ToList();
         public IReadOnlyList<Notification> Notifications => CentralBankContext.Notifications.ToList();
         private CentralBankContext CentralBankContext { get; }
-        private Checks Checks { get; }
 
         public Bank FindBank(Guid bankId)
         {
@@ -57,31 +55,7 @@ namespace Banks.Entities
             BaseBill billFrom = CentralBankContext.Bills.Find(billFromId);
             BaseBill billTo = CentralBankContext.Bills.Find(billToId);
 
-            Checks.MakeTransactionChecks(billFrom, billTo, money);
-
-            billFrom.Money -= money;
-            billTo.Money += money;
-
-            CentralBankContext.Bills.Update(billFrom);
-            CentralBankContext.Bills.Update(billTo);
-
-            var transaction = new Transaction(billFromId, billToId, money);
-            CentralBankContext.Transactions.Add(transaction);
-
-            CentralBankContext.SaveChanges();
-            return transaction.Id;
-        }
-
-        public Guid MakeBankTransaction(Guid bankId, Guid billToId, decimal money)
-        {
-            BaseBill billTo = CentralBankContext.Bills.Find(billToId);
-
-            Checks.MakeBankTransactionChecks(CentralBankContext.Banks.Find(bankId), billTo);
-
-            billTo.Money += money;
-            CentralBankContext.Bills.Update(billTo);
-
-            var transaction = new Transaction(bankId, billToId, money);
+            var transaction = new Transaction(billFrom, billTo, money);
             CentralBankContext.Transactions.Add(transaction);
 
             CentralBankContext.SaveChanges();
@@ -122,7 +96,7 @@ namespace Banks.Entities
 
             foreach (BaseBill bill in CentralBankContext.Bills)
             {
-                if (bill.ClientId == id)
+                if (bill.Client.Id == id)
                 {
                     bill.Reliable = true;
                 }
@@ -147,8 +121,8 @@ namespace Banks.Entities
         {
             Checks.OpenBillChecks(billBuilder, CentralBankContext);
 
-            Bank bank = CentralBankContext.Banks.Find(billBuilder.BankId);
-            Client client = CentralBankContext.Clients.Find(billBuilder.ClientId);
+            Bank bank = CentralBankContext.Banks.Find(billBuilder.Bank.Id);
+            Client client = CentralBankContext.Clients.Find(billBuilder.Client.Id);
 
             billBuilder.AddBankInfo(
                 bank.GetDepositPercent(billBuilder.Money),
@@ -234,22 +208,18 @@ namespace Banks.Entities
         {
             Checks.ServiceBillChecks(bill, dateNow);
 
-            if (bill.Money > 0)
+            bill.ServiceDailyProfits();
+            Transaction transactionPercent = bill.ServicePercent(dateNow);
+            Transaction transactionCommission = bill.ServiceCommission(dateNow);
+
+            if (transactionPercent is not null)
             {
-                bill.DailyProfits += (bill.DailyProfits + bill.Money) * bill.Percent / (365 * 100);
-                CentralBankContext.Bills.Update(bill);
+                CentralBankContext.Transactions.Add(transactionPercent);
             }
 
-            if (dateNow.Day != 1)
-                return;
-
-            MakeBankTransaction(bill.BankId, bill.Id, bill.DailyProfits);
-            bill.DailyProfits = 0;
-            CentralBankContext.Bills.Update(bill);
-
-            if (bill.Money < 0)
+            if (transactionCommission is not null)
             {
-                MakeBankTransaction(bill.BankId, bill.Id, -bill.Commission);
+                CentralBankContext.Transactions.Add(transactionCommission);
             }
 
             CentralBankContext.SaveChanges();

@@ -1,13 +1,12 @@
 ﻿using System;
-using Banks.Models.Builders;
 
 namespace Banks.Entities.Bills
 {
     public class CreditBill : BaseBill
     {
         internal CreditBill(
-            Guid bankId,
-            Guid clientId,
+            Bank bank,
+            Client client,
             decimal money,
             decimal commission,
             decimal limit,
@@ -16,8 +15,8 @@ namespace Banks.Entities.Bills
             DateTime openDate,
             bool reliable)
             : base(
-                bankId,
-                clientId,
+                bank,
+                client,
                 money,
                 0,
                 commission,

@@ -70,14 +70,14 @@ namespace Banks.Ui.Tools
             }
         }
 
-        public void ExecuteOpenDebitBill(Guid clientId, CentralBank centralBank)
+        public void ExecuteOpenDebitBill(Client client, CentralBank centralBank)
         {
             try
             {
                 _actions.OpenDebitBill(
                     new DebitBillBuilder(
-                        _inputter.InputBankId(centralBank.Banks.Select(bank => bank.Id)),
-                        clientId,
+                        _inputter.InputBankId(centralBank.Banks),
+                        client,
                         _inputter.InputMoney()),
                     centralBank);
             }
@@ -87,14 +87,14 @@ namespace Banks.Ui.Tools
             }
         }
 
-        public void ExecuteOpenDepositBill(Guid clientId, CentralBank centralBank)
+        public void ExecuteOpenDepositBill(Client client, CentralBank centralBank)
         {
             try
             {
                 _actions.OpenDepositBill(
                     new DepositBillBuilder(
-                        _inputter.InputBankId(centralBank.Banks.Select(bank => bank.Id)),
-                        clientId,
+                        _inputter.InputBankId(centralBank.Banks),
+                        client,
                         _inputter.InputMoney()),
                     centralBank);
             }
@@ -104,14 +104,14 @@ namespace Banks.Ui.Tools
             }
         }
 
-        public void ExecuteOpenCreditBill(Guid clientId, CentralBank centralBank)
+        public void ExecuteOpenCreditBill(Client client, CentralBank centralBank)
         {
             try
             {
                 _actions.OpenCreditBill(
                     new CreditBillBuilder(
-                        _inputter.InputBankId(centralBank.Banks.Select(bank => bank.Id)),
-                        clientId,
+                        _inputter.InputBankId(centralBank.Banks),
+                        client,
                         _inputter.InputMoney()),
                     centralBank);
             }
@@ -127,7 +127,7 @@ namespace Banks.Ui.Tools
             {
                 _actions.ShowBank(
                     centralBank,
-                    _inputter.InputBankId(centralBank.Banks.Select(bank => bank.Id)));
+                    _inputter.InputBankId(centralBank.Banks));
             }
             catch (BanksException exception)
             {
@@ -156,7 +156,7 @@ namespace Banks.Ui.Tools
                 _actions.ShowBill(
                     centralBank,
                     _inputter.InputBillId(centralBank.Bills
-                        .Where(bill => bill.ClientId == clientId)
+                        .Where(bill => bill.Client.Id == clientId)
                         .Select(bill => bill.Id)));
             }
             catch (BanksException exception)
@@ -202,7 +202,7 @@ namespace Banks.Ui.Tools
                 _actions.MakeTransaction(
                     centralBank,
                     _inputter.InputBillFromId(centralBank.Bills
-                        .Where(bill => bill.ClientId == clientId)
+                        .Where(bill => bill.Client.Id == clientId)
                         .Select(bill => bill.Id)),
                     _inputter.InputBillToId(centralBank.Bills.Select(bill => bill.Id)),
                     _inputter.InputMoney());

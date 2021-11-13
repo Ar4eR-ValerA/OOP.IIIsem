@@ -64,7 +64,10 @@ namespace Banks
 
             var clientInfo = new ClientBuilder("Max", "Shevchenko", "Dom 21", 1111);
             Guid clientId = centralBank.RegisterClient(clientInfo);
-            centralBank.OpenBill(new DebitBillBuilder(bankId1, clientId, 1000));
+            centralBank.OpenBill(new DebitBillBuilder(
+                centralBank.FindBank(bankId1),
+                centralBank.FindClient(clientId),
+                1000));
 
             var ui = new UiService(centralBank);
             ui.Run();

@@ -24,7 +24,7 @@ namespace Banks.Ui.Tools
             foreach (BaseBill bill in centralBank.Bills)
             {
                 billsTable.AddRow(
-                    centralBank.FindClient(bill.ClientId).Name,
+                    centralBank.FindClient(bill.Client.Id).Name,
                     bill.GetType().ToString().Split(".").Last(),
                     bill.Id.ToString());
             }
@@ -67,8 +67,8 @@ namespace Banks.Ui.Tools
         public void FillBillPersonalTable(Table billTable, BaseBill bill)
         {
             billTable.AddRow(
-                bill.BankId.ToString(),
-                bill.ClientId.ToString(),
+                bill.Bank.Id.ToString(),
+                bill.Client.Id.ToString(),
                 bill.OpenDate.ToString(CultureInfo.InvariantCulture),
                 bill.EndDate.ToString(CultureInfo.InvariantCulture),
                 bill.Money.ToString(CultureInfo.InvariantCulture),

@@ -1,4 +1,5 @@
 ﻿using System;
+using Banks.Entities;
 using Banks.Entities.Bills;
 using Banks.Tools;
 
@@ -6,11 +7,11 @@ namespace Banks.Models.Builders
 {
     public class CreditBillBuilder : BaseBillBuilder
     {
-        public CreditBillBuilder(Guid bankId, Guid clientId, decimal money)
-            : base(bankId, clientId, money)
+        public CreditBillBuilder(Bank bank, Client client, decimal money)
+            : base(bank, client, money)
         {
-            BankId = bankId;
-            ClientId = clientId;
+            Bank = bank;
+            Client = client;
             Money = money;
         }
 
@@ -47,8 +48,8 @@ namespace Banks.Models.Builders
         internal override BaseBill CreateBill()
         {
             return new CreditBill(
-                BankId,
-                ClientId,
+                Bank,
+                Client,
                 Money,
                 Commission,
                 Limit,

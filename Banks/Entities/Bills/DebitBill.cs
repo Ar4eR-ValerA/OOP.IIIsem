@@ -6,8 +6,8 @@ namespace Banks.Entities.Bills
     public class DebitBill : BaseBill
     {
         internal DebitBill(
-            Guid bankId,
-            Guid clientId,
+            Bank bank,
+            Client client,
             decimal money,
             decimal percent,
             DateTime endDate,
@@ -15,8 +15,8 @@ namespace Banks.Entities.Bills
             DateTime openDate,
             bool reliable)
             : base(
-                bankId,
-                clientId,
+                bank,
+                client,
                 money,
                 percent,
                 0,
