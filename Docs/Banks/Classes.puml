@@ -1,0 +1,69 @@
+﻿@startuml
+
+hide empty members
+
+class CentralBank {
+    + ICentralBankRepository Repository { get; }
+    + List<Guid> TransactionsIds { get; }
+    + List<Guid> BanksIds { get; }
+    + List<Guid> ClientsIds { get; }
+    + List<Guid> BillsIds { get; }
+
+    + Guid MakeTransaction(Guid billFrom, Guid billTo, int amount)
+    + void CancelTransaction(Guid guid)
+    + void RegisterClient(string name, string surname)
+    + void RegisterBank(string nme)
+    + Guid OpenBill(Guid bankId, Guid clientId, ITradeObject tradeObject)
+}
+
+class Bank {
+    + Guid Id { get; }
+    + string Name { get; }
+    + Guid OpenBill(Client client)
+}
+
+class Bill {
+    + Guid Id { get; }
+    + Guid BankId { get; }
+    + Guid ClientId { get; }
+    + decimal Money { get; }
+}
+
+interface ICentralBankRepository {
+    + List<Client> Clients { get; }
+    + List<Bank> Banks { get; }
+    + List<Transaction> Transactions { get; }
+    + List<Bill> Bills { get; }
+
+    + void AddClient(Client client)
+    + void AddBank(Bank bank)
+    + void AddTransaction(Transaction transaction)
+    + void AddBill(Bill bill)
+}
+
+class CentralBankBd implements ICentralBankRepository {
+    - CentralBankContext CentralBankContext { get; }
+}
+
+class Client {
+    + Guid Id { get; }
+    + string Name { get; }
+    + string Surname { get; }
+}
+
+class Transaction {
+    + Guid Id { get; }
+    + Guid From { get; }
+    + Guid To { get; }
+}
+
+CentralBank o-- Bank
+Bank o-- Bill
+
+CentralBank o-- Client
+
+CentralBank o-- Transaction
+
+CentralBank o-- ICentralBankRepository
+
+@enduml
