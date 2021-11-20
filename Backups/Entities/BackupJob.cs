@@ -34,5 +34,10 @@ namespace Backups.Entities
 
             return restorePoint;
         }
+
+        public void AddRestorePoints(List<RestorePoint> restorePoints)
+        {
+            _restorePoints.AddRange(restorePoints);
+        }
     }
 }

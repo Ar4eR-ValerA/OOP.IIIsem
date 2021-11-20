@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
+using BackupsExtra.Tools;
 
 namespace BackupsExtra.Entities
 {
@@ -30,12 +31,12 @@ namespace BackupsExtra.Entities
 
             if (type is null)
             {
-                throw new BackupsException("There is no such type");
+                throw new BackupsExtraException("There is no such type");
             }
 
             if (files is null)
             {
-                throw new BackupsException("Json error, there is no \"files\"");
+                throw new BackupsExtraException("Json error, there is no \"files\"");
             }
 
             var jobObject = (IJobObject)Activator.CreateInstance(type);
@@ -43,6 +44,11 @@ namespace BackupsExtra.Entities
             foreach (string file in files)
             {
                 jobObject!.AddFile(new FileInfo(file));
+            }
+
+            if (jobObject is null)
+            {
+                throw new BackupsExtraException("Json error");
             }
 
             return jobObject;

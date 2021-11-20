@@ -16,8 +16,14 @@ namespace Backups.Client.ServerStorages
         }
 
         public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { FileInfo };
-        public string Path => FileInfo.FullName;
-        public FileInfo FileInfo { get; }
+
+        public string Path
+        {
+            get => FileInfo.FullName;
+            set => FileInfo = new FileInfo(value);
+        }
+
+        public FileInfo FileInfo { get; set; }
 
         public IPAddress IpAddress { get; }
         public int Port { get; }

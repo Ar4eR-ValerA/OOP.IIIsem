@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Backups.Interfaces;
-using Backups.Tools;
+using BackupsExtra.Tools;
 
 namespace BackupsExtra.Entities
 {
@@ -30,12 +28,17 @@ namespace BackupsExtra.Entities
 
             if (archiveServiceType is null || archiverType is null)
             {
-                throw new BackupsException("There is no such type");
+                throw new BackupsExtraException("There is no such type");
             }
 
             var archiveService = (IArchiveService)Activator.CreateInstance(archiveServiceType);
             var archiver = (IArchiver)Activator.CreateInstance(archiverType);
             archiveService!.Archiver = archiver;
+
+            if (archiveService is null)
+            {
+                throw new BackupsExtraException("Json error");
+            }
 
             return archiveService;
         }

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text.Json;
 using Backups.Entities;
 using Backups.Interfaces;
-using Backups.Tools;
 using BackupsExtra.Entities;
+using BackupsExtra.Tools;
 
 namespace BackupsExtra.Services
 {
@@ -37,14 +37,14 @@ namespace BackupsExtra.Services
             File.WriteAllText(path, jsonBackupJob);
         }
 
-        public void Deserialize(string path)
+        public BackupJob Deserialize(string path)
         {
             string jsonString = File.ReadAllText(path);
             SerializedBackupJob serializedBackupJob = JsonSerializer.Deserialize<SerializedBackupJob>(jsonString);
 
             if (serializedBackupJob is null)
             {
-                throw new BackupsException($"Where is no such file: {path}");
+                throw new BackupsExtraException($"Where is no such file: {path}");
             }
 
             SerializedRestorePoints =
@@ -54,12 +54,20 @@ namespace BackupsExtra.Services
             SerializedArchiveService =
                 JsonSerializer.Deserialize<SerializedArchiveService>(serializedBackupJob.SerializedArchiveService);
 
-            IJobObject jobObject = SerializedJobObject.GetJobObject();
-            IArchiveService archiveService = SerializedArchiveService.GetArchiveService();
+            IJobObject jobObject = SerializedJobObject!.GetJobObject();
+            IArchiveService archiveService = SerializedArchiveService!.GetArchiveService();
+            var restorePoints = new List<RestorePoint>();
+            foreach (SerializedRestorePoint serializedRestorePoint in SerializedRestorePoints!)
+            {
+                restorePoints.Add(serializedRestorePoint.GetRestorePoint());
+            }
 
-            // RestorePoint
+            // restorePoints.AddRange(SerializedRestorePoints!
+            // .Select(serializedRestorePoint => serializedRestorePoint.GetRestorePoint()));
+            var backupJop = new BackupJob(jobObject, archiveService);
+            backupJop.AddRestorePoints(restorePoints);
 
-            // return serializedBackupJob;
+            return backupJop;
         }
 
         private void SerializeRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
@@ -71,7 +79,7 @@ namespace BackupsExtra.Services
                 SerializedRestorePoints.Add(
                     new SerializedRestorePoint(
                         restorePoint.Name,
-                        JsonSerializer.Serialize(restorePoint.Storage.FileInfos.Select(file => file.FullName)),
+                        JsonSerializer.Serialize(restorePoint.Storage.Path),
                         restorePoint.Storage.GetType().ToString()));
             }
         }

@@ -32,7 +32,7 @@ namespace BackupsExtra
             var backupJobSerialize = new SerializeBackupJob();
 
             backupJobSerialize.Serialize(backupJob1, "cfg");
-            backupJobSerialize.Deserialize("cfg");
+            BackupJob backupJob2 = backupJobSerialize.Deserialize("cfg");
         }
     }
 }

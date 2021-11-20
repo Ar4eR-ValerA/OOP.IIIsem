@@ -6,6 +6,11 @@ namespace Backups.Services
 {
     public class LocalArchiveService : IArchiveService
     {
+        public LocalArchiveService()
+        {
+            Archiver = null;
+        }
+
         public LocalArchiveService(IArchiver archiver)
         {
             Archiver = archiver ?? throw new BackupsException("Archiver is null");
@@ -23,6 +28,11 @@ namespace Backups.Services
             if (restorePoint is null)
             {
                 throw new BackupsException("JobObject is null");
+            }
+
+            if (Archiver is null)
+            {
+                throw new BackupsException("There is no archiver");
             }
 
             Archiver.Archive(jobObject.FileInfos, restorePoint.Storage.Path);

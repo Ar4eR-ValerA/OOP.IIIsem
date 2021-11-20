@@ -1,19 +1,49 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Backups.Entities;
+using Backups.Interfaces;
+using BackupsExtra.Tools;
 
 namespace BackupsExtra.Entities
 {
     public class SerializedRestorePoint
     {
         [JsonConstructor]
-        public SerializedRestorePoint(string name, string storagePath, string storageType)
+        public SerializedRestorePoint(string name, string storageFile, string storageType)
         {
             Name = name;
-            StoragePath = storagePath;
+            StorageFile = storageFile;
             StorageType = storageType;
         }
 
         public string Name { get; }
-        public string StoragePath { get; }
+        public string StorageFile { get; }
         public string StorageType { get; }
+
+        public RestorePoint GetRestorePoint()
+        {
+            string name = Name;
+            string storagePath = JsonSerializer.Deserialize<string>(StorageFile);
+            string storageTypePath = StorageType;
+            string storageTypePackage = storageTypePath?.Split(".")[0];
+
+            var storageType = Type.GetType($"{storageTypePath}, {storageTypePackage}");
+
+            if (storageType is null)
+            {
+                throw new BackupsExtraException("There is no such type");
+            }
+
+            var storage = (IStorage)Activator.CreateInstance(storageType);
+            storage!.Path = storagePath;
+
+            if (storage is null)
+            {
+                throw new BackupsExtraException("Json error");
+            }
+
+            return new RestorePoint(name, storage);
+        }
     }
 }

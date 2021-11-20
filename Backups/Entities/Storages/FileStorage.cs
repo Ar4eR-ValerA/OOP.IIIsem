@@ -7,7 +7,12 @@ namespace Backups.Entities.Storages
 {
     public class FileStorage : IStorage
     {
-        private readonly FileInfo _fileInfo;
+        private FileInfo _fileInfo;
+
+        public FileStorage()
+        {
+            _fileInfo = null;
+        }
 
         public FileStorage(FileInfo fileInfo)
         {
@@ -15,6 +20,19 @@ namespace Backups.Entities.Storages
         }
 
         public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { _fileInfo };
-        public string Path => _fileInfo.FullName;
+
+        public string Path
+        {
+            get
+            {
+                if (_fileInfo is null)
+                {
+                    throw new BackupsException("There is no file info");
+                }
+
+                return _fileInfo.FullName;
+            }
+            set => _fileInfo = new FileInfo(value ?? throw new BackupsException("value is null"));
+        }
     }
 }
