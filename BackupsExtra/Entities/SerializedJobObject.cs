@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Backups.Interfaces;
+using Backups.Tools;
 
 namespace BackupsExtra.Entities
 {
@@ -22,25 +23,29 @@ namespace BackupsExtra.Entities
 
         public IJobObject GetJobObject()
         {
-            string typePath = EraseExtraSymbols(JobObjectType);
-            string package = EraseExtraSymbols(JobObjectType.Split(".")[0]);
-            var type = Type.GetType($"{typePath}, {package}", true);
+            List<string> files = JsonSerializer.Deserialize<List<string>>(Files);
+            string typePath = JsonSerializer.Deserialize<string>(JobObjectType);
+            string package = typePath?.Split(".")[0];
+            var type = Type.GetType($"{typePath}, {package}");
+
+            if (type is null)
+            {
+                throw new BackupsException("There is no such type");
+            }
+
+            if (files is null)
+            {
+                throw new BackupsException("Json error, there is no \"files\"");
+            }
 
             var jobObject = (IJobObject)Activator.CreateInstance(type);
-            List<string> files = JsonSerializer.Deserialize<List<string>>(Files);
 
             foreach (string file in files)
             {
-                jobObject.AddFile(new FileInfo(file));
+                jobObject!.AddFile(new FileInfo(file));
             }
 
             return jobObject;
-        }
-
-        private string EraseExtraSymbols(string path)
-        {
-            char[] chars = path.Where(c => c != '\"').ToArray();
-            return new string(chars);
         }
     }
 }

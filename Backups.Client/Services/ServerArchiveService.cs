@@ -19,7 +19,7 @@ namespace Backups.Client.Services
             Port = port;
         }
 
-        public IArchiver Archiver { get; }
+        public IArchiver Archiver { get; set; }
 
         public IPAddress IpAddress { get; }
 

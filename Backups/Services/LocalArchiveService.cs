@@ -11,7 +11,7 @@ namespace Backups.Services
             Archiver = archiver ?? throw new BackupsException("Archiver is null");
         }
 
-        public IArchiver Archiver { get; }
+        public IArchiver Archiver { get; set; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
         {

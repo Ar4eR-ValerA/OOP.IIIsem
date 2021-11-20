@@ -55,6 +55,9 @@ namespace BackupsExtra.Services
                 JsonSerializer.Deserialize<SerializedArchiveService>(serializedBackupJob.SerializedArchiveService);
 
             IJobObject jobObject = SerializedJobObject.GetJobObject();
+            IArchiveService archiveService = SerializedArchiveService.GetArchiveService();
+
+            // RestorePoint
 
             // return serializedBackupJob;
         }
