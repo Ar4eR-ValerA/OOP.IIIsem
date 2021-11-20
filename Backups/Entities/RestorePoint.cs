@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Backups.Interfaces;
+﻿using Backups.Interfaces;
 using Backups.Tools;
 
 namespace Backups.Entities

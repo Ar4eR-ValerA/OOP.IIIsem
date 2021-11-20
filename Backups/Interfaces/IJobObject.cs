@@ -7,6 +7,7 @@ namespace Backups.Interfaces
     {
         IReadOnlyList<FileInfo> FileInfos { get; }
 
+        void AddFile(FileInfo fileInfo);
         void RemoveFile(FileInfo fileInfo);
     }
 }
