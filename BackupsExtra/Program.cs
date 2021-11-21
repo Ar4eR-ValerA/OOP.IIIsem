@@ -7,6 +7,7 @@ using Backups.Entities.Storages;
 using Backups.Interfaces;
 using Backups.Services;
 using Backups.Tools;
+using BackupsExtra.Entities;
 using BackupsExtra.Services;
 
 namespace BackupsExtra
@@ -24,8 +25,12 @@ namespace BackupsExtra
             var archiveService1 = new LocalArchiveService(new SingleZipArchiver());
             var backupJob1 = new BackupJob(jobObject, archiveService1);
 
-            RestorePoint restorePoint1 = backupJob1.CreateRestorePoint(
+            backupJob1.CreateRestorePoint(
                 "Test 1",
+                new FileStorage(
+                    new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip")));
+            backupJob1.CreateRestorePoint(
+                "Test 2",
                 new FileStorage(
                     new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip")));
 
@@ -33,6 +38,9 @@ namespace BackupsExtra
 
             backupJobSerialize.Serialize(backupJob1, "cfg");
             BackupJob backupJob2 = backupJobSerialize.Deserialize("cfg");
+
+            var restorePointsControl = new RestorePointsControl(new RestorePointsControlCounter(1));
+            restorePointsControl.EraseExtraRestorePoints(backupJob2);
         }
     }
 }

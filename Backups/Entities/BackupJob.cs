@@ -37,7 +37,25 @@ namespace Backups.Entities
 
         public void AddRestorePoints(List<RestorePoint> restorePoints)
         {
-            _restorePoints.AddRange(restorePoints);
+            _restorePoints.AddRange(restorePoints ?? throw new BackupsException("Restore point is null"));
+        }
+
+        public void EraseRestorePoint(RestorePoint restorePoint)
+        {
+            _restorePoints.Remove(restorePoint ?? throw new BackupsException("Restore point is null"));
+        }
+
+        public void EraseRestorePoints(List<RestorePoint> restorePoints)
+        {
+            if (restorePoints is null)
+            {
+                throw new BackupsException("Restore points are null");
+            }
+
+            foreach (RestorePoint restorePoint in restorePoints)
+            {
+                _restorePoints.Remove(restorePoint);
+            }
         }
     }
 }
