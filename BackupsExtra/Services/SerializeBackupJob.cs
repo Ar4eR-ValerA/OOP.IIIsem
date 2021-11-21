@@ -54,16 +54,16 @@ namespace BackupsExtra.Services
             SerializedArchiveService =
                 JsonSerializer.Deserialize<SerializedArchiveService>(serializedBackupJob.SerializedArchiveService);
 
-            IJobObject jobObject = SerializedJobObject!.GetJobObject();
-            IArchiveService archiveService = SerializedArchiveService!.GetArchiveService();
-            var restorePoints = new List<RestorePoint>();
-            foreach (SerializedRestorePoint serializedRestorePoint in SerializedRestorePoints!)
+            if (SerializedJobObject is null || SerializedArchiveService is null || SerializedRestorePoints is null)
             {
-                restorePoints.Add(serializedRestorePoint.GetRestorePoint());
+                throw new BackupsExtraException("Json error, there is no serialized objects");
             }
 
-            // restorePoints.AddRange(SerializedRestorePoints!
-            // .Select(serializedRestorePoint => serializedRestorePoint.GetRestorePoint()));
+            IJobObject jobObject = SerializedJobObject.GetJobObject();
+            IArchiveService archiveService = SerializedArchiveService.GetArchiveService();
+            var restorePoints = SerializedRestorePoints
+                .Select(serializedRestorePoint => serializedRestorePoint.GetRestorePoint()).ToList();
+
             var backupJop = new BackupJob(jobObject, archiveService);
             backupJop.AddRestorePoints(restorePoints);
 

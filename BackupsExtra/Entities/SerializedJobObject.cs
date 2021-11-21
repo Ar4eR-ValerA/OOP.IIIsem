@@ -39,16 +39,16 @@ namespace BackupsExtra.Entities
                 throw new BackupsExtraException("Json error, there is no \"files\"");
             }
 
-            var jobObject = (IJobObject)Activator.CreateInstance(type);
-
-            foreach (string file in files)
-            {
-                jobObject!.AddFile(new FileInfo(file));
-            }
+            var jobObject = Activator.CreateInstance(type) as IJobObject;
 
             if (jobObject is null)
             {
-                throw new BackupsExtraException("Json error");
+                throw new BackupsExtraException("Json error, there is no job object");
+            }
+
+            foreach (string file in files)
+            {
+                jobObject.AddFile(new FileInfo(file));
             }
 
             return jobObject;

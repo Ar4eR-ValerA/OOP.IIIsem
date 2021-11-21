@@ -31,14 +31,20 @@ namespace BackupsExtra.Entities
                 throw new BackupsExtraException("There is no such type");
             }
 
-            var archiveService = (IArchiveService)Activator.CreateInstance(archiveServiceType);
-            var archiver = (IArchiver)Activator.CreateInstance(archiverType);
-            archiveService!.Archiver = archiver;
+            var archiveService = Activator.CreateInstance(archiveServiceType) as IArchiveService;
+            var archiver = Activator.CreateInstance(archiverType) as IArchiver;
 
             if (archiveService is null)
             {
-                throw new BackupsExtraException("Json error");
+                throw new BackupsExtraException("Json error, there is no archive service");
             }
+
+            if (archiver is null)
+            {
+                throw new BackupsExtraException("Json error, there is no archiver");
+            }
+
+            archiveService.Archiver = archiver;
 
             return archiveService;
         }

@@ -35,13 +35,14 @@ namespace BackupsExtra.Entities
                 throw new BackupsExtraException("There is no such type");
             }
 
-            var storage = (IStorage)Activator.CreateInstance(storageType);
-            storage!.Path = storagePath;
+            var storage = Activator.CreateInstance(storageType) as IStorage;
 
             if (storage is null)
             {
-                throw new BackupsExtraException("Json error");
+                throw new BackupsExtraException("Json error, there is no storage");
             }
+
+            storage.Path = storagePath;
 
             return new RestorePoint(name, storage);
         }
