@@ -11,7 +11,6 @@ namespace Backups.Entities.Storages
 
         public DirectoryStorage()
         {
-            _directoryInfo = null;
         }
 
         public DirectoryStorage(DirectoryInfo directoryInfo)

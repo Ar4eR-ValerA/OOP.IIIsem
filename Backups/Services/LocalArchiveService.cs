@@ -8,7 +8,6 @@ namespace Backups.Services
     {
         public LocalArchiveService()
         {
-            Archiver = null;
         }
 
         public LocalArchiveService(IArchiver archiver)
@@ -35,7 +34,10 @@ namespace Backups.Services
                 throw new BackupsException("There is no archiver");
             }
 
-            Archiver.Archive(jobObject.FileInfos, restorePoint.Storage.Path);
+            foreach (IStorage storage in restorePoint.Storages)
+            {
+                Archiver.Archive(jobObject.FileInfos, storage.Path);
+            }
         }
     }
 }

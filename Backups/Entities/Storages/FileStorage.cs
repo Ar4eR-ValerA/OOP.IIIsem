@@ -11,7 +11,6 @@ namespace Backups.Entities.Storages
 
         public FileStorage()
         {
-            _fileInfo = null;
         }
 
         public FileStorage(FileInfo fileInfo)

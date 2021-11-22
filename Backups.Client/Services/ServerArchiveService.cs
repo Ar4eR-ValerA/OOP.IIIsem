@@ -43,9 +43,12 @@ namespace Backups.Client.Services
 
             foreach (FileInfo localFileInfo in tempDir.GetFiles())
             {
-                var serverFileInfo = new FileInfo(@$"{restorePoint.Storage.Path} {localFileInfo.Name}");
+                foreach (IStorage storage in restorePoint.Storages)
+                {
+                    var serverFileInfo = new FileInfo(@$"{storage.Path} {localFileInfo.Name}");
 
-                FileSender.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
+                    FileSender.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
+                }
             }
 
             tempDir.Delete(true);
