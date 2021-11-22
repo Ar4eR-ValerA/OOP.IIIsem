@@ -16,7 +16,7 @@ namespace BackupsExtra.Entities
 
         public DateTime DeadLine { get; }
 
-        public List<RestorePoint> EraseIrrelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
+        public List<RestorePoint> GetRelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
         {
             if (restorePoints is null)
             {

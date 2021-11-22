@@ -76,13 +76,11 @@ namespace BackupsExtra.Services
 
             foreach (RestorePoint restorePoint in restorePoints)
             {
-                SerializedRestorePoints.Add(new SerializedRestorePoint(
-                    restorePoint.Name,
-                    JsonSerializer.Serialize(
-                        restorePoint.Storages.Select(s => new SerializedStorage(
-                            JsonSerializer.Serialize(s.Path),
-                            s.GetType().ToString())).ToList()),
-                    restorePoint.RestoreDate));
+                SerializedRestorePoints.Add(
+                    new SerializedRestorePoint(
+                        restorePoint.Name,
+                        JsonSerializer.Serialize(restorePoint.Storage.Path),
+                        restorePoint.Storage.GetType().ToString()));
             }
         }
 

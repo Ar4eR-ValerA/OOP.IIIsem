@@ -18,7 +18,7 @@ namespace BackupsExtra.Entities
 
         public int Amount { get; }
 
-        public List<RestorePoint> EraseIrrelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
+        public List<RestorePoint> GetRelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
         {
             if (restorePoints is null)
             {

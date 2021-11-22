@@ -21,18 +21,20 @@ namespace BackupsExtra
 
             fileInfo1.Create().Close();
             fileInfo2.Create().Close();
-            IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
-            var archiveService1 = new LocalArchiveService(new SingleZipArchiver());
+            IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1 });
+            var archiveService1 = new LocalArchiveService(new SplitZipArchiver());
             var backupJob1 = new BackupJob(jobObject, archiveService1);
 
             backupJob1.CreateRestorePoint(
                 "Test 1",
-                new FileStorage(
-                    new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip")));
+                new DirectoryStorage(
+                    new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test1")));
+
+            backupJob1.JobObject.AddFile(fileInfo2);
             backupJob1.CreateRestorePoint(
                 "Test 2",
-                new FileStorage(
-                    new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip")));
+                new DirectoryStorage(
+                    new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test2")));
 
             var backupJobSerialize = new SerializeBackupJob();
 
@@ -40,7 +42,7 @@ namespace BackupsExtra
             BackupJob backupJob2 = backupJobSerialize.Deserialize("cfg");
 
             var restorePointsControl = new RestorePointsControl(new RestorePointsControlCounter(1));
-            restorePointsControl.EraseExtraRestorePoints(backupJob2);
+            restorePointsControl.MergeExtraRestorePoints(backupJob2);
         }
     }
 }

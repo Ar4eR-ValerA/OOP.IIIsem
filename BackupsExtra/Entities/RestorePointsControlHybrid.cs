@@ -21,7 +21,7 @@ namespace BackupsExtra.Entities
         public int Amount { get; }
         public DateTime DeadLine { get; }
 
-        public List<RestorePoint> EraseIrrelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
+        public List<RestorePoint> GetRelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
         {
             if (restorePoints is null)
             {
@@ -29,10 +29,10 @@ namespace BackupsExtra.Entities
             }
 
             List<RestorePoint> relevantRestorePoints = new RestorePointsControlOutDated(DeadLine)
-                .EraseIrrelevantRestorePoints(restorePoints);
+                .GetRelevantRestorePoints(restorePoints);
 
             relevantRestorePoints = new RestorePointsControlCounter(Amount)
-                .EraseIrrelevantRestorePoints(relevantRestorePoints);
+                .GetRelevantRestorePoints(relevantRestorePoints);
 
             return relevantRestorePoints;
         }

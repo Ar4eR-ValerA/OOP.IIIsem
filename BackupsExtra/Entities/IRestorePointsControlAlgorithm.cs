@@ -5,6 +5,6 @@ namespace BackupsExtra.Entities
 {
     public interface IRestorePointsControlAlgorithm
     {
-        List<RestorePoint> EraseIrrelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints);
+        List<RestorePoint> GetRelevantRestorePoints(IReadOnlyList<RestorePoint> restorePoints);
     }
 }

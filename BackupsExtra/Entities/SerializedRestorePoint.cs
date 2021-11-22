@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Backups.Entities;
+using Backups.Interfaces;
 using BackupsExtra.Tools;
 
 namespace BackupsExtra.Entities
@@ -11,30 +12,41 @@ namespace BackupsExtra.Entities
     public class SerializedRestorePoint
     {
         [JsonConstructor]
-        public SerializedRestorePoint(string name, string serializedStorages, DateTime createDate)
+        public SerializedRestorePoint(string name, string storageFile, string storageType)
         {
             Name = name ?? throw new BackupsExtraException("Name is null");
-            SerializedStorages = serializedStorages ?? throw new BackupsExtraException("Serialized storages are null");
-            CreateDate = createDate;
+            StorageFile = storageFile;
+            StorageType = storageType;
         }
 
         public string Name { get; }
-        public DateTime CreateDate { get; }
-        public string SerializedStorages { get; }
+        public string StorageFile { get; }
+        public string StorageType { get; }
 
         public RestorePoint GetRestorePoint()
         {
             string name = Name;
-            List<SerializedStorage> serializedStorages =
-                JsonSerializer.Deserialize<List<SerializedStorage>>(SerializedStorages);
+            string storagePath = JsonSerializer.Deserialize<string>(StorageFile);
+            string storageTypePath = StorageType;
+            string storageTypePackage = storageTypePath?.Split(".")[0];
 
-            if (serializedStorages is null)
+            var storageType = Type.GetType($"{storageTypePath}, {storageTypePackage}");
+
+            if (storageType is null)
             {
-                throw new BackupsExtraException("Json error, there are no serialized storages");
+                throw new BackupsExtraException("There is no such type");
             }
 
-            var storages = serializedStorages.Select(s => s.GetStorage()).ToList();
-            return new RestorePoint(name, storages, CreateDate);
+            var storage = Activator.CreateInstance(storageType) as IStorage;
+
+            if (storage is null)
+            {
+                throw new BackupsExtraException("Json error, there is no storage");
+            }
+
+            storage.Path = storagePath;
+
+            return new RestorePoint(name, storage);
         }
     }
 }

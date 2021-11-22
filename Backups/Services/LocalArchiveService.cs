@@ -34,10 +34,7 @@ namespace Backups.Services
                 throw new BackupsException("There is no archiver");
             }
 
-            foreach (IStorage storage in restorePoint.Storages)
-            {
-                Archiver.Archive(jobObject.FileInfos, storage.Path);
-            }
+            Archiver.Archive(jobObject.FileInfos, restorePoint.Storage.Path);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Backups.Client.Services
             {
                 throw new BackupsException("RestorePoint is null");
             }
-            
+
             if (jobObject is null)
             {
                 throw new BackupsException("JobObject is null");
@@ -43,12 +43,9 @@ namespace Backups.Client.Services
 
             foreach (FileInfo localFileInfo in tempDir.GetFiles())
             {
-                foreach (IStorage storage in restorePoint.Storages)
-                {
-                    var serverFileInfo = new FileInfo(@$"{storage.Path} {localFileInfo.Name}");
+                var serverFileInfo = new FileInfo(@$"{restorePoint.Storage.Path} {localFileInfo.Name}");
 
-                    FileSender.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
-                }
+                FileSender.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
             }
 
             tempDir.Delete(true);
