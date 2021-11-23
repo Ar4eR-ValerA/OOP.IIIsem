@@ -9,11 +9,12 @@ namespace Backups.Entities
     {
         private readonly List<RestorePoint> _restorePoints;
 
-        public BackupJob(IJobObject jobObject, IArchiveService archiveService)
+        public BackupJob(IJobObject jobObject, IArchiveService archiveService, ILogger logger)
         {
             _restorePoints = new List<RestorePoint>();
             JobObject = jobObject ?? throw new BackupsException("JobObject is null");
             ArchiveService = archiveService ?? throw new BackupsException("ArchiveService is null");
+            Logger = logger ?? throw new BackupsException("Logger is null");
         }
 
         [JsonConstructor]
@@ -25,6 +26,7 @@ namespace Backups.Entities
         public IJobObject JobObject { get; private set; }
 
         public IArchiveService ArchiveService { get; private set; }
+        public ILogger Logger { get; private set; }
 
         public IArchiver Archiver => ArchiveService.Archiver;
 

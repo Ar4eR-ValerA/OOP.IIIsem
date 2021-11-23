@@ -24,12 +24,14 @@ namespace Backups.Client
             IJobObject jobObject = new FilesJobObject(new List<string> { filePath1, filePath2 });
             var backupJob1 = new BackupJob(
                 jobObject,
-                new ServerArchiveService(new SingleZipArchiver(), "127.0.0.1", 8888));
+                new ServerArchiveService(new SingleZipArchiver(), "127.0.0.1", 8888),
+                new ConsoleLogger());
             backupJob1.CreateRestorePoint("Test 1", new FileStorage(@"E:\Test.zip"));
 
             var backupJob2 = new BackupJob(
                 jobObject,
-                new ServerArchiveService(new SplitZipArchiver(), "127.0.0.1", 8888));
+                new ServerArchiveService(new SplitZipArchiver(), "127.0.0.1", 8888),
+                new ConsoleLogger());
             backupJob2.CreateRestorePoint("Test 2", new DirectoryStorage(@"E:\"));
 
             File.Delete(filePath1);

@@ -22,14 +22,14 @@ namespace Backups
 
             IJobObject jobObject = new FilesJobObject(new List<string> { filePath1, filePath2 });
             var archiveService1 = new LocalArchiveService(new SingleZipArchiver());
-            var backupJob1 = new BackupJob(jobObject, archiveService1);
+            var backupJob1 = new BackupJob(jobObject, archiveService1, new ConsoleLogger());
 
             RestorePoint restorePoint1 = backupJob1.CreateRestorePoint(
                 "Test 1",
                 new FileStorage(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test.zip"));
 
             var archiveService2 = new LocalArchiveService(new SplitZipArchiver());
-            var backupJob2 = new BackupJob(jobObject, archiveService2);
+            var backupJob2 = new BackupJob(jobObject, archiveService2, new ConsoleLogger());
             backupJob2.CreateRestorePoint(
                 "Test 2",
                 new DirectoryStorage(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));

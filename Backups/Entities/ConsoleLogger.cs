@@ -3,7 +3,7 @@ using Backups.Interfaces;
 
 namespace Backups.Entities
 {
-    public class ConsoleLogging : ILogging
+    public class ConsoleLogger : ILogger
     {
         public void Log(string message)
         {

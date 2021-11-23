@@ -1,6 +1,6 @@
 ﻿namespace Backups.Interfaces
 {
-    public interface ILogging
+    public interface ILogger
     {
         void Log(string message);
     }

@@ -19,7 +19,7 @@ namespace Backups.Tests
             string fileInfo2 = @"Test2.txt";
 
             IJobObject jobObject = new FilesJobObject(new List<string> { fileInfo1, fileInfo2 });
-            var backupJob = new BackupJob(jobObject, new LocalArchiveService(new TestArchiver()));
+            var backupJob = new BackupJob(jobObject, new LocalArchiveService(new TestArchiver()), new ConsoleLogger());
 
             backupJob.CreateRestorePoint("Test1", new FileStorage("Test1.test"));
 

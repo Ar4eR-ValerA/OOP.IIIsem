@@ -4,9 +4,9 @@ using Backups.Tools;
 
 namespace Backups.Entities
 {
-    public class FileLogging : ILogging
+    public class FileLogger : ILogger
     {
-        public FileLogging(string filePath)
+        public FileLogger(string filePath)
         {
             FilePath = filePath ?? throw new BackupsException("File path is null");
         }
