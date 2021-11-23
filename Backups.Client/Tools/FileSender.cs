@@ -19,7 +19,7 @@ namespace Backups.Client.Tools
                 throw new BackupsException("LocalFileInfo is null");
             }
 
-            var tcpClient = new TcpClient(fileServerStorage.IpAddress.ToString(), fileServerStorage.Port);
+            var tcpClient = new TcpClient(fileServerStorage.IpAddress, fileServerStorage.Port);
             byte[] bytes = File.ReadAllBytes(localFileInfo.FullName);
 
             var streamWriter = new StreamWriter(tcpClient.GetStream());
