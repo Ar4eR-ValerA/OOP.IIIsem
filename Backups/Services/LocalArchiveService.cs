@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Backups.Entities;
 using Backups.Interfaces;
 using Backups.Tools;
@@ -6,6 +7,7 @@ namespace Backups.Services
 {
     public class LocalArchiveService : IArchiveService
     {
+        [JsonConstructor]
         public LocalArchiveService()
         {
         }
@@ -34,7 +36,7 @@ namespace Backups.Services
                 throw new BackupsException("There is no archiver");
             }
 
-            Archiver.Archive(jobObject.FileInfos, restorePoint.Storage.Path);
+            Archiver.Archive(jobObject.FilePaths, restorePoint.Storage.Path);
         }
     }
 }

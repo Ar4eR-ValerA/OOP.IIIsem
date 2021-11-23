@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Backups.Entities;
 using Backups.Entities.Storages;
-using Backups.Interfaces;
 using BackupsExtra.Entities;
 using BackupsExtra.Tools;
 
@@ -60,19 +58,19 @@ namespace BackupsExtra.Services
                     continue;
                 }
 
-                foreach (FileInfo fileInfo in extraRestorePoint.Storage.FileInfos)
+                foreach (string filePath in extraRestorePoint.Storage.FilePaths)
                 {
-                    if (targetRestorePoint.ContainsFile(fileInfo.Name))
+                    if (targetRestorePoint.ContainsFile(Path.GetFileName(filePath)))
                     {
-                        fileInfo.Delete();
+                        File.Delete(filePath);
                     }
                     else
                     {
-                        fileInfo.MoveTo($"{targetRestorePoint.Storage.Path}/{fileInfo.Name}");
+                        File.Move(filePath, $"{targetRestorePoint.Storage.Path}/{Path.GetFileName(filePath)}");
                     }
                 }
 
-                if (extraRestorePoint.Storage.FileInfos.Count == 0)
+                if (extraRestorePoint.Storage.FilePaths.Count == 0)
                 {
                     backupJob.EraseRestorePoint(extraRestorePoint);
                 }

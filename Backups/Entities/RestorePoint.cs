@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
 
@@ -7,6 +9,11 @@ namespace Backups.Entities
 {
     public class RestorePoint
     {
+        [JsonConstructor]
+        public RestorePoint()
+        {
+        }
+
         public RestorePoint(string name, IStorage storage)
         {
             Name = name ?? throw new BackupsException("Name is null");
@@ -21,9 +28,9 @@ namespace Backups.Entities
             RestoreDate = createDate;
         }
 
-        public string Name { get; }
-        public DateTime RestoreDate { get; }
-        public IStorage Storage { get; }
+        public string Name { get; private set; }
+        public DateTime RestoreDate { get; private set; }
+        public IStorage Storage { get; private set; }
 
         public bool ContainsFile(string fileName)
         {
@@ -32,7 +39,7 @@ namespace Backups.Entities
                 throw new BackupsException("File name is null");
             }
 
-            return Storage.FileInfos.Count(f => f.Name == fileName) == 1;
+            return Storage.FilePaths.Count(f => Path.GetFileName(f) == fileName) == 1;
         }
     }
 }

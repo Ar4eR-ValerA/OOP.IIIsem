@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
 
@@ -7,31 +7,33 @@ namespace Backups.Entities.Storages
 {
     public class FileStorage : IStorage
     {
-        private FileInfo _fileInfo;
+        private string _filePath;
 
+        [JsonConstructor]
         public FileStorage()
         {
         }
 
-        public FileStorage(FileInfo fileInfo)
+        public FileStorage(string filePath)
         {
-            _fileInfo = fileInfo ?? throw new BackupsException("FileInfo is null");
+            _filePath = filePath ?? throw new BackupsException("File path is null");
         }
 
-        public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { _fileInfo };
+        [JsonIgnore]
+        public IReadOnlyList<string> FilePaths => new List<string> { _filePath };
 
         public string Path
         {
             get
             {
-                if (_fileInfo is null)
+                if (_filePath is null)
                 {
-                    throw new BackupsException("There is no file info");
+                    throw new BackupsException("There is no file path");
                 }
 
-                return _fileInfo.FullName;
+                return _filePath;
             }
-            set => _fileInfo = new FileInfo(value ?? throw new BackupsException("value is null"));
+            set => _filePath = value ?? throw new BackupsException("value is null");
         }
     }
 }

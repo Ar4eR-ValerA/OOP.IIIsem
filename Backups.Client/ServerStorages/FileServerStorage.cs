@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Net;
+using System.Text.Json.Serialization;
 using Backups.Client.Interfaces;
 using Backups.Tools;
 
@@ -8,24 +7,29 @@ namespace Backups.Client.ServerStorages
 {
     public class FileServerStorage : IServerStorage
     {
-        public FileServerStorage(FileInfo fileInfo, IPAddress ipAddress, int port)
+        public FileServerStorage(string fileInfo, string ipAddress, int port)
         {
             IpAddress = ipAddress ?? throw new BackupsException("IpAddress is null");
             Port = port;
-            FileInfo = fileInfo ?? throw new BackupsException("FileInfo is null");
+            FilePath = fileInfo ?? throw new BackupsException("FilePath is null");
+        }
+        
+        [JsonConstructor]
+        public FileServerStorage()
+        {
         }
 
-        public IReadOnlyList<FileInfo> FileInfos => new List<FileInfo> { FileInfo };
+        [JsonIgnore]
+        public IReadOnlyList<string> FilePaths => new List<string> { FilePath };
 
         public string Path
         {
-            get => FileInfo.FullName;
-            set => FileInfo = new FileInfo(value);
+            get => FilePath;
+            set => FilePath = value ?? throw new BackupsException("File Path is null");
         }
 
-        public FileInfo FileInfo { get; set; }
-
-        public IPAddress IpAddress { get; }
-        public int Port { get; }
+        public string FilePath { get; private set; }
+        public string IpAddress { get; private set; }
+        public int Port { get; private set; }
     }
 }

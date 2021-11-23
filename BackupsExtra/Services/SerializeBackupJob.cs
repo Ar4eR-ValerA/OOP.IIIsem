@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
+﻿using System.IO;
 using Backups.Entities;
 using Backups.Interfaces;
-using BackupsExtra.Entities;
 using BackupsExtra.Tools;
+using Newtonsoft.Json;
 
 namespace BackupsExtra.Services
 {
@@ -13,89 +10,47 @@ namespace BackupsExtra.Services
     {
         public SerializeBackupJob()
         {
-            SerializedRestorePoints = new List<SerializedRestorePoint>();
+            JsonSerializerSettings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                ContractResolver = new PrivateContractResolver(),
+            };
         }
 
-        private List<SerializedRestorePoint> SerializedRestorePoints { get; set; }
-        private SerializedJobObject SerializedJobObject { get; set; }
-        private SerializedArchiveService SerializedArchiveService { get; set; }
+        public JsonSerializerSettings JsonSerializerSettings { get; }
 
         public void Serialize(BackupJob backupJob, string path)
         {
-            SerializeRestorePoints(backupJob.RestorePoints);
-            SerializeJobObject(backupJob.JobObject);
-            SerializeArchiveService(backupJob.ArchiveService);
+            if (path is null)
+            {
+                throw new BackupsExtraException("Path is null");
+            }
 
-            string jsonRestorePoints = JsonSerializer.Serialize(SerializedRestorePoints);
-            string jsonJobObject = JsonSerializer.Serialize(SerializedJobObject);
-            string jsonArchiveService = JsonSerializer.Serialize(SerializedArchiveService);
+            if (backupJob is null)
+            {
+                throw new BackupsExtraException("Backup job is null");
+            }
 
-            string jsonBackupJob = JsonSerializer.Serialize(new SerializedBackupJob(
-                jsonRestorePoints,
-                jsonJobObject,
-                jsonArchiveService));
-            File.WriteAllText(path, jsonBackupJob);
+            string jsonString = JsonConvert.SerializeObject(backupJob, Formatting.Indented, JsonSerializerSettings);
+            File.WriteAllText(path, jsonString);
         }
 
         public BackupJob Deserialize(string path)
         {
+            if (path is null)
+            {
+                throw new BackupsExtraException("Path is null");
+            }
+
             string jsonString = File.ReadAllText(path);
-            SerializedBackupJob serializedBackupJob = JsonSerializer.Deserialize<SerializedBackupJob>(jsonString);
+            BackupJob backupJob = JsonConvert.DeserializeObject<BackupJob>(jsonString, JsonSerializerSettings);
 
-            if (serializedBackupJob is null)
+            if (backupJob is null)
             {
-                throw new BackupsExtraException($"Where is no such file: {path}");
+                throw new BackupsExtraException("Json error, there is no backup job");
             }
 
-            SerializedRestorePoints =
-                JsonSerializer.Deserialize<List<SerializedRestorePoint>>(serializedBackupJob.SerializedRestorePoints);
-            SerializedJobObject =
-                JsonSerializer.Deserialize<SerializedJobObject>(serializedBackupJob.SerializedJobObject);
-            SerializedArchiveService =
-                JsonSerializer.Deserialize<SerializedArchiveService>(serializedBackupJob.SerializedArchiveService);
-
-            if (SerializedJobObject is null || SerializedArchiveService is null || SerializedRestorePoints is null)
-            {
-                throw new BackupsExtraException("Json error, there is no serialized objects");
-            }
-
-            IJobObject jobObject = SerializedJobObject.GetJobObject();
-            IArchiveService archiveService = SerializedArchiveService.GetArchiveService();
-            var restorePoints = SerializedRestorePoints
-                .Select(serializedRestorePoint => serializedRestorePoint.GetRestorePoint()).ToList();
-
-            var backupJop = new BackupJob(jobObject, archiveService);
-            backupJop.AddRestorePoints(restorePoints);
-
-            return backupJop;
-        }
-
-        private void SerializeRestorePoints(IReadOnlyList<RestorePoint> restorePoints)
-        {
-            SerializedRestorePoints = new List<SerializedRestorePoint>();
-
-            foreach (RestorePoint restorePoint in restorePoints)
-            {
-                SerializedRestorePoints.Add(
-                    new SerializedRestorePoint(
-                        restorePoint.Name,
-                        JsonSerializer.Serialize(restorePoint.Storage.Path),
-                        restorePoint.Storage.GetType().ToString()));
-            }
-        }
-
-        private void SerializeJobObject(IJobObject jobObject)
-        {
-            SerializedJobObject = new SerializedJobObject(
-                JsonSerializer.Serialize(jobObject.FileInfos.Select(file => file.FullName).ToList()),
-                JsonSerializer.Serialize(jobObject.GetType().ToString()));
-        }
-
-        private void SerializeArchiveService(IArchiveService archiveService)
-        {
-            SerializedArchiveService = new SerializedArchiveService(
-                JsonSerializer.Serialize(archiveService.GetType().ToString()),
-                JsonSerializer.Serialize(archiveService.Archiver.GetType().ToString()));
+            return backupJob;
         }
     }
 }

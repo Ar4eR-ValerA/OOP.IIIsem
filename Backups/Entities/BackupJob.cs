@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
 
@@ -15,12 +16,19 @@ namespace Backups.Entities
             ArchiveService = archiveService ?? throw new BackupsException("ArchiveService is null");
         }
 
-        public IJobObject JobObject { get; }
+        [JsonConstructor]
+        public BackupJob()
+        {
+            _restorePoints = new List<RestorePoint>();
+        }
 
-        public IArchiveService ArchiveService { get; }
+        public IJobObject JobObject { get; private set; }
+
+        public IArchiveService ArchiveService { get; private set; }
 
         public IArchiver Archiver => ArchiveService.Archiver;
 
+        [JsonIgnore]
         public IReadOnlyList<RestorePoint> RestorePoints => _restorePoints;
 
         public RestorePoint CreateRestorePoint(string name, IStorage storage)

@@ -26,7 +26,7 @@ namespace Backups.Client.Tools
             streamWriter.WriteLine(bytes.Length.ToString());
             streamWriter.Flush();
 
-            streamWriter.WriteLine(fileServerStorage.FileInfo.FullName);
+            streamWriter.WriteLine(fileServerStorage.FilePath);
             streamWriter.Flush();
 
             tcpClient.Client.SendFile(localFileInfo.FullName);

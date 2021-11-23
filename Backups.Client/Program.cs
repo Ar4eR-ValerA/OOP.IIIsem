@@ -15,25 +15,25 @@ namespace Backups.Client
     {
         static void Main(string[] args)
         {
-            var fileInfo1 = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test1.txt");
-            var fileInfo2 = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test2.txt");
+            string filePath1 = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test1.txt";
+            string filePath2 = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Test2.txt";
 
-            fileInfo1.Create().Close();
-            fileInfo2.Create().Close();
+            File.Create(filePath1).Close();
+            File.Create(filePath2).Close();
 
-            IJobObject jobObject = new FilesJobObject(new List<FileInfo> { fileInfo1, fileInfo2 });
+            IJobObject jobObject = new FilesJobObject(new List<string> { filePath1, filePath2 });
             var backupJob1 = new BackupJob(
                 jobObject,
-                new ServerArchiveService(new SingleZipArchiver(), IPAddress.Parse("127.0.0.1"), 8888));
-            backupJob1.CreateRestorePoint("Test 1", new FileStorage(new FileInfo(@"E:\Test.zip")));
+                new ServerArchiveService(new SingleZipArchiver(), "127.0.0.1", 8888));
+            backupJob1.CreateRestorePoint("Test 1", new FileStorage(@"E:\Test.zip"));
 
             var backupJob2 = new BackupJob(
                 jobObject,
-                new ServerArchiveService(new SplitZipArchiver(), IPAddress.Parse("127.0.0.1"), 8888));
-            backupJob2.CreateRestorePoint("Test 2", new DirectoryStorage(new DirectoryInfo(@"E:\")));
+                new ServerArchiveService(new SplitZipArchiver(), "127.0.0.1", 8888));
+            backupJob2.CreateRestorePoint("Test 2", new DirectoryStorage(@"E:\"));
 
-            fileInfo1.Delete();
-            fileInfo2.Delete();
+            File.Delete(filePath1);
+            File.Delete(filePath2);
         }
     }
 }

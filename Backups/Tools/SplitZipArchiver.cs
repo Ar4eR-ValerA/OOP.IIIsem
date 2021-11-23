@@ -7,27 +7,27 @@ namespace Backups.Tools
 {
     public class SplitZipArchiver : IArchiver
     {
-        public void Archive(IReadOnlyList<FileInfo> fileInfos, string path)
+        public void Archive(IReadOnlyList<string> filePaths, string targetPath)
         {
-            if (fileInfos is null)
+            if (filePaths is null)
             {
-                throw new BackupsException("FileInfos is null");
+                throw new BackupsException("File paths is null");
             }
 
-            if (path is null)
+            if (targetPath is null)
             {
-                throw new BackupsException("Path is null");
+                throw new BackupsException("Target path is null");
             }
 
-            string tempDirPath = $@"{path}\TempDir";
+            string tempDirPath = $@"{targetPath}\TempDir";
             SafeCreateDirectory(tempDirPath);
 
-            foreach (FileInfo fileInfo in fileInfos)
+            foreach (string filePath in filePaths)
             {
-                string tempFullPath = $@"{tempDirPath}\{fileInfo.Name}";
-                fileInfo.CopyTo(tempFullPath);
+                string tempFullPath = $@"{tempDirPath}\{Path.GetFileName(filePath)}";
+                File.Copy(filePath, tempFullPath);
 
-                string pathZip = @$"{path}\{fileInfo.Name}.zip";
+                string pathZip = @$"{targetPath}\{Path.GetFileName(filePath)}.zip";
                 SafeCreateZipFile(tempDirPath, pathZip);
 
                 File.Delete(tempFullPath);
