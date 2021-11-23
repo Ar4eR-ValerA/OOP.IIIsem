@@ -10,10 +10,6 @@ namespace Backups.Entities.Storages
         private string _filePath;
 
         [JsonConstructor]
-        public FileStorage()
-        {
-        }
-
         public FileStorage(string filePath)
         {
             _filePath = filePath ?? throw new BackupsException("File path is null");

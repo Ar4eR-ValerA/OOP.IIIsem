@@ -9,19 +9,16 @@ namespace Backups.Entities.Storages
 {
     public class DirectoryStorage : IStorage
     {
-        private string _directoryPath;
         private List<string> _filePaths;
 
         [JsonConstructor]
-        public DirectoryStorage()
-        {
-        }
-
         public DirectoryStorage(string directoryPath)
         {
-            _directoryPath = directoryPath ?? throw new BackupsException("Path is null");
-            _filePaths = Directory.GetFiles(_directoryPath).ToList();
+            DirectoryPath = directoryPath ?? throw new BackupsException("Path is null");
+            _filePaths = Directory.GetFiles(DirectoryPath).ToList();
         }
+
+        public string DirectoryPath { get; private set; }
 
         [JsonIgnore]
         public IReadOnlyList<string> FilePaths
@@ -32,8 +29,8 @@ namespace Backups.Entities.Storages
 
         public string Path
         {
-            get => _directoryPath;
-            private set => _directoryPath = value ?? throw new BackupsException("value is null");
+            get => DirectoryPath;
+            private set => DirectoryPath = value ?? throw new BackupsException("value is null");
         }
     }
 }

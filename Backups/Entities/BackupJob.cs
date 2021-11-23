@@ -9,22 +9,17 @@ namespace Backups.Entities
     {
         private readonly List<RestorePoint> _restorePoints;
 
+        [JsonConstructor]
         public BackupJob(IJobObject jobObject, IArchiveService archiveService, ILogger logger)
         {
             _restorePoints = new List<RestorePoint>();
             JobObject = jobObject ?? throw new BackupsException("JobObject is null");
             ArchiveService = archiveService ?? throw new BackupsException("ArchiveService is null");
             Logger = logger ?? throw new BackupsException("Logger is null");
-        }
-
-        [JsonConstructor]
-        public BackupJob()
-        {
-            _restorePoints = new List<RestorePoint>();
+            Logger.Log($"Backup job was created");
         }
 
         public IJobObject JobObject { get; private set; }
-
         public IArchiveService ArchiveService { get; private set; }
         public ILogger Logger { get; private set; }
 
@@ -41,18 +36,18 @@ namespace Backups.Entities
 
             ArchiveService.ArchiveRestorePoint(JobObject, restorePoint);
             _restorePoints.Add(restorePoint);
+            Logger.Log($"Restore point {name} was created");
 
             return restorePoint;
         }
 
-        public void AddRestorePoints(List<RestorePoint> restorePoints)
-        {
-            _restorePoints.AddRange(restorePoints ?? throw new BackupsException("Restore points are null"));
-        }
-
         public void EraseRestorePoint(RestorePoint restorePoint)
         {
-            _restorePoints.Remove(restorePoint ?? throw new BackupsException("Restore point is null"));
+            EraseRestorePoints(
+                new List<RestorePoint>
+                {
+                    restorePoint ?? throw new BackupsException("Restore point is null"),
+                });
         }
 
         public void EraseRestorePoints(List<RestorePoint> restorePoints)
@@ -65,6 +60,7 @@ namespace Backups.Entities
             foreach (RestorePoint restorePoint in restorePoints)
             {
                 _restorePoints.Remove(restorePoint);
+                Logger.Log($"Restore point {restorePoint.Name} was erased");
             }
         }
     }

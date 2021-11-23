@@ -26,7 +26,7 @@ namespace BackupsExtra
 
             IJobObject jobObject = new FilesJobObject(new List<string> { filePath1 });
             var archiveService1 = new LocalArchiveService(new SplitZipArchiver());
-            var backupJob1 = new BackupJob(jobObject, archiveService1, new FileLogger("log.txt"));
+            var backupJob1 = new BackupJob(jobObject, archiveService1, new FileLogger("log.txt", DateTime.Now));
 
             backupJob1.CreateRestorePoint(
                 "Test 1",
