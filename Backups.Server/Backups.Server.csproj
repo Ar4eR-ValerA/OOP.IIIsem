@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Backups.Client\Backups.Client.csproj" />
       <ProjectReference Include="..\Backups\Backups.csproj" />
     </ItemGroup>
 

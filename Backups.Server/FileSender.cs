@@ -3,11 +3,11 @@ using System.Net.Sockets;
 using Backups.Client.ServerStorages;
 using Backups.Tools;
 
-namespace Backups.Client.Tools
+namespace Backups.Server
 {
     public static class FileSender
     {
-        public static void SendFile(FileInfo localFileInfo, FileServerStorage fileServerStorage)
+        public static void SendFile(string localFileInfo, FileServerStorage fileServerStorage)
         {
             if (fileServerStorage is null)
             {
@@ -20,7 +20,7 @@ namespace Backups.Client.Tools
             }
 
             var tcpClient = new TcpClient(fileServerStorage.IpAddress, fileServerStorage.Port);
-            byte[] bytes = File.ReadAllBytes(localFileInfo.FullName);
+            byte[] bytes = File.ReadAllBytes(localFileInfo);
 
             var streamWriter = new StreamWriter(tcpClient.GetStream());
             streamWriter.WriteLine(bytes.Length.ToString());
@@ -29,7 +29,7 @@ namespace Backups.Client.Tools
             streamWriter.WriteLine(fileServerStorage.FilePath);
             streamWriter.Flush();
 
-            tcpClient.Client.SendFile(localFileInfo.FullName);
+            tcpClient.Client.SendFile(localFileInfo);
 
             streamWriter.Close();
             tcpClient.Close();
