@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities
 {
@@ -28,8 +28,13 @@ namespace Backups.Entities
             RestoreDate = createDate;
         }
 
+        [JsonProperty]
         public string Name { get; private set; }
+
+        [JsonProperty]
         public DateTime RestoreDate { get; private set; }
+
+        [JsonProperty]
         public IStorage Storage { get; private set; }
 
         public bool ContainsFile(string fileName)

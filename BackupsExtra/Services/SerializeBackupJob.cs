@@ -12,7 +12,6 @@ namespace BackupsExtra.Services
             JsonSerializerSettings = new JsonSerializerSettings()
             {
                 TypeNameHandling = TypeNameHandling.All,
-                ContractResolver = new PrivateContractResolver(),
             };
         }
 

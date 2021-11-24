@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities.JobObjects
 {
     public class FilesJobObject : IJobObject
     {
+        [JsonProperty("filePaths")]
         private readonly List<string> _filePaths;
 
+        [JsonConstructor]
         public FilesJobObject(List<string> filePaths)
         {
             _filePaths = filePaths ?? throw new BackupsException("Paths are null");
@@ -17,12 +19,6 @@ namespace Backups.Entities.JobObjects
         public FilesJobObject(string filePath)
         {
             _filePaths = new List<string> { filePath ?? throw new BackupsException("Path is null") };
-        }
-
-        [JsonConstructor]
-        public FilesJobObject()
-        {
-            _filePaths = new List<string>();
         }
 
         [JsonIgnore]

@@ -1,12 +1,11 @@
 ﻿using System.IO;
-using System.Net;
-using System.Text.Json.Serialization;
 using Backups.Client.Interfaces;
 using Backups.Client.ServerStorages;
 using Backups.Client.Tools;
 using Backups.Entities;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Client.Services
 {
@@ -18,17 +17,20 @@ namespace Backups.Client.Services
             IpAddress = ipAddress ?? throw new BackupsException("IpAddress is null");
             Port = port;
         }
-        
+
         [JsonConstructor]
         public ServerArchiveService()
         {
         }
 
 
+        [JsonProperty]
         public IArchiver Archiver { get; set; }
 
+        [JsonProperty]
         public string IpAddress { get; private set; }
 
+        [JsonProperty]
         public int Port { get; private set; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
@@ -50,7 +52,7 @@ namespace Backups.Client.Services
             foreach (FileInfo localFileInfo in tempDir.GetFiles())
             {
                 string serverFileInfo = @$"{restorePoint.Storage.Path} {localFileInfo.Name}";
-                
+
                 if (restorePoint.Storage.Path.EndsWith(@"\"))
                 {
                     serverFileInfo = @$"{restorePoint.Storage.Path}{localFileInfo.Name}";

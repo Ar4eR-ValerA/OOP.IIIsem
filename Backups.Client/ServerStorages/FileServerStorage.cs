@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Backups.Client.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Client.ServerStorages
 {
@@ -13,7 +13,7 @@ namespace Backups.Client.ServerStorages
             Port = port;
             FilePath = fileInfo ?? throw new BackupsException("FilePath is null");
         }
-        
+
         [JsonConstructor]
         public FileServerStorage()
         {
@@ -25,11 +25,16 @@ namespace Backups.Client.ServerStorages
         public string Path
         {
             get => FilePath;
-            set => FilePath = value ?? throw new BackupsException("File Path is null");
+            private set => FilePath = value ?? throw new BackupsException("File Path is null");
         }
 
+        [JsonProperty]
         public string FilePath { get; private set; }
+
+        [JsonProperty]
         public string IpAddress { get; private set; }
+
+        [JsonProperty]
         public int Port { get; private set; }
     }
 }

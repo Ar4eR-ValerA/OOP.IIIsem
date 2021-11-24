@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities
 {
     public class BackupJob
     {
+        [JsonProperty("restorePoints")]
         private readonly List<RestorePoint> _restorePoints;
 
-        [JsonConstructor]
         public BackupJob(IJobObject jobObject, IArchiveService archiveService, ILogger logger)
         {
             _restorePoints = new List<RestorePoint>();
@@ -19,10 +19,30 @@ namespace Backups.Entities
             Logger.Log($"Backup job was created");
         }
 
+        [JsonConstructor]
+        private BackupJob(
+            IJobObject jobObject,
+            IArchiveService archiveService,
+            ILogger logger,
+            List<RestorePoint> restorePoints)
+        {
+            _restorePoints = restorePoints;
+            JobObject = jobObject ?? throw new BackupsException("JobObject is null");
+            ArchiveService = archiveService ?? throw new BackupsException("ArchiveService is null");
+            Logger = logger ?? throw new BackupsException("Logger is null");
+            Logger.Log($"Backup job was created");
+        }
+
+        [JsonProperty]
         public IJobObject JobObject { get; private set; }
+
+        [JsonProperty]
         public IArchiveService ArchiveService { get; private set; }
+
+        [JsonProperty]
         public ILogger Logger { get; private set; }
 
+        [JsonIgnore]
         public IArchiver Archiver => ArchiveService.Archiver;
 
         [JsonIgnore]

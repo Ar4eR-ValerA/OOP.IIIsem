@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities
 {
@@ -17,6 +17,7 @@ namespace Backups.Entities
             ExtraInfo = extraInfo ?? throw new BackupsException("Extra info is null");
         }
 
+        [JsonProperty]
         public object ExtraInfo { get; private set; }
 
         public void Log(string message)

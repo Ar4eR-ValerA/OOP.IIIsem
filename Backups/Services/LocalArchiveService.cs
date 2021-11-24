@@ -1,7 +1,7 @@
-using System.Text.Json.Serialization;
 using Backups.Entities;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Services
 {
@@ -17,6 +17,7 @@ namespace Backups.Services
             Archiver = archiver ?? throw new BackupsException("Archiver is null");
         }
 
+        [JsonProperty]
         public IArchiver Archiver { get; set; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)

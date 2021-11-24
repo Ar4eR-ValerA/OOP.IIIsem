@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities.Storages
 {
     public class FileStorage : IStorage
     {
+        [JsonIgnore]
         private string _filePath;
 
         [JsonConstructor]
@@ -18,6 +19,7 @@ namespace Backups.Entities.Storages
         [JsonIgnore]
         public IReadOnlyList<string> FilePaths => new List<string> { _filePath };
 
+        [JsonProperty]
         public string Path
         {
             get
@@ -29,7 +31,7 @@ namespace Backups.Entities.Storages
 
                 return _filePath;
             }
-            set => _filePath = value ?? throw new BackupsException("value is null");
+            private set => _filePath = value ?? throw new BackupsException("value is null");
         }
     }
 }
