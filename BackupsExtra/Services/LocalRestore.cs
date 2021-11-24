@@ -7,6 +7,13 @@ namespace BackupsExtra.Services
 {
     public class LocalRestore
     {
+        public LocalRestore(ILogger logger)
+        {
+            Logger = logger;
+        }
+
+        public ILogger Logger { get; }
+
         public void Restore(RestorePoint restorePoint, string targetDirPath)
         {
             if (restorePoint is null)
@@ -20,6 +27,7 @@ namespace BackupsExtra.Services
             }
 
             RestoreStorage(restorePoint.Storage, targetDirPath);
+            Logger.Log($"Restore point {restorePoint.Name} was restored");
         }
 
         private void RestoreStorage(IStorage storage, string targetDirPath)
