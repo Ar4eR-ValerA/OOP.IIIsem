@@ -18,50 +18,44 @@ namespace Backups.Server
 
             tcpListener.Start();
 
-            while (true)
+
+            TcpClient tcpClient = tcpListener.AcceptTcpClient();
+
+            var streamReader = new StreamReader(tcpClient.GetStream());
+            string mode = streamReader.ReadLine();
+
+            if (mode == "send")
             {
-                TcpClient tcpClient = tcpListener.AcceptTcpClient();
+                string fileSize = streamReader.ReadLine();
+                string fileName = streamReader.ReadLine();
 
-                var streamReader = new StreamReader(tcpClient.GetStream());
-                string mode = streamReader.ReadLine();
+                int length = Convert.ToInt32(fileSize);
+                byte[] buffer = new byte[length];
 
-                if (mode == "send")
-                {
-                    string fileSize = streamReader.ReadLine();
-                    string fileName = streamReader.ReadLine();
+                tcpClient.GetStream().Read(buffer, 0, length);
 
-                    int length = Convert.ToInt32(fileSize);
-                    byte[] buffer = new byte[length];
+                using var fileStream = new FileStream(fileName ?? string.Empty, FileMode.Create);
+                fileStream.Write(buffer, 0, buffer.Length);
+                fileStream.Flush();
+                fileStream.Close();
 
-                    tcpClient.GetStream().Read(buffer, 0, length);
+                Thread.Sleep(1000);
+                tcpClient.Close();
+                tcpListener.Stop();
+            }
 
-                    using var fileStream = new FileStream(fileName ?? string.Empty, FileMode.Create);
-                    fileStream.Write(buffer, 0, buffer.Length);
-                    fileStream.Flush();
-                    fileStream.Close();
+            if (mode == "take")
+            {
+                string fileName = streamReader.ReadLine();
+                string targetFile = streamReader.ReadLine();
+                int transferPort = Convert.ToInt32(streamReader.ReadLine());
 
-                    Thread.Sleep(1000);
-                    tcpClient.Close();
-                    tcpListener.Stop();
-
-                    return;
-                }
-
-                if (mode == "take")
-                {
-                    string fileName = streamReader.ReadLine();
-                    string targetFile = streamReader.ReadLine();
-                    int transferPort = Convert.ToInt32(streamReader.ReadLine());
-                    
-                    Thread.Sleep(1000);
-                    tcpClient.Close();
-                    tcpListener.Stop();
-                    FileSender.SendFile(
-                        fileName,
-                        new FileServerStorage(targetFile, ipAddress.ToString(), transferPort));
-
-                    return;
-                }
+                Thread.Sleep(1000);
+                tcpClient.Close();
+                tcpListener.Stop();
+                FileSender.SendFile(
+                    fileName,
+                    new FileServerStorage(targetFile, ipAddress.ToString(), transferPort));
             }
         }
     }

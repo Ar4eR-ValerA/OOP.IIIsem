@@ -16,25 +16,21 @@ namespace Backups.Client.Tools
 
             tcpListener.Start();
 
-            while (true)
-            {
-                TcpClient tcpClient = tcpListener.AcceptTcpClient();
+            TcpClient tcpClient = tcpListener.AcceptTcpClient();
 
-                var streamReader = new StreamReader(tcpClient.GetStream());
-                string fileSize = streamReader.ReadLine();
-                string fileName = streamReader.ReadLine();
+            var streamReader = new StreamReader(tcpClient.GetStream());
+            string fileSize = streamReader.ReadLine();
+            string fileName = streamReader.ReadLine();
 
-                int length = Convert.ToInt32(fileSize);
-                byte[] buffer = new byte[length];
+            int length = Convert.ToInt32(fileSize);
+            byte[] buffer = new byte[length];
 
-                tcpClient.GetStream().Read(buffer, 0, length);
+            tcpClient.GetStream().Read(buffer, 0, length);
 
-                using var fileStream = new FileStream(fileName ?? string.Empty, FileMode.Create);
-                fileStream.Write(buffer, 0, buffer.Length);
-                fileStream.Flush();
-                fileStream.Close();
-                return;
-            }
+            using var fileStream = new FileStream(fileName ?? string.Empty, FileMode.Create);
+            fileStream.Write(buffer, 0, buffer.Length);
+            fileStream.Flush();
+            fileStream.Close();
         }
     }
 }
