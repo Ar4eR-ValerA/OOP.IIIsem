@@ -47,8 +47,8 @@ namespace BackupsExtra
             var restorePointsControl = new RestorePointsControl(new RestorePointsControlCounter(1));
             restorePointsControl.MergeExtraRestorePoints(backupJob2);
 
-            var localRestore = new LocalRestore(new FileLogger("log.txt"));
-            localRestore.Restore(backupJob2.RestorePoints[0], @"E:");
+            var localRestore = new LocalRestore(backupJob2, new FileLogger("log.txt"));
+            localRestore.Restore(backupJob2.RestorePoints[0]);
 
             File.Delete(filePath1);
             File.Delete(filePath2);

@@ -21,6 +21,7 @@ namespace Backups.Server
 
             var tcpClient = new TcpClient(fileServerStorage.IpAddress, fileServerStorage.Port);
             byte[] bytes = File.ReadAllBytes(localFileInfo);
+            File.Delete(localFileInfo);
 
             var streamWriter = new StreamWriter(tcpClient.GetStream());
             streamWriter.WriteLine(bytes.Length.ToString());

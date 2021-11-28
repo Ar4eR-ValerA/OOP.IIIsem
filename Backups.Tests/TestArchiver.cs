@@ -19,5 +19,18 @@ namespace Backups.Tests
                 throw new BackupsException("File paths is null");
             }
         }
+
+        public void Unpack(string archivePath, string targetPath)
+        {
+            if (archivePath is null)
+            {
+                throw new BackupsException("Archive path is null");
+            }
+
+            if (targetPath is null)
+            {
+                throw new BackupsException("Target path is null");
+            }
+        }
     }
 }

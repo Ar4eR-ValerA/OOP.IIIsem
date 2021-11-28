@@ -36,6 +36,21 @@ namespace Backups.Tools
             Directory.Delete(tempDirPath, true);
         }
 
+        public void Unpack(string archivePath, string targetPath)
+        {
+            if (archivePath is null)
+            {
+                throw new BackupsException("Archive path is null");
+            }
+
+            if (targetPath is null)
+            {
+                throw new BackupsException("Target path is null");
+            }
+
+            SafeCreateZipFile(targetPath, archivePath);
+        }
+
         private static void SafeCreateDirectory(string path)
         {
             if (Directory.Exists(path ?? throw new BackupsException("Path is null")))

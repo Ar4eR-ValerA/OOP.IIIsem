@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Backups.Client.ServerStorages;
 using Backups.Entities;
 using Backups.Entities.Storages;
+using Backups.Interfaces;
 using BackupsExtra.Entities;
 using BackupsExtra.Tools;
 
@@ -37,7 +39,6 @@ namespace BackupsExtra.Services
                 throw new BackupsExtraException("Backup job is null");
             }
 
-            RestorePoint targetRestorePoint = backupJob.RestorePoints.Last();
             List<RestorePoint> relevantRestorePoints =
                 RestorePointsControlAlgorithm.GetRelevantRestorePoints(backupJob.RestorePoints);
 
@@ -49,31 +50,17 @@ namespace BackupsExtra.Services
             var extraRestorePoints = backupJob.RestorePoints
                 .Where(restorePoint => !relevantRestorePoints.Contains(restorePoint)).ToList();
 
+            RestorePoint targetRestorePoint = backupJob.RestorePoints.Last();
+
             foreach (RestorePoint extraRestorePoint in extraRestorePoints)
             {
-                if (extraRestorePoint.Storage.GetType() == typeof(FileStorage))
-                {
-                    File.Delete(extraRestorePoint.Storage.Path);
-                    backupJob.EraseRestorePoint(extraRestorePoint);
-                    continue;
-                }
+                StorageMerge.Merge(extraRestorePoint.Storage, targetRestorePoint);
+                backupJob.EraseRestorePoint(extraRestorePoint);
+            }
 
-                foreach (string filePath in extraRestorePoint.Storage.FilePaths)
-                {
-                    if (targetRestorePoint.ContainsFile(Path.GetFileName(filePath)))
-                    {
-                        File.Delete(filePath);
-                    }
-                    else
-                    {
-                        File.Move(filePath, $"{targetRestorePoint.Storage.Path}/{Path.GetFileName(filePath)}");
-                    }
-                }
-
-                if (extraRestorePoint.Storage.FilePaths.Count == 0)
-                {
-                    backupJob.EraseRestorePoint(extraRestorePoint);
-                }
+            foreach (string filePath in targetRestorePoint.Storage.FilePaths)
+            {
+                backupJob.JobObject.AddFile(filePath);
             }
         }
     }

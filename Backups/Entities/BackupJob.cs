@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Backups.Interfaces;
 using Backups.Tools;
 using Newtonsoft.Json;
@@ -10,9 +11,13 @@ namespace Backups.Entities
         [JsonProperty("restorePoints")]
         private readonly List<RestorePoint> _restorePoints;
 
+        [JsonProperty("originalPaths")]
+        private readonly Dictionary<string, string> _originalPaths;
+
         public BackupJob(IJobObject jobObject, IArchiveService archiveService, ILogger logger)
         {
             _restorePoints = new List<RestorePoint>();
+            _originalPaths = new Dictionary<string, string>();
             JobObject = jobObject ?? throw new BackupsException("JobObject is null");
             ArchiveService = archiveService ?? throw new BackupsException("ArchiveService is null");
             Logger = logger ?? throw new BackupsException("Logger is null");
@@ -24,9 +29,11 @@ namespace Backups.Entities
             IJobObject jobObject,
             IArchiveService archiveService,
             ILogger logger,
-            List<RestorePoint> restorePoints)
+            List<RestorePoint> restorePoints,
+            Dictionary<string, string> originalPaths)
         {
             _restorePoints = restorePoints;
+            _originalPaths = originalPaths;
             JobObject = jobObject ?? throw new BackupsException("JobObject is null");
             ArchiveService = archiveService ?? throw new BackupsException("ArchiveService is null");
             Logger = logger ?? throw new BackupsException("Logger is null");
@@ -37,10 +44,13 @@ namespace Backups.Entities
         public IJobObject JobObject { get; private set; }
 
         [JsonProperty]
-        public IArchiveService ArchiveService { get; private set; }
+        public IArchiveService ArchiveService { get; set; }
 
         [JsonProperty]
         public ILogger Logger { get; private set; }
+
+        [JsonProperty]
+        public IReadOnlyDictionary<string, string> OriginalPaths => _originalPaths;
 
         [JsonIgnore]
         public IArchiver Archiver => ArchiveService.Archiver;
@@ -53,6 +63,11 @@ namespace Backups.Entities
             var restorePoint = new RestorePoint(
                 name ?? throw new BackupsException("Name is null"),
                 storage ?? throw new BackupsException("Storage is null"));
+
+            foreach (string path in JobObject.FilePaths)
+            {
+                _originalPaths[Path.GetFileName(path)] = path;
+            }
 
             ArchiveService.ArchiveRestorePoint(JobObject, restorePoint);
             _restorePoints.Add(restorePoint);

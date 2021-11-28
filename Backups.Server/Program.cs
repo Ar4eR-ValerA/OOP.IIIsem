@@ -9,6 +9,11 @@ namespace Backups.Server
             Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
             Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
             Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
+            Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
+            Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
+            Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
+            Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
+            Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
         }
     }
 }
