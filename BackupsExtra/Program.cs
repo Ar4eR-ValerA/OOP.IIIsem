@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Backups.Client.Services;
 using Backups.Entities;
 using Backups.Entities.JobObjects;
 using Backups.Entities.Storages;
@@ -25,7 +26,7 @@ namespace BackupsExtra
             Directory.CreateDirectory($@"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\Test2");
 
             IJobObject jobObject = new FilesJobObject(new List<string> { filePath1 });
-            var archiveService1 = new LocalArchiveService(new SplitZipArchiver());
+            var archiveService1 = new ServerArchiveService(new SplitZipArchiver(), "127.0.0.1", 8888);
             var backupJob1 = new BackupJob(jobObject, archiveService1, new FileLogger("log.txt", DateTime.Now));
 
             backupJob1.CreateRestorePoint(

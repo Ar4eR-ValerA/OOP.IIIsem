@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Net;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using Backups.Client.ServerStorages;
 using Backups.Tools;
@@ -40,7 +40,7 @@ namespace Backups.Client.Tools
             tcpClient.Close();
         }
 
-        public static void TakeFile(FileServerStorage fileServerStorage, string targetPath, int transferPort)
+        public static void TakeFile(FileServerStorage fileServerStorage, string targetPath)
         {
             if (fileServerStorage is null)
             {
@@ -52,9 +52,9 @@ namespace Backups.Client.Tools
                 throw new BackupsException("targetPath is null");
             }
 
-            var tcpClient = new TcpClient(fileServerStorage.IpAddress, fileServerStorage.Port);
+            using var tcpClient = new TcpClient(fileServerStorage.IpAddress, fileServerStorage.Port);
 
-            var streamWriter = new StreamWriter(tcpClient.GetStream());
+            using var streamWriter = new StreamWriter(tcpClient.GetStream());
 
             streamWriter.WriteLine("take");
             streamWriter.Flush();
@@ -65,13 +65,19 @@ namespace Backups.Client.Tools
             streamWriter.WriteLine(targetPath);
             streamWriter.Flush();
 
-            streamWriter.WriteLine(transferPort.ToString());
-            streamWriter.Flush();
+            var streamReader = new StreamReader(tcpClient.GetStream());
+            string fileSize = streamReader.ReadLine();
+            string fileName = streamReader.ReadLine();
 
-            streamWriter.Close();
-            tcpClient.Close();
+            int length = Convert.ToInt32(fileSize);
+            byte[] buffer = new byte[length];
 
-            Receiver.ReceiveFile(IPAddress.Parse(fileServerStorage.IpAddress), transferPort);
+            tcpClient.GetStream().Read(buffer, 0, length);
+
+            using var fileStream = new FileStream(fileName ?? string.Empty, FileMode.Create);
+            fileStream.Write(buffer, 0, buffer.Length);
+            fileStream.Flush();
+            fileStream.Close();
         }
     }
 }

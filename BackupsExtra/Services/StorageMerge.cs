@@ -28,8 +28,7 @@ namespace BackupsExtra.Services
             {
                 FileService.TakeFile(
                     serverStorage,
-                    $@"temp\{Path.GetFileName(targetRestorePoint.Storage.Path)}",
-                    serverStorage.Port + 1);
+                    $@"temp\{Path.GetFileName(targetRestorePoint.Storage.Path)}");
             }
 
             if (storage is FileStorage)

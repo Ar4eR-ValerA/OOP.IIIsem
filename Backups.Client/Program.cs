@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Threading;
 using Backups.Client.ServerStorages;
 using Backups.Client.Services;
 using Backups.Client.Tools;
@@ -40,8 +38,7 @@ namespace Backups.Client
             File.Delete(filePath1);
             File.Delete(filePath2);
             
-            Thread.Sleep(1000);
-            FileService.TakeFile(new FileServerStorage(@"E:\Test1.txt.zip", "127.0.0.1", 8888), @"E:\test.zip", 7654);
+            FileService.TakeFile(new FileServerStorage(@"E:\Test1.txt.zip", "127.0.0.1", 8888), @"E:\test.zip");
         }
     }
 }
