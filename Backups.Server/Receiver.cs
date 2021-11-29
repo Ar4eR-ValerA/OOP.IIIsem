@@ -56,6 +56,7 @@ namespace Backups.Server
                     streamWriter.Flush();
 
                     tcpClient.Client.SendFile(fileName);
+                    streamWriter.Flush();
                     File.Delete(fileName);
 
                     streamWriter.Close();

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using Backups.Client.Interfaces;
 using Backups.Client.ServerStorages;
 using Backups.Client.Tools;
@@ -24,14 +25,11 @@ namespace Backups.Client.Services
         }
 
 
-        [JsonProperty]
-        public IArchiver Archiver { get; set; }
+        [JsonProperty] public IArchiver Archiver { get; set; }
 
-        [JsonProperty]
-        public string IpAddress { get; private set; }
+        [JsonProperty] public string IpAddress { get; private set; }
 
-        [JsonProperty]
-        public int Port { get; private set; }
+        [JsonProperty] public int Port { get; private set; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
         {
@@ -49,19 +47,18 @@ namespace Backups.Client.Services
             Archiver.Archive(jobObject.FilePaths, tempDirPath);
             var tempDir = new DirectoryInfo(tempDirPath);
 
-            foreach (FileInfo localFileInfo in tempDir.GetFiles())
+            if (File.Exists("temp.zip"))
             {
-                string serverFileInfo = @$"{restorePoint.Storage.Path} {localFileInfo.Name}";
-
-                if (restorePoint.Storage.Path.EndsWith(@"\"))
-                {
-                    serverFileInfo = @$"{restorePoint.Storage.Path}{localFileInfo.Name}";
-                }
-
-                FileService.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
+                File.Delete("temp.zip");
             }
 
+            ZipFile.CreateFromDirectory(tempDirPath, "temp.zip");
+
+            FileService.SendFile(new FileInfo("temp.zip"), new FileServerStorage(
+                restorePoint.Storage.Path, IpAddress, Port));
+
             tempDir.Delete(true);
+            File.Delete("temp.zip");
         }
     }
 }

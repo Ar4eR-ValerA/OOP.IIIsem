@@ -35,7 +35,8 @@ namespace Backups.Client.Tools
             streamWriter.Flush();
 
             tcpClient.Client.SendFile(localFileInfo.FullName);
-
+            streamWriter.Flush();
+            
             streamWriter.Close();
             tcpClient.Close();
         }
@@ -78,6 +79,7 @@ namespace Backups.Client.Tools
             fileStream.Write(buffer, 0, buffer.Length);
             fileStream.Flush();
             fileStream.Close();
+            tcpClient.Client.Close();
         }
     }
 }

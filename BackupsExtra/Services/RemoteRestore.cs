@@ -1,14 +1,18 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using Backups.Client.ServerStorages;
+using Backups.Client.Tools;
 using Backups.Entities;
+using Backups.Entities.Storages;
 using Backups.Interfaces;
 using BackupsExtra.Tools;
 
 namespace BackupsExtra.Services
 {
-    public class LocalRestore : IRestoreService
+    public class RemoteRestore : IRestoreService
     {
-        public LocalRestore(BackupJob backupJob, ILogger logger)
+        public RemoteRestore(BackupJob backupJob, ILogger logger)
         {
             Logger = logger ?? throw new BackupsExtraException("Logger is null");
             BackupJob = backupJob ?? throw new BackupsExtraException("Backup job is null");
@@ -29,12 +33,17 @@ namespace BackupsExtra.Services
                 throw new BackupsExtraException("Target directory is null");
             }
 
-            if (!BackupJob.RestorePoints.Contains(restorePoint))
+            if (restorePoint.Storage is not FileServerStorage fileServerStorage)
             {
-                throw new BackupsExtraException("There is no such restore point");
+                throw new BackupsExtraException("This not a server storage");
             }
 
-            RestoreStorage(restorePoint.Storage, targetDirPath);
+            FileService.TakeFile(fileServerStorage, Path.GetFileName(restorePoint.Storage.Path));
+            ZipFile.ExtractToDirectory(Path.GetFileName(restorePoint.Storage.Path), "temp");
+
+            RestoreStorage(new DirectoryStorage("temp"), targetDirPath);
+            Directory.Delete("temp", true);
+
             Logger.Log($"Restore point {restorePoint.Name} was restored");
         }
 
@@ -50,13 +59,20 @@ namespace BackupsExtra.Services
                 throw new BackupsExtraException("There is no such restore point");
             }
 
+            if (restorePoint.Storage is not FileServerStorage fileServerStorage)
+            {
+                throw new BackupsExtraException("This not a server storage");
+            }
+
+            FileService.TakeFile(fileServerStorage, Path.GetFileName(restorePoint.Storage.Path));
+
             if (Directory.Exists("temp"))
             {
                 Directory.Delete("temp");
             }
 
             Directory.CreateDirectory("temp");
-            RestoreStorage(restorePoint.Storage, "temp");
+            ZipFile.ExtractToDirectory(Path.GetFileName(restorePoint.Storage.Path), "temp");
 
             foreach (string filePath in Directory.GetFiles("temp"))
             {
