@@ -1,29 +1,35 @@
 ﻿using System.IO;
-using System.Net;
+using System.IO.Compression;
 using Backups.Client.Interfaces;
 using Backups.Client.ServerStorages;
 using Backups.Client.Tools;
 using Backups.Entities;
-using Backups.Entities.Storages;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Client.Services
 {
     public class ServerArchiveService : IServerArchiveService
     {
-        public ServerArchiveService(IArchiver archiver, IPAddress ipAddress, int port)
+        public ServerArchiveService(IArchiver archiver, string ipAddress, int port)
         {
             Archiver = archiver ?? throw new BackupsException("Archiver is null");
             IpAddress = ipAddress ?? throw new BackupsException("IpAddress is null");
             Port = port;
         }
 
-        public IArchiver Archiver { get; }
+        [JsonConstructor]
+        public ServerArchiveService()
+        {
+        }
 
-        public IPAddress IpAddress { get; }
 
-        public int Port { get; }
+        [JsonProperty] public IArchiver Archiver { get; set; }
+
+        [JsonProperty] public string IpAddress { get; private set; }
+
+        [JsonProperty] public int Port { get; private set; }
 
         public void ArchiveRestorePoint(IJobObject jobObject, RestorePoint restorePoint)
         {
@@ -31,24 +37,28 @@ namespace Backups.Client.Services
             {
                 throw new BackupsException("RestorePoint is null");
             }
-            
+
             if (jobObject is null)
             {
                 throw new BackupsException("JobObject is null");
             }
 
             string tempDirPath = "temp";
-            Archiver.Archive(jobObject.FileInfos, tempDirPath);
+            Archiver.Archive(jobObject.FilePaths, tempDirPath);
             var tempDir = new DirectoryInfo(tempDirPath);
 
-            foreach (FileInfo localFileInfo in tempDir.GetFiles())
+            if (File.Exists("temp.zip"))
             {
-                var serverFileInfo = new FileInfo(@$"{restorePoint.Storage.Path} {localFileInfo.Name}");
-
-                FileSender.SendFile(localFileInfo, new FileServerStorage(serverFileInfo, IpAddress, Port));
+                File.Delete("temp.zip");
             }
 
+            ZipFile.CreateFromDirectory(tempDirPath, "temp.zip");
+
+            FileService.SendFile(new FileInfo("temp.zip"), new FileServerStorage(
+                restorePoint.Storage.Path, IpAddress, Port));
+
             tempDir.Delete(true);
+            File.Delete("temp.zip");
         }
     }
 }

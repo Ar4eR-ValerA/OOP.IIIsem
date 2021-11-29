@@ -7,16 +7,29 @@ namespace Backups.Tests
 {
     public class TestArchiver : IArchiver
     {
-        public void Archive(IReadOnlyList<FileInfo> fileInfos, string path)
+        public void Archive(IReadOnlyList<string> filePaths, string targetPath)
         {
-            if (path is null)
+            if (targetPath is null)
             {
                 throw new BackupsException("Path is null");
             }
 
-            if (fileInfos is null)
+            if (filePaths is null)
             {
-                throw new BackupsException("FileInfos is null");
+                throw new BackupsException("File paths is null");
+            }
+        }
+
+        public void Unpack(string archivePath, string targetPath)
+        {
+            if (archivePath is null)
+            {
+                throw new BackupsException("Archive path is null");
+            }
+
+            if (targetPath is null)
+            {
+                throw new BackupsException("Target path is null");
             }
         }
     }

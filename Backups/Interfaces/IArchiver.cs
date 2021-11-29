@@ -5,6 +5,7 @@ namespace Backups.Interfaces
 {
     public interface IArchiver
     {
-        void Archive(IReadOnlyList<FileInfo> fileInfos, string path);
+        void Archive(IReadOnlyList<string> filePaths, string targetPath);
+        void Unpack(string archivePath, string targetPath);
     }
 }

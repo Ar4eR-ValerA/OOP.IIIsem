@@ -5,8 +5,9 @@ namespace Backups.Interfaces
 {
     public interface IJobObject
     {
-        IReadOnlyList<FileInfo> FileInfos { get; }
+        IReadOnlyList<string> FilePaths { get; }
 
-        void RemoveFile(FileInfo fileInfo);
+        void AddFile(string filePath);
+        void RemoveFile(string filePath);
     }
 }

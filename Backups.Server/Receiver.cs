@@ -8,31 +8,60 @@ namespace Backups.Server
 {
     public static class Receiver
     {
-        public static void ReceiveFile(IPAddress ipAddress, int port)
+        public static void Receive(IPAddress ipAddress, int port)
         {
             var tcpListener = new TcpListener(
-                ipAddress ?? throw new BackupsException("IpAddress is null"), 
+                ipAddress ?? throw new BackupsException("IpAddress is null"),
                 port);
-            
+
             tcpListener.Start();
 
             while (true)
             {
-                TcpClient tcpClient = tcpListener.AcceptTcpClient();  
+                TcpClient tcpClient = tcpListener.AcceptTcpClient();
 
                 var streamReader = new StreamReader(tcpClient.GetStream());
-                string fileSize = streamReader.ReadLine();
-                string fileName = streamReader.ReadLine();
+                string mode = streamReader.ReadLine();
 
-                int length = Convert.ToInt32(fileSize);
-                byte[] buffer = new byte[length];
+                if (mode == "send")
+                {
+                    string fileSize = streamReader.ReadLine();
+                    string fileName = streamReader.ReadLine();
 
-                tcpClient.GetStream().Read(buffer, 0, length);
+                    int length = Convert.ToInt32(fileSize);
+                    byte[] buffer = new byte[length];
 
-                using var fileStream = new FileStream(fileName ?? string.Empty, FileMode.Create);
-                fileStream.Write(buffer, 0, buffer.Length);  
-                fileStream.Flush();  
-                fileStream.Close();
+                    tcpClient.GetStream().Read(buffer, 0, length);
+
+                    using var fileStream = new FileStream(fileName ?? string.Empty, FileMode.Create);
+                    fileStream.Write(buffer, 0, buffer.Length);
+                    fileStream.Flush();
+                    fileStream.Close();
+                    
+                    tcpClient.Close();
+                }
+
+                if (mode == "take")
+                {
+                    string fileName = streamReader.ReadLine();
+                    string targetFile = streamReader.ReadLine();
+
+                    byte[] bytes = File.ReadAllBytes(fileName);
+
+                    var streamWriter = new StreamWriter(tcpClient.GetStream());
+                    streamWriter.WriteLine(bytes.Length.ToString());
+                    streamWriter.Flush();
+
+                    streamWriter.WriteLine(targetFile);
+                    streamWriter.Flush();
+
+                    tcpClient.Client.SendFile(fileName);
+                    streamWriter.Flush();
+                    File.Delete(fileName);
+
+                    streamWriter.Close();
+                    tcpClient.Close();
+                }
             }
         }
     }

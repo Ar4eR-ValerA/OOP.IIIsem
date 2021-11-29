@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 
 namespace Backups.Interfaces
 {
     public interface IStorage
     {
-        IReadOnlyList<FileInfo> FileInfos { get; }
+        IReadOnlyList<string> FilePaths { get; }
         string Path { get; }
     }
 }

@@ -7,38 +7,53 @@ namespace Backups.Tools
 {
     public class SingleZipArchiver : IArchiver
     {
-        public void Archive(IReadOnlyList<FileInfo> fileInfos, string path)
+        public void Archive(IReadOnlyList<string> filePaths, string targetPath)
         {
-            if (path is null)
+            if (targetPath is null)
             {
                 throw new BackupsException("Path is null");
             }
 
-            if (fileInfos is null)
+            if (filePaths is null)
             {
                 throw new BackupsException("FileInfos is null");
             }
 
-            if (!path.EndsWith(".zip"))
+            if (!targetPath.EndsWith(".zip"))
             {
-                if (!Directory.Exists(path))
+                if (!Directory.Exists(targetPath))
                 {
-                    Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(targetPath);
                 }
 
-                path += @"\archive.zip";
+                targetPath += @"\archive.zip";
             }
 
-            string tempDirPath = $"{path}temp";
+            string tempDirPath = $"{targetPath}temp";
             SafeCreateDirectory(tempDirPath);
-            foreach (FileInfo fileInfo in fileInfos)
+            foreach (string filePath in filePaths)
             {
-                fileInfo.CopyTo($@"{tempDirPath}\{fileInfo.Name}");
+                File.Copy(filePath, $@"{tempDirPath}\{Path.GetFileName(filePath)}");
             }
 
-            SafeCreateZipFile(tempDirPath, path);
+            SafeCreateZipFile(tempDirPath, targetPath);
 
             Directory.Delete(tempDirPath, true);
+        }
+
+        public void Unpack(string archivePath, string targetPath)
+        {
+            if (archivePath is null)
+            {
+                throw new BackupsException("Archive path is null");
+            }
+
+            if (targetPath is null)
+            {
+                throw new BackupsException("Target path is null");
+            }
+
+            SafeCreateZipFile(targetPath, archivePath);
         }
 
         private static void SafeCreateDirectory(string path)

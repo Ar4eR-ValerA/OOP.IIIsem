@@ -2,19 +2,28 @@
 using System.IO;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities.Storages
 {
     public class DirectoryStorage : IStorage
     {
-        private readonly DirectoryInfo _directoryInfo;
-
-        public DirectoryStorage(DirectoryInfo directoryInfo)
+        [JsonConstructor]
+        public DirectoryStorage(string directoryPath)
         {
-            _directoryInfo = directoryInfo ?? throw new BackupsException("DirectoryInfo is null");
+            DirectoryPath = directoryPath ?? throw new BackupsException("Path is null");
         }
 
-        public IReadOnlyList<FileInfo> FileInfos => _directoryInfo.GetFiles();
-        public string Path => _directoryInfo.FullName;
+        [JsonProperty]
+        public string DirectoryPath { get; private set; }
+
+        [JsonIgnore]
+        public IReadOnlyList<string> FilePaths => Directory.GetFiles(DirectoryPath);
+
+        public string Path
+        {
+            get => DirectoryPath;
+            private set => DirectoryPath = value ?? throw new BackupsException("value is null");
+        }
     }
 }

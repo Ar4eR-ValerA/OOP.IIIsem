@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,11 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Backups.Client\Backups.Client.csproj" />
     <ProjectReference Include="..\Backups\Backups.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Entities" />
   </ItemGroup>
 
 </Project>

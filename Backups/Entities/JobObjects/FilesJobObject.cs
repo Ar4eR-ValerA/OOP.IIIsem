@@ -1,39 +1,37 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using Backups.Interfaces;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities.JobObjects
 {
     public class FilesJobObject : IJobObject
     {
-        private readonly List<FileInfo> _fileInfos;
+        [JsonProperty("filePaths")]
+        private readonly List<string> _filePaths;
 
-        public FilesJobObject(List<FileInfo> files)
+        [JsonConstructor]
+        public FilesJobObject(List<string> filePaths)
         {
-            _fileInfos = files ?? throw new BackupsException("Files is null");
+            _filePaths = filePaths ?? throw new BackupsException("Paths are null");
         }
 
-        public FilesJobObject(FileInfo fileInfo)
+        public FilesJobObject(string filePath)
         {
-            _fileInfos = new List<FileInfo> { fileInfo ?? throw new BackupsException("FileInfo is null") };
+            _filePaths = new List<string> { filePath ?? throw new BackupsException("Path is null") };
         }
 
-        public FilesJobObject()
+        [JsonIgnore]
+        public IReadOnlyList<string> FilePaths => _filePaths;
+
+        public void AddFile(string filePath)
         {
-            _fileInfos = new List<FileInfo>();
+            _filePaths.Add(filePath ?? throw new BackupsException("Path is null"));
         }
 
-        public IReadOnlyList<FileInfo> FileInfos => _fileInfos;
-
-        public void AddFile(FileInfo fileInfo)
+        public void RemoveFile(string filePath)
         {
-            _fileInfos.Add(fileInfo ?? throw new BackupsException("FileInfo is null"));
-        }
-
-        public void RemoveFile(FileInfo fileInfo)
-        {
-            _fileInfos.Remove(fileInfo ?? throw new BackupsException("FileInfo is null"));
+            _filePaths.Remove(filePath ?? throw new BackupsException("Path is null"));
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Backups.Server
     {
         static void Main(string[] args)
         {
-            Receiver.ReceiveFile(IPAddress.Parse("127.0.0.1"), 8888);
+            Receiver.Receive(IPAddress.Parse("127.0.0.1"), 8888);
         }
     }
 }
