@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using Reports.Tools;
 
 namespace Reports.Entities.Tasks
@@ -37,6 +39,17 @@ namespace Reports.Entities.Tasks
             }
 
             _comments.Add(comment);
+        }
+
+        public bool Equals(Task task)
+        {
+            return task is not null &&
+                   Status == task.Status &&
+                   Name == task.Name &&
+                   Id == task.Id &&
+                   Description == task.Description &&
+                   !Comments.Except(task.Comments).ToList().Any() &&
+                   !task.Comments.Except(Comments).ToList().Any();
         }
     }
 }
