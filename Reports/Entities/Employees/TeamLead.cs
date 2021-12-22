@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Reports.Dtos;
 using Reports.Tools;
 
 namespace Reports.Entities.Employees
@@ -13,7 +15,25 @@ namespace Reports.Entities.Employees
             _subordinates = new List<BaseEmployee>();
         }
 
-        public IReadOnlyList<BaseEmployee> Subordinates => _subordinates;
+        internal TeamLead(TeamLeadDto teamLeadDto)
+            : base(teamLeadDto.Id, teamLeadDto.Name, teamLeadDto.Active)
+        {
+            _subordinates = new List<BaseEmployee>();
+            foreach (BaseEmployeeDto baseEmployeeDto in teamLeadDto.Subordinates)
+            {
+                if (baseEmployeeDto is ManagerDto managerDto)
+                {
+                    _subordinates.Add(new Manager(managerDto));
+                }
+
+                if (baseEmployeeDto is EmployeeDto employeeDto)
+                {
+                    _subordinates.Add(new Employee(employeeDto));
+                }
+            }
+        }
+
+        public virtual IReadOnlyList<BaseEmployee> Subordinates => _subordinates;
 
         public void AddSubordinate(BaseEmployee subordinate)
         {
@@ -27,7 +47,17 @@ namespace Reports.Entities.Employees
                 throw new ReportsExceptions("You can't add team lead as a subordinate");
             }
 
+            if (_subordinates.Contains(subordinate))
+            {
+                throw new ReportsExceptions("This employee is already subordinate");
+            }
+
             _subordinates.Add(subordinate);
+        }
+
+        public override BaseEmployeeDto GetDto()
+        {
+            return new TeamLeadDto(Id, Name, _subordinates.Select(e => e.GetDto()).ToList(), Active);
         }
     }
 }
