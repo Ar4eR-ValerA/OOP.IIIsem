@@ -9,4 +9,9 @@
       <Folder Include="Entities\Employees" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.13" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.13" />
+    </ItemGroup>
+
 </Project>
