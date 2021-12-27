@@ -13,6 +13,7 @@ namespace Reports.Services
         IReadOnlyList<BaseEmployeeDto> FindByName(string name);
         IReadOnlyList<BaseEmployeeDto> FindById(Guid id);
         IReadOnlyList<BaseEmployeeDto> Find(string name, Guid id);
+        BaseEmployeeDto FindOne(string name, Guid id);
         IReadOnlyList<BaseEmployeeDto> GetAllEmployees();
         void ConnectEmployee(Guid targetEmployeeId, Guid supervisorId);
     }

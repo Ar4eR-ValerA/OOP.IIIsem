@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Reports.Dtos;
 using Reports.Services;
-using Reports.Tools;
 
 namespace Reports.Server.Controllers
 {
@@ -24,15 +22,14 @@ namespace Reports.Server.Controllers
         [HttpPost]
         [Route("/tasks/create")]
         public void CreateTask(
-            [FromQuery] string name, 
-            [FromQuery] string description, 
+            [FromQuery] string name,
+            [FromQuery] string description,
             [FromQuery] string creatorName,
             [FromQuery] Guid creatorId)
         {
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(creatorName, creatorId);
-            IsOne(creatorDtos);
-            
-            _tasksService.CreateTask(name, description, creatorDtos.First().Id, DateTime.Now);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
+
+            _tasksService.CreateTask(name, description, creatorDto.Id, DateTime.Now);
         }
 
         [HttpGet]
@@ -57,19 +54,11 @@ namespace Reports.Server.Controllers
             [FromQuery] string creatorName,
             [FromQuery] Guid creatorId)
         {
-            IReadOnlyList<TaskDto> taskDtos = _tasksService.Find(taskName, taskId);
-            IReadOnlyList<BaseEmployeeDto> employeeDtos = _employeesService.Find(employeeName, employeeId);
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(creatorName, creatorId);
+            TaskDto taskDto = _tasksService.FindOne(taskName, taskId);
+            BaseEmployeeDto employeeDto = _employeesService.FindOne(employeeName, employeeId);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
 
-            IsOne(taskDtos);
-            IsOne(employeeDtos);
-            IsOne(creatorDtos);
-
-            _tasksService.AssignEmployee(
-                taskDtos.First().Id, 
-                employeeDtos.First().Id, 
-                creatorDtos.First().Id, 
-                DateTime.Now);
+            _tasksService.AssignEmployee(taskDto.Id, employeeDto.Id, creatorDto.Id, DateTime.Now);
         }
 
         [HttpPatch]
@@ -82,84 +71,52 @@ namespace Reports.Server.Controllers
             [FromQuery] string creatorName,
             [FromQuery] Guid creatorId)
         {
-            IReadOnlyList<TaskDto> taskDtos = _tasksService.Find(taskName, taskId);
-            IReadOnlyList<BaseEmployeeDto> employeeDtos = _employeesService.Find(creatorName, creatorId);
+            TaskDto taskDto = _tasksService.FindOne(taskName, taskId);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
 
-            IsOne(taskDtos);
-            IsOne(employeeDtos);
-
-            _tasksService.AddComment(
-                taskDtos.First().Id,
-                commentName, commentMessage,
-                employeeDtos.First().Id,
-                DateTime.Now);
+            _tasksService.AddComment(taskDto.Id, commentName, commentMessage, creatorDto.Id, DateTime.Now);
         }
 
         [HttpPatch]
         [Route("/tasks/finish-task")]
         public void FinishTask(
-            [FromQuery] string taskName, 
-            [FromQuery] Guid taskId, 
+            [FromQuery] string taskName,
+            [FromQuery] Guid taskId,
             [FromQuery] string creatorName,
             [FromQuery] Guid creatorId)
         {
-            IReadOnlyList<TaskDto> taskDtos = _tasksService.Find(taskName, taskId);
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(creatorName, creatorId);
-            IsOne(taskDtos);
-            IsOne(creatorDtos);
+            TaskDto taskDto = _tasksService.FindOne(taskName, taskId);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
 
-            _tasksService.FinishTask(taskDtos.First().Id, creatorDtos.First().Id, DateTime.Now);
+            _tasksService.FinishTask(taskDto.Id, creatorDto.Id, DateTime.Now);
         }
-        
+
         [HttpPatch]
         [Route("/tasks/open-task")]
         public void OpenTask(
-            [FromQuery] string taskName, 
-            [FromQuery] Guid taskId, 
+            [FromQuery] string taskName,
+            [FromQuery] Guid taskId,
             [FromQuery] string creatorName,
             [FromQuery] Guid creatorId)
         {
-            IReadOnlyList<TaskDto> taskDtos = _tasksService.Find(taskName, taskId);
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(creatorName, creatorId);
-            IsOne(taskDtos);
-            IsOne(creatorDtos);
+            TaskDto taskDto = _tasksService.FindOne(taskName, taskId);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
 
-            _tasksService.OpenTask(taskDtos.First().Id, creatorDtos.First().Id, DateTime.Now);
+            _tasksService.OpenTask(taskDto.Id, creatorDto.Id, DateTime.Now);
         }
-        
+
         [HttpPatch]
         [Route("/tasks/change-description")]
         public void ChangeDescription(
-            [FromQuery] string taskName, 
-            [FromQuery] Guid taskId, 
+            [FromQuery] string taskName,
+            [FromQuery] Guid taskId,
             [FromQuery] string creatorName,
             [FromQuery] Guid creatorId)
         {
-            IReadOnlyList<TaskDto> taskDtos = _tasksService.Find(taskName, taskId);
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(creatorName, creatorId);
-            IsOne(taskDtos);
-            IsOne(creatorDtos);
+            TaskDto taskDto = _tasksService.FindOne(taskName, taskId);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
 
-            _tasksService.OpenTask(taskDtos.First().Id, creatorDtos.First().Id, DateTime.Now);
-        }
-
-        private void IsOne(IReadOnlyList<object> objects)
-        {
-            if (objects is null)
-            {
-                throw new ReportsExceptions("There is no objects");
-            }
-
-            if (objects.Count == 0)
-            {
-                throw new ReportsExceptions(
-                    $"There is not such {objects.GetType().GetGenericArguments().First().Name}");
-            }
-
-            if (objects.Count > 1)
-            {
-                throw new ReportsExceptions($"There are more than 1 suitable {objects.First().GetType().Name}");
-            }
+            _tasksService.OpenTask(taskDto.Id, creatorDto.Id, DateTime.Now);
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Reports.Dtos;
 using Reports.Services;
-using Reports.Tools;
 
 namespace Reports.Server.Controllers
 {
@@ -55,13 +54,10 @@ namespace Reports.Server.Controllers
             [FromQuery] string supervisorName,
             [FromQuery] Guid supervisorId)
         {
-            IReadOnlyList<BaseEmployeeDto> baseTargetEmployeeDtos = _employeesService.Find(targetName, targetId);
-            IReadOnlyList<BaseEmployeeDto> supervisorDtos = _employeesService.Find(supervisorName, supervisorId);
-            
-            IsOne(baseTargetEmployeeDtos);
-            IsOne(supervisorDtos);
+            BaseEmployeeDto baseTargetEmployeeDto = _employeesService.FindOne(targetName, targetId);
+            BaseEmployeeDto supervisorDto = _employeesService.FindOne(supervisorName, supervisorId);
 
-            _employeesService.ConnectEmployee(baseTargetEmployeeDtos.First().Id, supervisorDtos.First().Id);
+            _employeesService.ConnectEmployee(baseTargetEmployeeDto.Id, supervisorDto.Id);
         }
         
         [HttpPatch]
@@ -70,29 +66,9 @@ namespace Reports.Server.Controllers
             [FromQuery] string name,
             [FromQuery] Guid id)
         {
-            IReadOnlyList<BaseEmployeeDto> employeeDtos = _employeesService.Find(name, id);
-            IsOne(employeeDtos);
+            BaseEmployeeDto employeeDto = _employeesService.FindOne(name, id);
 
-            _employeesService.DeleteEmployee(employeeDtos.First().Id);
-        }
-        
-        private void IsOne(IReadOnlyList<object> objects)
-        {
-            if (objects is null)
-            {
-                throw new ReportsExceptions("There is no objects");
-            }
-
-            if (objects.Count == 0)
-            {
-                throw new ReportsExceptions(
-                    $"There is not such {objects.GetType().GetGenericArguments().First().Name}");
-            }
-
-            if (objects.Count > 1)
-            {
-                throw new ReportsExceptions($"There are more than 1 suitable {objects.First().GetType().Name}");
-            }
+            _employeesService.DeleteEmployee(employeeDto.Id);
         }
     }
 }

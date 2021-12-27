@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Reports.Database;
 using Reports.Dtos;
 using Reports.Entities.Employees;
@@ -103,6 +102,23 @@ namespace Reports.Services
             return notNullLists
                 .Aggregate(commonDtos, (current, reportDtos)
                     => current.Intersect(reportDtos).ToList());
+        }
+
+        public ReportDto FindOne(string creatorName, Guid creatorId, Guid id, DateTime creationDate)
+        {
+            IReadOnlyList<ReportDto> reports = Find(creatorName, creatorId, id, creationDate);
+
+            if (reports.Count == 0)
+            {
+                throw new ReportsExceptions("There are no suitable reports");
+            }
+
+            if (reports.Count > 1)
+            {
+                throw new ReportsExceptions("There are more then 1 suitable reports");
+            }
+            
+            return reports.Single();
         }
 
         public IReadOnlyList<ReportDto> GetAllReports()

@@ -183,6 +183,23 @@ namespace Reports.Services
                     => current.Intersect(taskDtos).ToList());
         }
 
+        public TaskDto FindOne(string name, Guid id)
+        {
+            IReadOnlyList<TaskDto> tasks = Find(name, id);
+
+            if (tasks.Count == 0)
+            {
+                throw new ReportsExceptions("There are no suitable tasks");
+            }
+
+            if (tasks.Count > 1)
+            {
+                throw new ReportsExceptions("There are more then 1 suitable tasks");
+            }
+            
+            return tasks.Single();
+        }
+
         public IReadOnlyList<TaskDto> GetAllTasks()
         {
             return _context.Tasks.Include(t => t.Comments).Select(t => t.GetDto()).ToList();

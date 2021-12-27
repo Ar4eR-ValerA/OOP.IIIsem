@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Reports.Dtos;
 using Reports.Services;
-using Reports.Tools;
 
 namespace Reports.Server.Controllers
 {
@@ -28,10 +26,9 @@ namespace Reports.Server.Controllers
             [FromQuery] Guid creatorId,
             [FromQuery] int sprintDays)
         {
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(creatorName, creatorId);
-            IsOne(creatorDtos);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
 
-            _reportsService.CreateEmployeeReport(creatorDtos.First().Id, DateTime.Now, sprintDays);
+            _reportsService.CreateEmployeeReport(creatorDto.Id, DateTime.Now, sprintDays);
         }
 
         [HttpPost]
@@ -41,10 +38,9 @@ namespace Reports.Server.Controllers
             [FromQuery] Guid teamLeadId,
             [FromQuery] int sprintDays)
         {
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(teamLeadName, teamLeadId);
-            IsOne(creatorDtos);
+            BaseEmployeeDto teamLeadDto = _employeesService.FindOne(teamLeadName, teamLeadId);
 
-            _reportsService.CreateTeamReport(teamLeadId, DateTime.Now, sprintDays);
+            _reportsService.CreateTeamReport(teamLeadDto.Id, DateTime.Now, sprintDays);
         }
 
         [HttpGet]
@@ -67,29 +63,9 @@ namespace Reports.Server.Controllers
             [FromQuery] string commentName,
             [FromQuery] string commentMessage)
         {
-            IReadOnlyList<BaseEmployeeDto> creatorDtos = _employeesService.Find(creatorName, creatorId);
-            IsOne(creatorDtos);
+            BaseEmployeeDto creatorDto = _employeesService.FindOne(creatorName, creatorId);
 
-            _reportsService.AddComment(reportId, creatorDtos.First().Id, DateTime.Now, commentName, commentMessage);
-        }
-
-        private void IsOne(IReadOnlyList<object> objects)
-        {
-            if (objects is null)
-            {
-                throw new ReportsExceptions("There is no objects");
-            }
-
-            if (objects.Count == 0)
-            {
-                throw new ReportsExceptions(
-                    $"There is not such {objects.GetType().GetGenericArguments().First().Name}");
-            }
-
-            if (objects.Count > 1)
-            {
-                throw new ReportsExceptions($"There are more than 1 suitable {objects.First().GetType().Name}");
-            }
+            _reportsService.AddComment(reportId, creatorDto.Id, DateTime.Now, commentName, commentMessage);
         }
     }
 }

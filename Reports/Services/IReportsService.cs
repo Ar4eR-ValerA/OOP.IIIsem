@@ -11,6 +11,7 @@ namespace Reports.Services
         IReadOnlyList<ReportDto> FindById(Guid id);
         IReadOnlyList<ReportDto> FindByCreationDate(DateTime creationDate);
         IReadOnlyList<ReportDto> Find(string creatorName, Guid creatorId, Guid id, DateTime creationDate);
+        ReportDto FindOne(string creatorName, Guid creatorId, Guid id, DateTime creationDate);
         IReadOnlyList<ReportDto> GetAllReports();
         void CreateEmployeeReport(Guid creatorId, DateTime creationDate, int sprintDays);
         void CreateTeamReport(Guid teamLeadId, DateTime creationDate, int sprintDays);

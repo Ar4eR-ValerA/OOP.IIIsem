@@ -119,6 +119,22 @@ namespace Reports.Services
                     => current.Intersect(baseEmpoloyeeDtos).ToList());
         }
 
+        public BaseEmployeeDto FindOne(string name, Guid id)
+        {
+            IReadOnlyList<BaseEmployeeDto> employees = Find(name, id);
+            if (employees.Count == 0)
+            {
+                throw new ReportsExceptions("There are no suitable employees");
+            }
+
+            if (employees.Count > 1)
+            {
+                throw new ReportsExceptions("There are more then 1 suitable employees");
+            }
+
+            return employees.Single();
+        }
+
         public IReadOnlyList<BaseEmployeeDto> GetAllEmployees()
         {
             return _context.BaseEmployees

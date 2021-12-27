@@ -13,17 +13,16 @@ namespace Reports.Services
         IReadOnlyList<TaskDto> FindByCreationDate(DateTime creationDate);
         IReadOnlyList<TaskDto> FindByLastChangeDate(DateTime lastChangeDate);
 
+        IReadOnlyList<TaskDto> Find(string name, Guid id);
+
         IReadOnlyList<TaskDto> Find(
-            string name, 
-            Guid id);
-        
-        IReadOnlyList<TaskDto> Find(
-            string name, 
-            Guid id, 
-            Guid assignedId, 
+            string name,
+            Guid id,
+            Guid assignedId,
             DateTime creationDate,
             DateTime lastChangeDate);
 
+        TaskDto FindOne(string name, Guid id);
         IReadOnlyList<TaskDto> GetAllTasks();
 
         void AddComment(
