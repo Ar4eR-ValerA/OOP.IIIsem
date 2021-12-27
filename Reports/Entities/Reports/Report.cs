@@ -35,21 +35,8 @@ namespace Reports.Entities.Reports
             _comments = reportDto.Comments.Select(c => c.GetInstance()).ToList();
             CreationDate = reportDto.CreationDate;
             Id = reportDto.Id;
-
-            if (reportDto.Creator is ManagerDto managerDto)
-            {
-                Creator = new Manager(managerDto);
-            }
-
-            if (reportDto.Creator is EmployeeDto employeeDto)
-            {
-                Creator = new Employee(employeeDto);
-            }
-
-            if (reportDto.Creator is TeamLeadDto teamLeadDto)
-            {
-                Creator = new TeamLead(teamLeadDto);
-            }
+            
+            Creator = reportDto.Creator.GetInstance();
         }
 
         public virtual IReadOnlyList<Comment> Comments => _comments;

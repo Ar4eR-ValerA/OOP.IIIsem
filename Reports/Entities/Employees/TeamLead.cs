@@ -18,19 +18,7 @@ namespace Reports.Entities.Employees
         internal TeamLead(TeamLeadDto teamLeadDto)
             : base(teamLeadDto.Id, teamLeadDto.Name, teamLeadDto.Active)
         {
-            _subordinates = new List<BaseEmployee>();
-            foreach (BaseEmployeeDto baseEmployeeDto in teamLeadDto.Subordinates)
-            {
-                if (baseEmployeeDto is ManagerDto managerDto)
-                {
-                    _subordinates.Add(new Manager(managerDto));
-                }
-
-                if (baseEmployeeDto is EmployeeDto employeeDto)
-                {
-                    _subordinates.Add(new Employee(employeeDto));
-                }
-            }
+            _subordinates = teamLeadDto.Subordinates.Select(s => s.GetInstance()).ToList();
         }
 
         public virtual IReadOnlyList<BaseEmployee> Subordinates => _subordinates;

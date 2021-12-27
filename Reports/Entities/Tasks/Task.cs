@@ -37,20 +37,7 @@ namespace Reports.Entities.Tasks
             CreationDate = taskDto.CreationDate;
             LastChangeDate = taskDto.LastChangeDate;
 
-            if (taskDto.Employee is ManagerDto managerDto)
-            {
-                Employee = new Manager(managerDto);
-            }
-
-            if (taskDto.Employee is EmployeeDto employeeDto)
-            {
-                Employee = new Employee(employeeDto);
-            }
-
-            if (taskDto.Employee is TeamLeadDto teamLeadDto)
-            {
-                Employee = new TeamLead(teamLeadDto);
-            }
+            Employee = taskDto.Employee.GetInstance();
         }
 
         public virtual IReadOnlyList<Comment> Comments => _comments;
